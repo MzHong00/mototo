@@ -22,3 +22,11 @@
 **레이어:** Component → Hook → Service → Api(`server/`) 단방향 · 컴포넌트는 UI만(비즈니스 로직 금지) · 단순 CRUD는 Hook → Api(`server/`) 직접 허용 · 비즈니스 로직 포함 시 Hook → Service → Api(`server/`) 필수
 **에러 처리:** Api에서 네트워크·HTTP 에러를 도메인 에러로 변환 후 throw · Error Boundary는 페이지 단위 필수 적용 · 에러 타입은 `unknown` + 타입 가드로 좁힘
 **디자인 토큰:** `--palette-*`(raw) → `--color-*` `--bg-*` `--text-*` `--border-*` `--spacing-*`(semantic). 공통 UI는 semantic만 사용, 특정 UI는 테마(`--palette-*`) 사용 가능
+
+## 코드 작성 프로젝트 규칙
+
+**[참조] 아키텍처:** 파일 생성·폴더 위치 결정 시 `agents/ARCHITECTURE.md` 참조
+**[참조] 테스트:** 테스트 파일 작성·수정 시 `agents/TESTING.md` 참조
+
+**[TanStack Query] 쿼리 정의:** 도메인별 `server/[feature]/[feature].queries.ts`에 키(`keys`)와 `queryOptions` · mutation 함께 정의 · `useQuery(userQueries.detail(id))` 형태로 사용 · 키 문자열 직접 사용 금지 · 계층 구조(`all→lists→detail(id)`)로 범위 무효화 가능하게 유지
+**[Zustand] 셀렉터·useShallow:** 필요한 값만 셀렉터로 구독(`useStore(s => s.count)`) · 복수 값 반환 시 `useShallow` 필수(`useStore(useShallow(s => ({ a: s.a, b: s.b })))`) · 셀렉터 없이 스토어 전체 구독 금지
