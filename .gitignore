@@ -13,9 +13,11 @@
 # testing
 /coverage
 
-# next.js
+# vite
+/dist
+
+# next.js (레거시 빌드 캐시 — 무시)
 /.next/
-/out/
 
 # production
 /build
@@ -38,5 +40,4 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 .gstack/

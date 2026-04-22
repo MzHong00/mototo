@@ -1,13 +1,11 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 import { useGameStore } from "@/stores/gameStore";
 
 export function LevelUpEffect() {
   const levelUpPending = useGameStore((s) => s.levelUpPending);
-  const clearLevelUp   = useGameStore((s) => s.clearLevelUp);
-  const level          = useGameStore((s) => s.character.level);
-  const overlayRef     = useRef<HTMLDivElement>(null);
+  const clearLevelUp = useGameStore((s) => s.clearLevelUp);
+  const level = useGameStore((s) => s.character.level);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!levelUpPending || !overlayRef.current) return;
@@ -66,7 +64,8 @@ export function LevelUpEffect() {
             fontWeight: 600,
             fontSize: 48,
             color: "#FFD700",
-            textShadow: "0 0 20px rgba(255,153,0,0.9), 0 2px 4px rgba(0,0,0,0.6)",
+            textShadow:
+              "0 0 20px rgba(255,153,0,0.9), 0 2px 4px rgba(0,0,0,0.6)",
             letterSpacing: 4,
           }}
         >

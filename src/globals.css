@@ -2,35 +2,35 @@
 
 :root {
   /* 배경 */
-  --bg: #D6E8FF;
-  --surface: #EAF2FF;
+  --bg: #d6e8ff;
+  --surface: #eaf2ff;
 
   /* 패널 */
-  --panel-bg: #FFFFFF;
-  --panel-blue: #EAF2FF;
+  --panel-bg: #ffffff;
+  --panel-blue: #eaf2ff;
 
   /* 보더 */
-  --border: #FFD700;
-  --border-blue: #5BA3FF;
+  --border: #ffd700;
+  --border-blue: #5ba3ff;
 
   /* 상태 바 */
-  --hp: #FF4D4D;
-  --mp: #4488FF;
-  --exp: #55CC22;
+  --hp: #ff4d4d;
+  --mp: #4488ff;
+  --exp: #55cc22;
 
   /* 텍스트 */
-  --text: #1A1A2E;
-  --text-muted: #5566AA;
+  --text: #1a1a2e;
+  --text-muted: #5566aa;
 
   /* 액션 */
-  --accent: #FF9900;
-  --accent2: #5BA3FF;
-  --success: #33BB55;
-  --danger: #FF3344;
+  --accent: #ff9900;
+  --accent2: #5ba3ff;
+  --success: #33bb55;
+  --danger: #ff3344;
 
-  /* 폰트 */
-  --font-ui: var(--font-mplus), sans-serif;
-  --font-title: var(--font-shippori), serif;
+  /* 폰트 — Google Fonts via index.html */
+  --font-ui: "M PLUS Rounded 1c", sans-serif;
+  --font-title: "Shippori Mincho", serif;
 
   /* 스페이싱 */
   --sp-xs: 4px;
