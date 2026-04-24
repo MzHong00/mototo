@@ -5,7 +5,7 @@
 **규칙 학습:** 사용자가 새로운 규칙을 제시하면 즉시 AGENTS.md의 프로젝트 코드 작성 규칙 섹션에 추가
 **코드 품질:** 코드 작성 시 UX · 성능 · 보안 · 접근성 · 유지보수성 항상 고려
 **간결성:** 최소한의 코드로 작성 · 불필요한 추상화·중간 변수·반복 제거 · 읽는 사람이 한눈에 의도를 파악할 수 있어야 함
-**네이밍:** `camelCase` 변수·함수·도메인 폴더(hud, screen, monster 등) · `PascalCase` 컴포넌트·타입·컴포넌트 파일·컴포넌트 폴더(CharacterPanel/, SkillSlot/ 등) · `UPPER_SNAKE_CASE` 상수
+**네이밍:** `camelCase` 변수·함수·폴더 · `PascalCase` 컴포넌트·타입·파일(.tsx·.scss) · `UPPER_SNAKE_CASE` 상수
 **Import 순서:** 외부 → 내부(`@/`) → 타입(`import type`)
 **Export:** 컴포넌트 named · 배럴 index는 공개 API만
 **타입:** `any` 금지 → `unknown` + 타입 가드 · Props는 파일 상단 `interface [Name]Props`

@@ -1,6 +1,6 @@
 import { useGameStore } from "@/stores/gameStore";
 import { SKILL_KEY_GROUPS, ALL_HOTKEYS } from "@/constants/skill";
-import { SkillSlot, EmptySlot } from "@/components/game/hud/SkillSlot/SkillSlot";
+import { SkillSlot, EmptySlot } from "@/components/game/hud/skillSlot/SkillSlot";
 import s from "./SkillBar.module.scss";
 
 export function SkillBar() {

@@ -1,6 +1,6 @@
 import { useGameStore } from "@/stores/gameStore";
 import { useShallow } from "zustand/react/shallow";
-import { StatBar } from "@/components/game/hud/StatBar/StatBar";
+import { StatBar } from "@/components/game/hud/statBar/StatBar";
 import s from "./CharacterPanel.module.scss";
 
 const STAT_BARS = [
