@@ -7,7 +7,9 @@
   background: var(--panel-bg);
   border: 2px solid var(--border);
   border-radius: var(--r-lg);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 215, 0, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 215, 0, 0.3);
   z-index: 50;
   overflow: hidden;
 }
@@ -137,7 +139,9 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: border-color 0.15s, transform 0.1s;
+  transition:
+    border-color 0.15s,
+    transform 0.1s;
   font-size: 22px;
 
   &:hover {

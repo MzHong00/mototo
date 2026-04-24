@@ -15,11 +15,11 @@ export function SkillSlot({ skill, hotkey }: SkillSlotProps) {
     return () => clearInterval(iv);
   }, []);
 
-  const elapsed   = (now - skill.lastUsed) / 1000;
+  const elapsed = (now - skill.lastUsed) / 1000;
   const remaining = Math.max(0, skill.cooldown - elapsed);
-  const pct       = skill.cooldown > 0 ? Math.min(1, elapsed / skill.cooldown) : 1;
-  const ready     = remaining === 0;
-  const color     = SKILL_COLOR[skill.id] ?? "var(--accent)";
+  const pct = skill.cooldown > 0 ? Math.min(1, elapsed / skill.cooldown) : 1;
+  const ready = remaining === 0;
+  const color = SKILL_COLOR[skill.id] ?? "var(--accent)";
 
   return (
     <div

@@ -5,22 +5,26 @@ import { FX_DURATION } from "@/constants/skill";
 import type { SkillFX } from "@/types/combat";
 
 export function ArrowBlastFX({ fx }: { fx: SkillFX }) {
-  const arrowRef  = useRef<THREE.Group>(null);
-  const ringRef   = useRef<THREE.Mesh>(null);
-  const ringMat   = useRef<THREE.MeshBasicMaterial>(null);
-  const arrowMat  = useRef<THREE.MeshStandardMaterial>(null);
-  const dir  = new THREE.Vector3(fx.dir[0], 0, fx.dir[2]).normalize();
-  const yaw  = Math.atan2(dir.x, dir.z);
+  const arrowRef = useRef<THREE.Group>(null);
+  const ringRef = useRef<THREE.Mesh>(null);
+  const ringMat = useRef<THREE.MeshBasicMaterial>(null);
+  const arrowMat = useRef<THREE.MeshStandardMaterial>(null);
+  const dir = new THREE.Vector3(fx.dir[0], 0, fx.dir[2]).normalize();
+  const yaw = Math.atan2(dir.x, dir.z);
   const TRAVEL = FX_DURATION.arrow_blast * 0.55;
 
   useFrame(() => {
     const elapsed = Date.now() - fx.startTime;
     if (elapsed < TRAVEL) {
-      const t    = elapsed / TRAVEL;
+      const t = elapsed / TRAVEL;
       const dist = t * 7;
       if (arrowRef.current) {
         arrowRef.current.visible = true;
-        arrowRef.current.position.set(fx.pos[0] + dir.x * dist, fx.pos[1] + 0.8, fx.pos[2] + dir.z * dist);
+        arrowRef.current.position.set(
+          fx.pos[0] + dir.x * dist,
+          fx.pos[1] + 0.8,
+          fx.pos[2] + dir.z * dist,
+        );
       }
       if (arrowMat.current) arrowMat.current.opacity = 1;
       if (ringMat.current) ringMat.current.opacity = 0;
@@ -36,7 +40,11 @@ export function ArrowBlastFX({ fx }: { fx: SkillFX }) {
 
   return (
     <>
-      <group ref={arrowRef} rotation={[0, yaw, 0]} position={[fx.pos[0], fx.pos[1] + 0.8, fx.pos[2]]}>
+      <group
+        ref={arrowRef}
+        rotation={[0, yaw, 0]}
+        position={[fx.pos[0], fx.pos[1] + 0.8, fx.pos[2]]}
+      >
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.03, 0.03, 0.9, 6]} />
           <meshStandardMaterial ref={arrowMat} color="#8B5E3C" transparent />

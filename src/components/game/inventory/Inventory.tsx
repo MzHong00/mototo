@@ -10,8 +10,8 @@ const TOTAL_SLOTS = 16;
 const EQUIP_SLOT_KEYS: (keyof EquipSlots)[] = ["weapon", "armor", "ring"];
 const EQUIP_SLOT_LABELS: Record<keyof EquipSlots, string> = {
   weapon: "⚔️ 무기",
-  armor:  "🛡️ 방어구",
-  ring:   "💍 반지",
+  armor: "🛡️ 방어구",
+  ring: "💍 반지",
 };
 
 interface InventoryProps {
@@ -20,14 +20,18 @@ interface InventoryProps {
 }
 
 export function Inventory({ open, onClose }: InventoryProps) {
-  const { inventory, equipped } = useGameStore(useShallow((s) => ({ inventory: s.inventory, equipped: s.equipped })));
-  const equipItem   = useGameStore((s) => s.equipItem);
+  const { inventory, equipped } = useGameStore(
+    useShallow((s) => ({ inventory: s.inventory, equipped: s.equipped })),
+  );
+  const equipItem = useGameStore((s) => s.equipItem);
   const unequipItem = useGameStore((s) => s.unequipItem);
-  const totalAtk    = useGameStore((s) => s.totalAtk);
-  const totalDef    = useGameStore((s) => s.totalDef);
+  const totalAtk = useGameStore((s) => s.totalAtk);
+  const totalDef = useGameStore((s) => s.totalDef);
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.code === "KeyI") onClose(); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.code === "KeyI") onClose();
+    };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
@@ -40,7 +44,9 @@ export function Inventory({ open, onClose }: InventoryProps) {
     <div className={s.modal}>
       <div className={s.header}>
         <span className={s.title}>인벤토리</span>
-        <button onClick={onClose} className={s.closeBtn}>✕</button>
+        <button onClick={onClose} className={s.closeBtn}>
+          ✕
+        </button>
       </div>
 
       <div className={s.body}>
@@ -75,7 +81,7 @@ export function Inventory({ open, onClose }: InventoryProps) {
 
           <div className={s.statSummary}>
             {[
-              { label: "ATK", value: totalAtk(), color: "var(--accent)"  },
+              { label: "ATK", value: totalAtk(), color: "var(--accent)" },
               { label: "DEF", value: totalDef(), color: "var(--accent2)" },
             ].map(({ label, value, color }) => (
               <div key={label} className={s.statLine} style={{ color }}>
@@ -87,7 +93,9 @@ export function Inventory({ open, onClose }: InventoryProps) {
         </div>
 
         <div className={s.gridCol}>
-          <div className={s.sectionLabel}>가방 ({inventory.length}/{TOTAL_SLOTS})</div>
+          <div className={s.sectionLabel}>
+            가방 ({inventory.length}/{TOTAL_SLOTS})
+          </div>
           <div className={s.grid}>
             {inventory.map((item) => (
               <ItemSlot key={item.uid} item={item} onClick={() => equipItem(item)} />

@@ -4,9 +4,9 @@ import s from "./level-up-effect.module.scss";
 
 export function LevelUpEffect() {
   const levelUpPending = useGameStore((s) => s.levelUpPending);
-  const clearLevelUp   = useGameStore((s) => s.clearLevelUp);
-  const level          = useGameStore((s) => s.character.level);
-  const overlayRef     = useRef<HTMLDivElement>(null);
+  const clearLevelUp = useGameStore((s) => s.clearLevelUp);
+  const level = useGameStore((s) => s.character.level);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!levelUpPending || !overlayRef.current) return;
@@ -18,7 +18,10 @@ export function LevelUpEffect() {
       el.style.transform = "translateX(-50%) scale(1)";
     }, 1800);
     const t2 = setTimeout(() => clearLevelUp(), 2200);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, [levelUpPending, clearLevelUp]);
 
   if (!levelUpPending) return null;

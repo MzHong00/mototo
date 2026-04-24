@@ -25,10 +25,7 @@ function FollowCamera() {
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const scale = e.deltaMode === 1 ? 20 : e.deltaMode === 2 ? 200 : 1;
-      dist.current = Math.max(
-        CAM_MIN,
-        Math.min(CAM_MAX, dist.current + e.deltaY * scale * 0.01),
-      );
+      dist.current = Math.max(CAM_MIN, Math.min(CAM_MAX, dist.current + e.deltaY * scale * 0.01));
     };
     canvas.addEventListener("wheel", onWheel, { passive: false });
     return () => canvas.removeEventListener("wheel", onWheel);

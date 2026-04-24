@@ -34,7 +34,14 @@ export function NpcMesh() {
         <meshStandardMaterial color="#FFEECC" />
       </mesh>
       <Billboard position={[0, 2.3, 0]}>
-        <Text fontSize={0.22} color="#FFD700" outlineWidth={0.04} outlineColor="#000" anchorX="center" anchorY="middle">
+        <Text
+          fontSize={0.22}
+          color="#FFD700"
+          outlineWidth={0.04}
+          outlineColor="#000"
+          anchorX="center"
+          anchorY="middle"
+        >
           상인
         </Text>
       </Billboard>

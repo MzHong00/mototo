@@ -1,7 +1,12 @@
 import { useEffect, useCallback } from "react";
 import * as THREE from "three";
 import { useGameStore } from "@/stores/gameStore";
-import { playerPositionRef, playerFacingRef, monsterPositions, monsterDamageFns } from "@/stores/worldRefs";
+import {
+  playerPositionRef,
+  playerFacingRef,
+  monsterPositions,
+  monsterDamageFns,
+} from "@/stores/worldRefs";
 import {
   SLASH_RANGE,
   BLAST_RANGE,
@@ -15,27 +20,27 @@ import type { SkillFXType } from "@/types/combat";
 
 const SLASH_FX_BY_CLASS: Record<JobClass, SkillFXType> = {
   warrior: "slash",
-  archer:  "arrow",
-  mage:    "fireball",
-  rogue:   "shuriken",
+  archer: "arrow",
+  mage: "fireball",
+  rogue: "shuriken",
 };
 
 const BLAST_FX_BY_CLASS: Record<JobClass, SkillFXType> = {
   warrior: "blast",
-  archer:  "arrow_blast",
-  mage:    "meteor",
-  rogue:   "shuriken_blast",
+  archer: "arrow_blast",
+  mage: "meteor",
+  rogue: "shuriken_blast",
 };
 
 export function useSkillInput() {
-  const skills        = useGameStore((s) => s.skills);
-  const triggerSkill  = useGameStore((s) => s.useSkill);
-  const addFX         = useGameStore((s) => s.addFX);
+  const skills = useGameStore((s) => s.skills);
+  const triggerSkill = useGameStore((s) => s.useSkill);
+  const addFX = useGameStore((s) => s.addFX);
   const activateShield = useGameStore((s) => s.activateShield);
-  const healHp        = useGameStore((s) => s.healHp);
-  const totalAtk      = useGameStore((s) => s.totalAtk);
-  const jobClass      = useGameStore((s) => s.character.jobClass);
-  const maxHp         = useGameStore((s) => s.character.maxHp);
+  const healHp = useGameStore((s) => s.healHp);
+  const totalAtk = useGameStore((s) => s.totalAtk);
+  const jobClass = useGameStore((s) => s.character.jobClass);
+  const maxHp = useGameStore((s) => s.character.maxHp);
 
   const fireSkill = useCallback(
     (id: string) => {

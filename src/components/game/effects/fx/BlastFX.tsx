@@ -7,8 +7,8 @@ import type { SkillFX } from "@/types/combat";
 export function BlastFX({ fx }: { fx: SkillFX }) {
   const outerRef = useRef<THREE.Mesh>(null);
   const innerRef = useRef<THREE.Mesh>(null);
-  const outMat   = useRef<THREE.MeshBasicMaterial>(null);
-  const inMat    = useRef<THREE.MeshBasicMaterial>(null);
+  const outMat = useRef<THREE.MeshBasicMaterial>(null);
+  const inMat = useRef<THREE.MeshBasicMaterial>(null);
 
   useFrame(() => {
     const age = (Date.now() - fx.startTime) / FX_DURATION.blast;

@@ -7,9 +7,9 @@ interface MapProps {
 
 export function Map({ zone }: MapProps) {
   const groundColor = zone === 2 ? "#AA8855" : "#88CC55";
-  const wireColor   = zone === 2 ? "#997744" : "#77BB44";
-  const treeColor   = zone === 2 ? "#886633" : "#33AA44";
-  const topColor    = zone === 2 ? "#AA7722" : "#44CC55";
+  const wireColor = zone === 2 ? "#997744" : "#77BB44";
+  const treeColor = zone === 2 ? "#886633" : "#33AA44";
+  const topColor = zone === 2 ? "#AA7722" : "#44CC55";
 
   return (
     <>

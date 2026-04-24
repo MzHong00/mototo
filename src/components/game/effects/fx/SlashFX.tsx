@@ -6,7 +6,7 @@ import type { SkillFX } from "@/types/combat";
 
 export function SlashFX({ fx }: { fx: SkillFX }) {
   const meshRef = useRef<THREE.Mesh>(null);
-  const matRef  = useRef<THREE.MeshBasicMaterial>(null);
+  const matRef = useRef<THREE.MeshBasicMaterial>(null);
 
   useFrame(() => {
     if (!meshRef.current || !matRef.current) return;

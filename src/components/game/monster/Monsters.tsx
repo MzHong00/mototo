@@ -44,7 +44,11 @@ export function Monsters({ zone }: MonstersProps) {
       }
       setDead((prev) => new Set(prev).add(id));
       setTimeout(() => {
-        setDead((prev) => { const next = new Set(prev); next.delete(id); return next; });
+        setDead((prev) => {
+          const next = new Set(prev);
+          next.delete(id);
+          return next;
+        });
       }, RESPAWN_MS);
     },
     [gainExp, addItem, addGold, zone, spawns],

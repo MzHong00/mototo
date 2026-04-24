@@ -12,21 +12,24 @@ import type { JobClass } from "@/types/character";
 const ZONE_FLASH_DURATION_MS = 400;
 
 export default function App() {
-  const [zone, setZone]           = useState(1);
+  const [zone, setZone] = useState(1);
   const [inventoryOpen, setInventory] = useState(false);
-  const [flash, setFlash]         = useState(false);
+  const [flash, setFlash] = useState(false);
 
-  const isDead      = useGameStore((s) => s.isDead);
-  const shopOpen    = useGameStore((s) => s.shopOpen);
+  const isDead = useGameStore((s) => s.isDead);
+  const shopOpen = useGameStore((s) => s.shopOpen);
   const setShopOpen = useGameStore((s) => s.setShopOpen);
   const selectClass = useGameStore((s) => s.selectClass);
-  const respawn     = useGameStore((s) => s.respawn);
-  const jobClass    = useGameStore((s) => s.character.jobClass);
+  const respawn = useGameStore((s) => s.respawn);
+  const jobClass = useGameStore((s) => s.character.jobClass);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.code === "KeyI") setInventory((v) => !v);
-      if (e.code === "Escape") { setInventory(false); setShopOpen(false); }
+      if (e.code === "Escape") {
+        setInventory(false);
+        setShopOpen(false);
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);

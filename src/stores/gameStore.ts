@@ -116,7 +116,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       const newExp = character.exp + amount;
       const needed = EXP_PER_LEVEL(character.level);
       if (newExp >= needed) {
-        const lv  = character.level + 1;
+        const lv = character.level + 1;
         const mhp = character.maxHp + LEVEL_HP_BONUS;
         const mmp = character.maxMp + LEVEL_MP_BONUS;
         return {
@@ -145,9 +145,13 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   healHp: (n) =>
-    set((s) => ({ character: { ...s.character, hp: Math.min(s.character.maxHp, s.character.hp + n) } })),
+    set((s) => ({
+      character: { ...s.character, hp: Math.min(s.character.maxHp, s.character.hp + n) },
+    })),
   healMp: (n) =>
-    set((s) => ({ character: { ...s.character, mp: Math.min(s.character.maxMp, s.character.mp + n) } })),
+    set((s) => ({
+      character: { ...s.character, mp: Math.min(s.character.maxMp, s.character.mp + n) },
+    })),
 
   useSkill: (id) => {
     const { skills, character } = get();
@@ -157,7 +161,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (character.mp < skill.mpCost) return false;
     set((s) => ({
       character: { ...s.character, mp: s.character.mp - skill.mpCost },
-      skills: s.skills.map((sk) => sk.id === id ? { ...sk, lastUsed: Date.now() } : sk),
+      skills: s.skills.map((sk) => (sk.id === id ? { ...sk, lastUsed: Date.now() } : sk)),
     }));
     return true;
   },
@@ -174,7 +178,9 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   addItem: (item) =>
-    set((s) => ({ inventory: s.inventory.length < INVENTORY_MAX ? [...s.inventory, item] : s.inventory })),
+    set((s) => ({
+      inventory: s.inventory.length < INVENTORY_MAX ? [...s.inventory, item] : s.inventory,
+    })),
 
   equipItem: (item) =>
     set((s) => {
@@ -211,8 +217,9 @@ export const useGameStore = create<GameState>((set, get) => ({
   setShopOpen: (v) => set({ shopOpen: v }),
 
   addFX: (type, pos, dir = [0, 0, -1]) =>
-    set((s) => ({ fxList: [...s.fxList, { fxId: fxCounter++, type, pos, dir, startTime: Date.now() }] })),
-  removeFX: (id) =>
-    set((s) => ({ fxList: s.fxList.filter((f) => f.fxId !== id) })),
+    set((s) => ({
+      fxList: [...s.fxList, { fxId: fxCounter++, type, pos, dir, startTime: Date.now() }],
+    })),
+  removeFX: (id) => set((s) => ({ fxList: s.fxList.filter((f) => f.fxId !== id) })),
   clearLevelUp: () => set({ levelUpPending: false }),
 }));

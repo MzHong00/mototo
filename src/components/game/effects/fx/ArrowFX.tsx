@@ -6,13 +6,13 @@ import type { SkillFX } from "@/types/combat";
 
 export function ArrowFX({ fx }: { fx: SkillFX }) {
   const groupRef = useRef<THREE.Group>(null);
-  const matRef   = useRef<THREE.MeshStandardMaterial>(null);
+  const matRef = useRef<THREE.MeshStandardMaterial>(null);
   const dir = new THREE.Vector3(fx.dir[0], 0, fx.dir[2]).normalize();
   const yaw = Math.atan2(dir.x, dir.z);
 
   useFrame(() => {
     if (!groupRef.current || !matRef.current) return;
-    const age  = (Date.now() - fx.startTime) / FX_DURATION.arrow;
+    const age = (Date.now() - fx.startTime) / FX_DURATION.arrow;
     const dist = age * 10;
     groupRef.current.position.set(
       fx.pos[0] + dir.x * dist,

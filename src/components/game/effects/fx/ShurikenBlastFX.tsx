@@ -6,9 +6,9 @@ import type { SkillFX } from "@/types/combat";
 
 export function ShurikenBlastFX({ fx }: { fx: SkillFX }) {
   const groupRef = useRef<THREE.Group>(null);
-  const ringRef  = useRef<THREE.Mesh>(null);
-  const ringMat  = useRef<THREE.MeshBasicMaterial>(null);
-  const dir    = new THREE.Vector3(fx.dir[0], 0, fx.dir[2]).normalize();
+  const ringRef = useRef<THREE.Mesh>(null);
+  const ringMat = useRef<THREE.MeshBasicMaterial>(null);
+  const dir = new THREE.Vector3(fx.dir[0], 0, fx.dir[2]).normalize();
   const TRAVEL = FX_DURATION.shuriken_blast * 0.5;
 
   useFrame(() => {
@@ -17,7 +17,11 @@ export function ShurikenBlastFX({ fx }: { fx: SkillFX }) {
       const t = elapsed / TRAVEL;
       if (groupRef.current) {
         groupRef.current.visible = true;
-        groupRef.current.position.set(fx.pos[0] + dir.x * t * 8, fx.pos[1] + 0.9, fx.pos[2] + dir.z * t * 8);
+        groupRef.current.position.set(
+          fx.pos[0] + dir.x * t * 8,
+          fx.pos[1] + 0.9,
+          fx.pos[2] + dir.z * t * 8,
+        );
         groupRef.current.rotation.y += 0.3;
       }
     } else {

@@ -11,7 +11,7 @@ import { HelpHint } from "@/components/game/hud/help-hint/HelpHint";
 
 export function HUD() {
   const setShopOpen = useGameStore((s) => s.setShopOpen);
-  const npcNear     = useNpcProximity();
+  const npcNear = useNpcProximity();
 
   useSkillInput();
   useMpRegen();

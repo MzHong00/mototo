@@ -12,9 +12,11 @@ export function SkillBar() {
           {group.map((hotkey) => {
             const idx = ALL_HOTKEYS.indexOf(hotkey);
             const skill = skills[idx];
-            return skill
-              ? <SkillSlot key={hotkey} skill={skill} hotkey={hotkey} />
-              : <EmptySlot key={hotkey} hotkey={hotkey} />;
+            return skill ? (
+              <SkillSlot key={hotkey} skill={skill} hotkey={hotkey} />
+            ) : (
+              <EmptySlot key={hotkey} hotkey={hotkey} />
+            );
           })}
         </div>
       ))}

@@ -5,7 +5,13 @@ import type { ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 import { playerPositionRef, monsterPositions, monsterDamageFns } from "@/stores/worldRefs";
 import { useGameStore } from "@/stores/gameStore";
-import { MONSTER_STATS, AGGRO_RANGE, DEAGGRO_RANGE, ATTACK_RANGE, ATTACK_CD } from "@/constants/monster";
+import {
+  MONSTER_STATS,
+  AGGRO_RANGE,
+  DEAGGRO_RANGE,
+  ATTACK_RANGE,
+  ATTACK_CD,
+} from "@/constants/monster";
 import type { MonsterConfig } from "@/types/monster";
 
 interface DamageNumber {
@@ -20,22 +26,22 @@ interface MonsterProps extends MonsterConfig {
 }
 
 export function Monster({ id, type, position, onDeath }: MonsterProps) {
-  const stats     = MONSTER_STATS[type];
+  const stats = MONSTER_STATS[type];
   const takeDamage = useGameStore((s) => s.takeDamage);
-  const totalAtk   = useGameStore((s) => s.totalAtk);
+  const totalAtk = useGameStore((s) => s.totalAtk);
 
-  const [hp, setHp]           = useState(stats.maxHp);
-  const [dead, setDead]       = useState(false);
-  const [hit, setHit]         = useState(false);
+  const [hp, setHp] = useState(stats.maxHp);
+  const [dead, setDead] = useState(false);
+  const [hit, setHit] = useState(false);
   const [damages, setDamages] = useState<DamageNumber[]>([]);
 
-  const groupRef   = useRef<THREE.Group>(null);
-  const posRef     = useRef(new THREE.Vector3(...position));
-  const aggroRef   = useRef(false);
-  const atkTimer   = useRef(0);
-  const dmgId      = useRef(0);
-  const _dir       = useRef(new THREE.Vector3());
-  const deadRef    = useRef(false);
+  const groupRef = useRef<THREE.Group>(null);
+  const posRef = useRef(new THREE.Vector3(...position));
+  const aggroRef = useRef(false);
+  const atkTimer = useRef(0);
+  const dmgId = useRef(0);
+  const _dir = useRef(new THREE.Vector3());
+  const deadRef = useRef(false);
   const eyeMatRefs = [
     useRef<THREE.MeshStandardMaterial>(null),
     useRef<THREE.MeshStandardMaterial>(null),
@@ -74,9 +80,9 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
     if (dead || !groupRef.current) return;
 
     const player = playerPositionRef.current;
-    const dist   = posRef.current.distanceTo(player);
+    const dist = posRef.current.distanceTo(player);
 
-    if (dist < AGGRO_RANGE)   aggroRef.current = true;
+    if (dist < AGGRO_RANGE) aggroRef.current = true;
     if (dist > DEAGGRO_RANGE) aggroRef.current = false;
 
     if (aggroRef.current) {
@@ -100,12 +106,16 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
     );
 
     const eyeColor = aggroRef.current ? "#FF2200" : "#111111";
-    eyeMatRefs.forEach((r) => { if (r.current) r.current.color.set(eyeColor); });
+    eyeMatRefs.forEach((r) => {
+      if (r.current) r.current.color.set(eyeColor);
+    });
 
     setDamages((prev) =>
-      prev.length === 0 ? prev :
-      prev.map((d) => ({ ...d, y: d.y + 0.02, opacity: d.opacity - 0.022 }))
-          .filter((d) => d.opacity > 0),
+      prev.length === 0
+        ? prev
+        : prev
+            .map((d) => ({ ...d, y: d.y + 0.02, opacity: d.opacity - 0.022 }))
+            .filter((d) => d.opacity > 0),
     );
   });
 
@@ -155,14 +165,23 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
         </mesh>
         <mesh position={[(hpPct - 1) * 0.4, 0, 0.001]} scale={[hpPct, 1, 1]}>
           <planeGeometry args={[0.8, 0.1]} />
-          <meshBasicMaterial color={hpPct > 0.5 ? "#33BB55" : hpPct > 0.25 ? "#FFAA00" : "#FF3333"} />
+          <meshBasicMaterial
+            color={hpPct > 0.5 ? "#33BB55" : hpPct > 0.25 ? "#FFAA00" : "#FF3333"}
+          />
         </mesh>
       </Billboard>
 
       {damages.map((d) => (
         <Billboard key={d.id} position={[0, d.y, 0]}>
-          <Text fontSize={0.3} color="#FFD700" outlineWidth={0.05} outlineColor="#000000"
-            anchorX="center" anchorY="middle" fillOpacity={d.opacity}>
+          <Text
+            fontSize={0.3}
+            color="#FFD700"
+            outlineWidth={0.05}
+            outlineColor="#000000"
+            anchorX="center"
+            anchorY="middle"
+            fillOpacity={d.opacity}
+          >
             {d.value}
           </Text>
         </Billboard>

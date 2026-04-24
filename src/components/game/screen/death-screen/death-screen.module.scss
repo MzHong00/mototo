@@ -15,7 +15,7 @@
   font-family: var(--font-title);
   font-weight: 600;
   font-size: 42px;
-  color: #FF4444;
+  color: #ff4444;
   text-shadow: 0 0 30px rgba(255, 68, 68, 0.8);
   margin-bottom: 12px;
 }
@@ -32,13 +32,15 @@
   font-weight: 900;
   font-size: 15px;
   padding: 12px 40px;
-  background: linear-gradient(135deg, #FF9900, #FFB300);
+  background: linear-gradient(135deg, #ff9900, #ffb300);
   color: #fff;
   border: none;
   border-radius: var(--r-full);
   cursor: pointer;
   box-shadow: 0 4px 20px rgba(255, 153, 0, 0.5);
-  transition: transform 0.1s, filter 0.1s;
+  transition:
+    transform 0.1s,
+    filter 0.1s;
 
   &:hover {
     filter: brightness(1.1);
@@ -52,6 +54,10 @@
 }
 
 @keyframes deathFade {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

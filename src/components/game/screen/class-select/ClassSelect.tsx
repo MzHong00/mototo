@@ -10,10 +10,38 @@ const CLASSES: {
   stats: string;
   color: string;
 }[] = [
-  { id: "warrior", name: "전사",   icon: "⚔️", desc: "두꺼운 갑옷과 강인한 체력으로 최전선을 지킨다.", stats: "HP ★★★  MP ★  ATK ★★  DEF ★★★", color: "#FF6633" },
-  { id: "archer",  name: "궁수",   icon: "🏹", desc: "빠른 발놀림과 정확한 조준으로 적을 압도한다.",   stats: "HP ★★  MP ★★  ATK ★★★  DEF ★",    color: "#33BB55" },
-  { id: "mage",    name: "마법사", icon: "🔮", desc: "광대한 마나로 강력한 마법을 구사한다.",           stats: "HP ★  MP ★★★  ATK ★★★★  DEF ☆",  color: "#5BA3FF" },
-  { id: "rogue",   name: "도적",   icon: "🗡️", desc: "날랜 몸놀림과 표창으로 적의 빈틈을 노린다.",    stats: "HP ★★  MP ★★  ATK ★★★  DEF ★",    color: "#AA44FF" },
+  {
+    id: "warrior",
+    name: "전사",
+    icon: "⚔️",
+    desc: "두꺼운 갑옷과 강인한 체력으로 최전선을 지킨다.",
+    stats: "HP ★★★  MP ★  ATK ★★  DEF ★★★",
+    color: "#FF6633",
+  },
+  {
+    id: "archer",
+    name: "궁수",
+    icon: "🏹",
+    desc: "빠른 발놀림과 정확한 조준으로 적을 압도한다.",
+    stats: "HP ★★  MP ★★  ATK ★★★  DEF ★",
+    color: "#33BB55",
+  },
+  {
+    id: "mage",
+    name: "마법사",
+    icon: "🔮",
+    desc: "광대한 마나로 강력한 마법을 구사한다.",
+    stats: "HP ★  MP ★★★  ATK ★★★★  DEF ☆",
+    color: "#5BA3FF",
+  },
+  {
+    id: "rogue",
+    name: "도적",
+    icon: "🗡️",
+    desc: "날랜 몸놀림과 표창으로 적의 빈틈을 노린다.",
+    stats: "HP ★★  MP ★★  ATK ★★★  DEF ★",
+    color: "#AA44FF",
+  },
 ];
 
 interface ClassSelectProps {

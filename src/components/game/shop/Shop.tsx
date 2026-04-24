@@ -10,11 +10,11 @@ interface ShopProps {
 }
 
 export function Shop({ open, onClose }: ShopProps) {
-  const gold      = useGameStore((s) => s.gold);
+  const gold = useGameStore((s) => s.gold);
   const spendGold = useGameStore((s) => s.spendGold);
-  const healHp    = useGameStore((s) => s.healHp);
-  const healMp    = useGameStore((s) => s.healMp);
-  const addItem   = useGameStore((s) => s.addItem);
+  const healHp = useGameStore((s) => s.healHp);
+  const healMp = useGameStore((s) => s.healMp);
+  const addItem = useGameStore((s) => s.addItem);
 
   if (!open) return null;
 
@@ -23,9 +23,9 @@ export function Shop({ open, onClose }: ShopProps) {
     if (!def) return;
     if (!spendGold(def.price)) return;
 
-    if (def.healHp)      healHp(def.healHp);
-    if (def.healMp)      healMp(def.healMp);
-    if (def.grantItem)   addItem({ ...def.grantItem, uid: `${def.id}_${shopUidCounter++}` });
+    if (def.healHp) healHp(def.healHp);
+    if (def.healMp) healMp(def.healMp);
+    if (def.grantItem) addItem({ ...def.grantItem, uid: `${def.id}_${shopUidCounter++}` });
     if (def.enhanceAtk) {
       useGameStore.setState((s) => ({
         character: { ...s.character, baseAtk: s.character.baseAtk + (def.enhanceAtk ?? 0) },
@@ -39,7 +39,9 @@ export function Shop({ open, onClose }: ShopProps) {
         <span className={s.shopTitle}>🏪 상점</span>
         <div className={s.headerLeft}>
           <span className={s.gold}>💰 {gold}G</span>
-          <button onClick={onClose} className={s.closeBtn}>✕</button>
+          <button onClick={onClose} className={s.closeBtn}>
+            ✕
+          </button>
         </div>
       </div>
 
