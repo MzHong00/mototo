@@ -1,0 +1,43 @@
+.flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 215, 0, 0.18);
+  pointer-events: none;
+  z-index: 20;
+  animation: levelFlash 0.5s ease-out forwards;
+}
+
+.overlay {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translateX(-50%) scale(1);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 30;
+  text-align: center;
+  pointer-events: none;
+}
+
+.levelUpText {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 48px;
+  color: #FFD700;
+  text-shadow: 0 0 20px rgba(255, 153, 0, 0.9), 0 2px 4px rgba(0, 0, 0, 0.6);
+  letter-spacing: 4px;
+}
+
+.levelNum {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 22px;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  margin-top: 6px;
+}
+
+@keyframes levelFlash {
+  0%   { opacity: 0.6; }
+  100% { opacity: 0; }
+}

@@ -4,17 +4,17 @@ import { Canvas } from "@react-three/fiber";
 import { Sky } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { playerPositionRef } from "@/stores/worldRefs";
-import { Character } from "./Character";
-import { Map } from "./Map";
-import { Monsters } from "./Monsters";
-import { SkillEffects } from "./SkillEffects";
-import { Portal } from "./Portal";
-import { NpcMesh } from "./Npc";
+import { Character } from "@/components/game/character/Character";
+import { Map } from "@/components/game/map/Map";
+import { Monsters } from "@/components/game/monster/Monsters";
+import { SkillEffects } from "@/components/game/effects/SkillEffects";
+import { Portal } from "@/components/game/map/Portal";
+import { NpcMesh } from "@/components/game/map/Npc";
 
 const CAM_MIN = 6;
 const CAM_MAX = 28;
-const CAM_YAW = 0; // 고정 방위각 (정면)
-const CAM_PITCH = 0.75; // 고정 앙각 (~43°)
+const CAM_YAW = 0;
+const CAM_PITCH = 0.75;
 
 function FollowCamera() {
   const { camera, gl } = useThree();

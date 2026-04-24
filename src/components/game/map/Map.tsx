@@ -1,14 +1,5 @@
 import { RigidBody } from "@react-three/rapier";
-
-const TREES: [number, number][] = [
-  [-4, -3],
-  [4, -5],
-  [-6, 2],
-  [5, 3],
-  [-2, 5],
-  [7, -1],
-  [-8, -6],
-];
+import { TREE_POSITIONS, MAP_WALLS } from "@/constants/world";
 
 interface MapProps {
   zone: number;
@@ -16,18 +7,14 @@ interface MapProps {
 
 export function Map({ zone }: MapProps) {
   const groundColor = zone === 2 ? "#AA8855" : "#88CC55";
-  const wireColor = zone === 2 ? "#997744" : "#77BB44";
-  const treeColor = zone === 2 ? "#886633" : "#33AA44";
-  const topColor = zone === 2 ? "#AA7722" : "#44CC55";
+  const wireColor   = zone === 2 ? "#997744" : "#77BB44";
+  const treeColor   = zone === 2 ? "#886633" : "#33AA44";
+  const topColor    = zone === 2 ? "#AA7722" : "#44CC55";
 
   return (
     <>
       <RigidBody type="fixed" colliders="cuboid">
-        <mesh
-          rotation={[-Math.PI / 2, 0, 0]}
-          receiveShadow
-          position={[0, 0, 0]}
-        >
+        <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, 0, 0]}>
           <planeGeometry args={[40, 40]} />
           <meshStandardMaterial color={groundColor} />
         </mesh>
@@ -38,7 +25,7 @@ export function Map({ zone }: MapProps) {
         <meshStandardMaterial color={wireColor} wireframe />
       </mesh>
 
-      {TREES.map(([x, z], i) => (
+      {TREE_POSITIONS.map(([x, z], i) => (
         <group key={i} position={[x, 0, z]}>
           <mesh position={[0, 0.75, 0]} castShadow>
             <cylinderGeometry args={[0.15, 0.2, 1.5, 6]} />
@@ -55,24 +42,7 @@ export function Map({ zone }: MapProps) {
         </group>
       ))}
 
-      {[
-        {
-          pos: [0, 2, -20] as [number, number, number],
-          size: [40, 4, 0.5] as [number, number, number],
-        },
-        {
-          pos: [0, 2, 20] as [number, number, number],
-          size: [40, 4, 0.5] as [number, number, number],
-        },
-        {
-          pos: [-20, 2, 0] as [number, number, number],
-          size: [0.5, 4, 40] as [number, number, number],
-        },
-        {
-          pos: [20, 2, 0] as [number, number, number],
-          size: [0.5, 4, 40] as [number, number, number],
-        },
-      ].map(({ pos, size }, i) => (
+      {MAP_WALLS.map(({ pos, size }, i) => (
         <RigidBody key={i} type="fixed" colliders="cuboid">
           <mesh position={pos} visible={false}>
             <boxGeometry args={size} />

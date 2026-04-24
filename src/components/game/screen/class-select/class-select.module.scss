@@ -1,0 +1,105 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.subtitle {
+  margin-bottom: 8px;
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 32px;
+  color: var(--text);
+  margin: 0 0 48px;
+  text-shadow: 0 2px 8px rgba(91, 163, 255, 0.3);
+}
+
+.cards {
+  display: flex;
+  gap: 20px;
+}
+
+.card {
+  width: 200px;
+  padding: 28px 20px 24px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid var(--border-blue);
+  border-radius: var(--r-xl);
+  cursor: pointer;
+  text-align: center;
+  transform: none;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 12px rgba(91, 163, 255, 0.1);
+
+  &.active {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: var(--cls-color);
+    transform: translateY(-8px) scale(1.03);
+    box-shadow:
+      0 12px 32px color-mix(in srgb, var(--cls-color) 27%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--cls-color) 40%, transparent);
+  }
+}
+
+.cardIcon {
+  font-size: 52px;
+  margin-bottom: 12px;
+}
+
+.cardName {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--text);
+  margin-bottom: 10px;
+
+  .active & {
+    color: var(--cls-color);
+  }
+}
+
+.cardDesc {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.cardStats {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.8;
+
+  .active & {
+    color: var(--cls-color);
+  }
+}
+
+.selectBtn {
+  margin-top: 20px;
+  padding: 8px 20px;
+  background: var(--cls-color);
+  border-radius: var(--r-full);
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 13px;
+  color: #fff;
+  box-shadow: color-mix(in srgb, var(--cls-color) 40%, transparent) 0 4px 12px;
+}

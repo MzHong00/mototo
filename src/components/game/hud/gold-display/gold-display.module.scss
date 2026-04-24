@@ -1,0 +1,17 @@
+.gold {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.93);
+  backdrop-filter: blur(4px);
+  border: 2px solid var(--border);
+  border-radius: var(--r-full);
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 14px;
+  color: #FFB300;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 2px 8px rgba(255, 153, 0, 0.2);
+  z-index: 10;
+}

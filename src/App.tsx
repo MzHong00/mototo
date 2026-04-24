@@ -1,35 +1,35 @@
 import { useState, useEffect, useCallback } from "react";
 import { Scene } from "@/components/game/Scene";
-import { HUD } from "@/components/game/HUD";
-import { LevelUpEffect } from "@/components/game/LevelUpEffect";
-import { Inventory } from "@/components/game/Inventory";
-import { ClassSelect } from "@/components/game/ClassSelect";
-import { DeathScreen } from "@/components/game/DeathScreen";
-import { Shop } from "@/components/game/Shop";
-import { useGameStore, type JobClass } from "@/stores/gameStore";
+import { HUD } from "@/components/game/hud/HUD";
+import { LevelUpEffect } from "@/components/game/screen/level-up-effect/LevelUpEffect";
+import { Inventory } from "@/components/game/inventory/Inventory";
+import { ClassSelect } from "@/components/game/screen/class-select/ClassSelect";
+import { DeathScreen } from "@/components/game/screen/death-screen/DeathScreen";
+import { Shop } from "@/components/game/shop/Shop";
+import { useGameStore } from "@/stores/gameStore";
+import type { JobClass } from "@/types/character";
+
+const ZONE_FLASH_DURATION_MS = 400;
 
 export default function App() {
-  const [zone, setZone] = useState(1);
+  const [zone, setZone]           = useState(1);
   const [inventoryOpen, setInventory] = useState(false);
-  const [flash, setFlash] = useState(false);
+  const [flash, setFlash]         = useState(false);
 
-  const isDead = useGameStore((s) => s.isDead);
-  const shopOpen = useGameStore((s) => s.shopOpen);
+  const isDead      = useGameStore((s) => s.isDead);
+  const shopOpen    = useGameStore((s) => s.shopOpen);
   const setShopOpen = useGameStore((s) => s.setShopOpen);
   const selectClass = useGameStore((s) => s.selectClass);
-  const respawn = useGameStore((s) => s.respawn);
-  const jobClass = useGameStore((s) => s.character.jobClass);
+  const respawn     = useGameStore((s) => s.respawn);
+  const jobClass    = useGameStore((s) => s.character.jobClass);
 
   useEffect(() => {
-    const h = (e: KeyboardEvent) => {
+    const handler = (e: KeyboardEvent) => {
       if (e.code === "KeyI") setInventory((v) => !v);
-      if (e.code === "Escape") {
-        setInventory(false);
-        setShopOpen(false);
-      }
+      if (e.code === "Escape") { setInventory(false); setShopOpen(false); }
     };
-    window.addEventListener("keydown", h);
-    return () => window.removeEventListener("keydown", h);
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, [setShopOpen]);
 
   const handlePortalEnter = useCallback(() => {
@@ -37,19 +37,12 @@ export default function App() {
     setTimeout(() => {
       setZone((z) => (z === 1 ? 2 : 1));
       setFlash(false);
-    }, 400);
+    }, ZONE_FLASH_DURATION_MS);
   }, []);
 
-  const handleClassSelect = useCallback(
-    (cls: JobClass) => {
-      selectClass(cls);
-    },
-    [selectClass],
-  );
+  const handleClassSelect = useCallback((cls: JobClass) => selectClass(cls), [selectClass]);
 
-  if (!jobClass) {
-    return <ClassSelect onSelect={handleClassSelect} />;
-  }
+  if (!jobClass) return <ClassSelect onSelect={handleClassSelect} />;
 
   return (
     <div
@@ -93,8 +86,7 @@ export default function App() {
           style={{
             position: "absolute",
             inset: 0,
-            background:
-              zone === 1 ? "rgba(91,163,255,0.55)" : "rgba(255,100,0,0.45)",
+            background: zone === 1 ? "rgba(91,163,255,0.55)" : "rgba(255,100,0,0.45)",
             zIndex: 40,
             pointerEvents: "none",
             animation: "flash 0.4s ease-out forwards",
@@ -102,9 +94,7 @@ export default function App() {
         />
       )}
 
-      <style>{`
-        @keyframes flash { 0% { opacity:1 } 100% { opacity:0 } }
-      `}</style>
+      <style>{`@keyframes flash { 0% { opacity:1 } 100% { opacity:0 } }`}</style>
     </div>
   );
 }

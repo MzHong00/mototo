@@ -1,4 +1,3 @@
-
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text, Billboard } from "@react-three/drei";
@@ -6,23 +5,8 @@ import type { ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 import { playerPositionRef, monsterPositions, monsterDamageFns } from "@/stores/worldRefs";
 import { useGameStore } from "@/stores/gameStore";
-
-export interface MonsterConfig {
-  id: number;
-  type: "green" | "blue" | "red";
-  position: [number, number, number];
-}
-
-export const MONSTER_STATS = {
-  green: { maxHp: 30,  exp: 10, damage: 5,  speed: 2.2, color: "#44AA44", scale: 0.7 },
-  blue:  { maxHp: 60,  exp: 25, damage: 10, speed: 2.8, color: "#4488FF", scale: 0.9 },
-  red:   { maxHp: 100, exp: 50, damage: 18, speed: 3.2, color: "#FF4444", scale: 1.1 },
-} as const;
-
-const AGGRO_RANGE   = 7;
-const DEAGGRO_RANGE = 12;
-const ATTACK_RANGE  = 1.3;
-const ATTACK_CD     = 2.0;
+import { MONSTER_STATS, AGGRO_RANGE, DEAGGRO_RANGE, ATTACK_RANGE, ATTACK_CD } from "@/constants/monster";
+import type { MonsterConfig } from "@/types/monster";
 
 interface DamageNumber {
   id: number;
@@ -36,25 +20,27 @@ interface MonsterProps extends MonsterConfig {
 }
 
 export function Monster({ id, type, position, onDeath }: MonsterProps) {
-  const stats = MONSTER_STATS[type];
+  const stats     = MONSTER_STATS[type];
   const takeDamage = useGameStore((s) => s.takeDamage);
   const totalAtk   = useGameStore((s) => s.totalAtk);
 
-  const [hp, setHp]         = useState<number>(stats.maxHp);
-  const [dead, setDead]     = useState(false);
-  const [hit, setHit]       = useState(false);
+  const [hp, setHp]           = useState(stats.maxHp);
+  const [dead, setDead]       = useState(false);
+  const [hit, setHit]         = useState(false);
   const [damages, setDamages] = useState<DamageNumber[]>([]);
 
   const groupRef   = useRef<THREE.Group>(null);
-  const posRef     = useRef(new THREE.Vector3(position[0], position[1], position[2]));
+  const posRef     = useRef(new THREE.Vector3(...position));
   const aggroRef   = useRef(false);
   const atkTimer   = useRef(0);
   const dmgId      = useRef(0);
   const _dir       = useRef(new THREE.Vector3());
   const deadRef    = useRef(false);
-  const eyeMatRefs = [useRef<THREE.MeshStandardMaterial>(null), useRef<THREE.MeshStandardMaterial>(null)];
+  const eyeMatRefs = [
+    useRef<THREE.MeshStandardMaterial>(null),
+    useRef<THREE.MeshStandardMaterial>(null),
+  ];
 
-  // worldRefs에 등록 — 스킬 히트 감지에서 사용
   useEffect(() => {
     monsterPositions.set(id, posRef.current);
 
@@ -110,7 +96,7 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
     groupRef.current.position.set(
       posRef.current.x,
       posRef.current.y + Math.sin(Date.now() * 0.002 + id) * 0.08,
-      posRef.current.z
+      posRef.current.z,
     );
 
     const eyeColor = aggroRef.current ? "#FF2200" : "#111111";
@@ -119,7 +105,7 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
     setDamages((prev) =>
       prev.length === 0 ? prev :
       prev.map((d) => ({ ...d, y: d.y + 0.02, opacity: d.opacity - 0.022 }))
-          .filter((d) => d.opacity > 0)
+          .filter((d) => d.opacity > 0),
     );
   });
 
@@ -127,10 +113,9 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
     (e: ThreeEvent<MouseEvent>) => {
       e.stopPropagation();
       if (dead) return;
-      const dmg = Math.floor(totalAtk() + Math.random() * 8);
-      monsterDamageFns.get(id)?.(dmg);
+      monsterDamageFns.get(id)?.(Math.floor(totalAtk() + Math.random() * 8));
     },
-    [dead, id, totalAtk]
+    [dead, id, totalAtk],
   );
 
   if (dead) {

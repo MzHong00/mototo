@@ -1,0 +1,16 @@
+.prompt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateY(80px);
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.93);
+  border: 2px solid var(--border);
+  border-radius: var(--r-full);
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--text);
+  z-index: 20;
+  pointer-events: none;
+}
