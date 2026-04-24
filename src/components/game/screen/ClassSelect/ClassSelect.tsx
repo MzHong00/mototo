@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { JobClass } from "@/types/character";
-import s from "./class-select.module.scss";
+import s from "./ClassSelect.module.scss";
 
 const CLASSES: {
   id: JobClass;

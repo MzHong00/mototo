@@ -3,7 +3,7 @@ import { useGameStore } from "@/stores/gameStore";
 import { useShallow } from "zustand/react/shallow";
 import type { EquipSlots } from "@/types/character";
 import type { Item } from "@/types/item";
-import s from "./inventory.module.scss";
+import s from "./Inventory.module.scss";
 
 const TOTAL_SLOTS = 16;
 

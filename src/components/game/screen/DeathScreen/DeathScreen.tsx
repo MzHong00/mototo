@@ -1,4 +1,4 @@
-import s from "./death-screen.module.scss";
+import s from "./DeathScreen.module.scss";
 
 interface DeathScreenProps {
   onRespawn: () => void;

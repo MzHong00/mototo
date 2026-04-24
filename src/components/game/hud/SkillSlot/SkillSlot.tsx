@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { SKILL_COLOR } from "@/constants/skill";
 import type { SkillState } from "@/types/character";
-import s from "./skill-slot.module.scss";
+import s from "./SkillSlot.module.scss";
 
 interface SkillSlotProps {
   skill: SkillState;

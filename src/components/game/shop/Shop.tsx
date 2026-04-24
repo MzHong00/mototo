@@ -1,6 +1,6 @@
 import { useGameStore } from "@/stores/gameStore";
 import { SHOP_CATALOG } from "@/constants/shop";
-import s from "./shop.module.scss";
+import s from "./Shop.module.scss";
 
 let shopUidCounter = 0;
 

@@ -1,4 +1,4 @@
-import s from "./npc-prompt.module.scss";
+import s from "./NpcPrompt.module.scss";
 
 interface NpcPromptProps {
   visible: boolean;

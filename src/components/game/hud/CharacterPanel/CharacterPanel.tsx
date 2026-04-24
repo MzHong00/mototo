@@ -1,7 +1,7 @@
 import { useGameStore } from "@/stores/gameStore";
 import { useShallow } from "zustand/react/shallow";
-import { StatBar } from "@/components/game/hud/stat-bar/StatBar";
-import s from "./character-panel.module.scss";
+import { StatBar } from "@/components/game/hud/StatBar/StatBar";
+import s from "./CharacterPanel.module.scss";
 
 const STAT_BARS = [
   { label: "HP", key: "hp" as const, maxKey: "maxHp" as const, colorVar: "--hp" },

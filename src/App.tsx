@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { Scene } from "@/components/game/Scene";
 import { HUD } from "@/components/game/hud/HUD";
-import { LevelUpEffect } from "@/components/game/screen/level-up-effect/LevelUpEffect";
-import { Inventory } from "@/components/game/inventory/Inventory";
-import { ClassSelect } from "@/components/game/screen/class-select/ClassSelect";
-import { DeathScreen } from "@/components/game/screen/death-screen/DeathScreen";
-import { Shop } from "@/components/game/shop/Shop";
+import { LevelUpEffect } from "@/components/game/screen/LevelUpEffect/LevelUpEffect";
+import { Inventory } from "@/components/game/Inventory/Inventory";
+import { ClassSelect } from "@/components/game/screen/ClassSelect/ClassSelect";
+import { DeathScreen } from "@/components/game/screen/DeathScreen/DeathScreen";
+import { Shop } from "@/components/game/Shop/Shop";
 import { useGameStore } from "@/stores/gameStore";
 import type { JobClass } from "@/types/character";
 

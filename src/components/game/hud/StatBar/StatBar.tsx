@@ -1,4 +1,4 @@
-import s from "./stat-bar.module.scss";
+import s from "./StatBar.module.scss";
 
 interface StatBarProps {
   value: number;

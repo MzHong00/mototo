@@ -3,11 +3,11 @@ import { useGameStore } from "@/stores/gameStore";
 import { useSkillInput } from "@/hooks/useSkillInput";
 import { useMpRegen } from "@/hooks/useMpRegen";
 import { useNpcProximity } from "@/hooks/useNpcProximity";
-import { CharacterPanel } from "@/components/game/hud/character-panel/CharacterPanel";
-import { SkillBar } from "@/components/game/hud/skill-bar/SkillBar";
-import { GoldDisplay } from "@/components/game/hud/gold-display/GoldDisplay";
-import { NpcPrompt } from "@/components/game/hud/npc-prompt/NpcPrompt";
-import { HelpHint } from "@/components/game/hud/help-hint/HelpHint";
+import { CharacterPanel } from "@/components/game/hud/CharacterPanel/CharacterPanel";
+import { SkillBar } from "@/components/game/hud/SkillBar/SkillBar";
+import { GoldDisplay } from "@/components/game/hud/GoldDisplay/GoldDisplay";
+import { NpcPrompt } from "@/components/game/hud/NpcPrompt/NpcPrompt";
+import { HelpHint } from "@/components/game/hud/HelpHint/HelpHint";
 
 export function HUD() {
   const setShopOpen = useGameStore((s) => s.setShopOpen);

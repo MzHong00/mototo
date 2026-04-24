@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useGameStore } from "@/stores/gameStore";
-import s from "./level-up-effect.module.scss";
+import s from "./LevelUpEffect.module.scss";
 
 export function LevelUpEffect() {
   const levelUpPending = useGameStore((s) => s.levelUpPending);

@@ -1,7 +1,7 @@
 import { useGameStore } from "@/stores/gameStore";
 import { SKILL_KEY_GROUPS, ALL_HOTKEYS } from "@/constants/skill";
-import { SkillSlot, EmptySlot } from "@/components/game/hud/skill-slot/SkillSlot";
-import s from "./skill-bar.module.scss";
+import { SkillSlot, EmptySlot } from "@/components/game/hud/SkillSlot/SkillSlot";
+import s from "./SkillBar.module.scss";
 
 export function SkillBar() {
   const skills = useGameStore((s) => s.skills);
