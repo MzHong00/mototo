@@ -1,6 +1,8 @@
 import type { Item } from "@/types/item";
+import type { SkillType, DamageType, TargetType } from "@/types/combat";
 
-export type JobClass = "warrior" | "archer" | "mage" | "rogue";
+export type { JobClass } from "@/types/job";
+import type { JobClass } from "@/types/job";
 
 export interface CharacterStats {
   name: string;
@@ -26,7 +28,10 @@ export interface SkillState {
   id: string;
   key: string;
   label: string;
+  skillType: SkillType;
   mpCost: number;
   cooldown: number;
   lastUsed: number;
+  damageType?: DamageType;
+  targetType?: TargetType;
 }

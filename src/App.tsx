@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import styles from "./App.module.scss";
 import { Scene } from "@/components/game/Scene";
 import { HUD } from "@/components/game/hud/HUD";
 import { LevelUpEffect } from "@/components/game/screen/levelUpEffect/LevelUpEffect";
@@ -6,13 +7,15 @@ import { Inventory } from "@/components/game/inventory/Inventory";
 import { ClassSelect } from "@/components/game/screen/classSelect/ClassSelect";
 import { DeathScreen } from "@/components/game/screen/deathScreen/DeathScreen";
 import { Shop } from "@/components/game/shop/Shop";
+import { RedGuardianEntry } from "@/components/game/boss/redGuardian/RedGuardianEntry";
 import { useGameStore } from "@/stores/gameStore";
+import { bossEnterTrigger } from "@/stores/worldRefs";
+import { MAPS } from "@/constants/maps";
 import type { JobClass } from "@/types/character";
 
 const ZONE_FLASH_DURATION_MS = 400;
 
 export default function App() {
-  const [zone, setZone] = useState(1);
   const [inventoryOpen, setInventory] = useState(false);
   const [flash, setFlash] = useState(false);
 
@@ -22,6 +25,9 @@ export default function App() {
   const selectClass = useGameStore((s) => s.selectClass);
   const respawn = useGameStore((s) => s.respawn);
   const jobClass = useGameStore((s) => s.character.jobClass);
+  const currentMapId = useGameStore((s) => s.currentMapId);
+  const travelTo = useGameStore((s) => s.travelTo);
+  const exitBoss = useGameStore((s) => s.exitBoss);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -36,68 +42,44 @@ export default function App() {
   }, [setShopOpen]);
 
   const handlePortalEnter = useCallback(() => {
+    const nextMapId = currentMapId === "evergreenMeadow" ? "twilightWasteland" : "evergreenMeadow";
     setFlash(true);
     setTimeout(() => {
-      setZone((z) => (z === 1 ? 2 : 1));
+      travelTo(nextMapId);
       setFlash(false);
     }, ZONE_FLASH_DURATION_MS);
-  }, []);
+  }, [currentMapId, travelTo]);
+
+  const handleBossEnter = useCallback(() => {
+    bossEnterTrigger.pending = true;
+    travelTo("redGuardianChamber");
+  }, [travelTo]);
 
   const handleClassSelect = useCallback((cls: JobClass) => selectClass(cls), [selectClass]);
 
   if (!jobClass) return <ClassSelect onSelect={handleClassSelect} />;
 
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "100vw",
-        height: "100vh",
-        overflow: "hidden",
-        background: "var(--bg)",
-      }}
-    >
-      <Scene zone={zone} onPortalEnter={handlePortalEnter} />
+    <div className={styles.root}>
+      <Scene mapId={currentMapId} onPortalEnter={handlePortalEnter} onBossExit={exitBoss} />
       <HUD />
       <LevelUpEffect />
       <Inventory open={inventoryOpen} onClose={() => setInventory(false)} />
       <Shop open={shopOpen} onClose={() => setShopOpen(false)} />
-      {isDead && <DeathScreen onRespawn={respawn} />}
-
-      <div
-        style={{
-          position: "absolute",
-          top: 16,
-          left: "50%",
-          transform: "translateX(-50%)",
-          padding: "4px 16px",
-          background: "rgba(255,255,255,0.85)",
-          border: "2px solid var(--border-blue)",
-          borderRadius: "var(--r-full)",
-          fontFamily: "var(--font-ui)",
-          fontWeight: 900,
-          fontSize: 11,
-          color: "var(--text-muted)",
-          zIndex: 10,
-        }}
-      >
-        {zone === 1 ? "🌿 1구역 — 초원" : "🔥 2구역 — 황야"}
-      </div>
-
-      {flash && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: zone === 1 ? "rgba(91,163,255,0.55)" : "rgba(255,100,0,0.45)",
-            zIndex: 40,
-            pointerEvents: "none",
-            animation: "flash 0.4s ease-out forwards",
+      {currentMapId !== "redGuardianChamber" && <RedGuardianEntry onEnter={handleBossEnter} />}
+      {isDead && (
+        <DeathScreen
+          onRespawn={() => {
+            respawn();
+            exitBoss();
           }}
         />
       )}
 
-      <style>{`@keyframes flash { 0% { opacity:1 } 100% { opacity:0 } }`}</style>
+      <div className={styles.zoneLabel}>{MAPS[currentMapId].label}</div>
+      {flash && (
+        <div className={styles.flash} style={{ background: MAPS[currentMapId].flashColor }} />
+      )}
     </div>
   );
 }

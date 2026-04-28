@@ -7,7 +7,7 @@ import { NPC_POS, NPC_INTERACT_RANGE } from "@/constants/world";
 
 const NPC_VEC = new THREE.Vector3(...NPC_POS);
 
-export function NpcMesh() {
+export function ShopkeeperNPC() {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(({ clock }) => {

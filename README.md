@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 모토토 (Mototo)
 
-## Getting Started
+> 브라우저 기반 3D RPG — 아기자기한 모험
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 세계관
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**모토토(Mototo)** 세계에서 벌어지는 모험 이야기.
+평화롭던 **에버그린**에 불길한 기운이 퍼지고,
+동쪽 깊은 곳에는 강력한 수호자가 잠들어 있다는 소문이 돈다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> 계층 구조: **세계(모토토) → 지역 → 필드**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 필드 (Maps)
 
-To learn more about Next.js, take a look at the following resources:
+| MapId                | 지역     | 필드명               | 분위기               | 설명                                                |
+| -------------------- | -------- | -------------------- | -------------------- | --------------------------------------------------- |
+| `evergreenMeadow`    | 에버그린 | **에버그린 초원**    | 밝은 하늘, 초록 잔디 | 시작 거점. 약한 몬스터가 서식. 상인 루카스가 있다.  |
+| `twilightWasteland`  | 에버그린 | **황혼의 황야**      | 붉은 노을, 메마른 땅 | 에버그린 동쪽 끝. 강한 몬스터가 출몰.               |
+| `redGuardianChamber` | 에버그린 | **붉은 수호자의 방** | 어둠, 붉은 경계 링   | 황야 너머 봉인된 아레나. 붉은 수호자가 지키고 있다. |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## NPC
 
-## Deploy on Vercel
+| 컴포넌트        | 이름               | 위치                      | 역할                             |
+| --------------- | ------------------ | ------------------------- | -------------------------------- |
+| `ShopkeeperNPC` | **루카스 (Lucas)** | 에버그린 초원 서쪽        | 무기·방어구·포션 판매            |
+| `GateKeeperNPC` | **봉인의 문**      | 에버그린 초원 동쪽 (x=15) | 붉은 수호자의 방으로 가는 게이트 |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 몬스터 (Monsters)
+
+| 컴포넌트        | 이름          | type     | rank     | Lv  | 출몰 지역                   | HP  | ATK | 특징                 |
+| --------------- | ------------- | -------- | -------- | --- | --------------------------- | --- | --- | -------------------- |
+| `SlimeMonster`  | **풀 슬라임** | `slime`  | `normal` | 1   | 에버그린 초원               | 30  | 5   | 느리고 약함. 입문용. |
+| `GoblinMonster` | **숲 고블린** | `goblin` | `normal` | 3   | 에버그린 초원 / 황혼의 황야 | 60  | 10  | 빠른 돌진. 중급.     |
+| `OrcMonster`    | **황야 오크** | `orc`    | `elite`  | 6   | 에버그린 초원 / 황혼의 황야 | 100 | 18  | 강하고 위협적. 상급. |
+
+### 드롭 테이블
+
+각 아이템은 독립 확률로 개별 롤.
+
+| 몬스터    | 아이템    | 희귀도   | 확률 |
+| --------- | --------- | -------- | ---- |
+| 풀 슬라임 | 낡은 반지 | `common` | 20%  |
+| 풀 슬라임 | 가죽 갑옷 | `common` | 15%  |
+| 숲 고블린 | 단검      | `rare`   | 25%  |
+| 숲 고블린 | 사슬 갑옷 | `rare`   | 20%  |
+| 황야 오크 | 강철 검   | `rare`   | 30%  |
+| 황야 오크 | 판금 갑옷 | `rare`   | 25%  |
+| 황야 오크 | 루비 반지 | `epic`   | 10%  |
+
+---
+
+## 보스 (Bosses)
+
+### 붉은 수호자 (Red Guardian)
+
+| 항목          | 값               |
+| ------------- | ---------------- |
+| `BOSS_ID`     | `red_guardian`   |
+| 위치          | 붉은 수호자의 방 |
+| HP            | 800              |
+| 보상 EXP      | 300              |
+| 보상 골드     | 500G             |
+| 초클리어 보상 | 수호자의 검      |
+
+**페이즈**
+
+| Phase | HP 구간    | 색상             | 패턴                                        |
+| ----- | ---------- | ---------------- | ------------------------------------------- |
+| 1     | 100% → 60% | 붉은색 `#CC2222` | 기본 돌진 + 근접 공격                       |
+| 2     | 60% → 30%  | 주황색 `#FF6600` | 근접 폭풍 AoE (반경 3.5, 1초마다 15 데미지) |
+| 3     | 30% → 0%   | 보라색 `#AA00FF` | 8방향 파이어볼 2.5초마다 + 2초 예고 경고 링 |
+
+---
+
+## 직업 (Job Classes)
+
+| 직업       | 영문      | HP  | MP  | ATK | DEF | 특징                       |
+| ---------- | --------- | --- | --- | --- | --- | -------------------------- |
+| **전사**   | `warrior` | 150 | 30  | 20  | 5   | 높은 HP·방어력. 근접 탱커. |
+| **궁수**   | `archer`  | 100 | 60  | 22  | 2   | 빠른 공격속도. 원거리.     |
+| **마법사** | `mage`    | 80  | 120 | 30  | 0   | 최고 공격력. 낮은 HP.      |
+| **도적**   | `rogue`   | 90  | 80  | 26  | 1   | 빠른 쿨타임. 은신 특화.    |
+
+### 스킬 목록
+
+| 직업   | 1번 슬롯 | 2번 슬롯 | 3번 슬롯 | 4번 슬롯 |
+| ------ | -------- | -------- | -------- | -------- |
+| 전사   | 베기     | 방패막기 | 투지     | 회오리   |
+| 궁수   | 연사     | 회피     | 치료약   | 폭발화살 |
+| 마법사 | 화염볼   | 냉기장벽 | 마나흡수 | 메테오   |
+| 도적   | 표창     | 은신     | 회복약   | 폭탄     |
+
+---
+
+## 아이템 (Items)
+
+### 장비
+
+| id            | 이름        | 타입   | 희귀도   | ATK | DEF | HP+ | 필요 Lv | 착용 직업              | 출처                 |
+| ------------- | ----------- | ------ | -------- | --- | --- | --- | ------- | ---------------------- | -------------------- |
+| `old_ring`    | 낡은 반지   | ring   | `common` | 0   | 0   | +15 | 1       | 전체                   | 풀 슬라임 드롭       |
+| `leather`     | 가죽 갑옷   | armor  | `common` | 0   | +2  | 0   | 1       | 전체                   | 풀 슬라임 드롭       |
+| `dagger`      | 단검        | weapon | `rare`   | +8  | 0   | 0   | 3       | 궁수, 도적             | 숲 고블린 드롭       |
+| `chain`       | 사슬 갑옷   | armor  | `rare`   | 0   | +5  | 0   | 4       | 전사, 궁수, 도적       | 숲 고블린 드롭       |
+| `steel_sword` | 강철 검     | weapon | `rare`   | +15 | 0   | 0   | 6       | 전사, 도적             | 황야 오크 드롭       |
+| `plate`       | 판금 갑옷   | armor  | `rare`   | 0   | +9  | 0   | 7       | 전사                   | 황야 오크 드롭       |
+| `ruby_ring`   | 루비 반지   | ring   | `epic`   | 0   | 0   | +35 | 5       | 전체                   | 황야 오크 드롭       |
+| `iron_sword`  | 철제 검     | weapon | `rare`   | +12 | 0   | 0   | 2       | 전사, 도적             | 상점 (150G)          |
+| `iron_armor`  | 철제 갑옷   | armor  | `rare`   | 0   | +7  | 0   | 3       | 전사, 궁수, 도적       | 상점 (120G)          |
+| `life_ring`   | 생명의 반지 | ring   | `rare`   | 0   | 0   | +40 | 3       | 전체                   | 상점 (100G)          |
+| `boss_sword`  | 수호자의 검 | weapon | `epic`   | +35 | +5  | 0   | 8       | 전사                   | 붉은 수호자 초클리어 |
+
+### 소비 아이템
+
+| id             | 이름      | 효과              | 가격 |
+| -------------- | --------- | ----------------- | ---- |
+| `hp_potion`    | HP 포션   | HP +80 회복       | 50G  |
+| `mp_potion`    | MP 포션   | MP +50 회복       | 30G  |
+| `enhance_rune` | 강화의 룬 | baseATK +5 (영구) | 200G |
+
+---
+
+## 개발 현황
+
+| Phase | 내용                                          | 상태 |
+| ----- | --------------------------------------------- | ---- |
+| 1     | 캐릭터 이동 · 모델 · 기본 맵                  | ✅   |
+| 2     | 전투 루프 (몬스터 3종, HP바, EXP)             | ✅   |
+| 3     | 성장 시스템 (레벨업, 스킬, 장비)              | ✅   |
+| 4     | 포탈 · 직업 선택 · NPC 거래                   | ✅   |
+| 5     | 카메라 재작성 · 이동/스킬 키 재편 · 도적 추가 | ✅   |
+| 6     | 보스 시스템 (붉은 수호자 3페이즈)             | ✅   |
+| 7     | 맵·NPC·몬스터 컴포넌트 아키텍처 리팩터링      | ✅   |
+| 8     | 던전 확장 · 장비 희귀도 · 퀘스트              | ⬜   |

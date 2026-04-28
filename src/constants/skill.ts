@@ -1,14 +1,15 @@
 import type { SkillFXType } from "@/types/combat";
+import { SKILL_FX_TYPE } from "@/constants/combat";
 
 export const FX_DURATION: Record<SkillFXType, number> = {
-  slash: 400,
-  blast: 600,
-  arrow: 450,
-  arrow_blast: 700,
-  fireball: 550,
-  meteor: 900,
-  shuriken: 500,
-  shuriken_blast: 750,
+  [SKILL_FX_TYPE.SLASH]: 400,
+  [SKILL_FX_TYPE.BLAST]: 600,
+  [SKILL_FX_TYPE.ARROW]: 450,
+  [SKILL_FX_TYPE.ARROW_BLAST]: 700,
+  [SKILL_FX_TYPE.FIREBALL]: 550,
+  [SKILL_FX_TYPE.METEOR]: 900,
+  [SKILL_FX_TYPE.SHURIKEN]: 500,
+  [SKILL_FX_TYPE.SHURIKEN_BLAST]: 750,
 };
 
 export const SKILL_COLOR: Record<string, string> = {

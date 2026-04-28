@@ -25,8 +25,11 @@
 
 ## 코드 작성 프로젝트 규칙
 
+**README.md 최신화 의무:** 지역·NPC·몬스터·보스·직업·아이템을 추가·수정·삭제할 때 반드시 `README.md`도 함께 업데이트
+
 **[참조] 아키텍처:** 파일 생성·폴더 위치 결정 시 `agents/ARCHITECTURE.md` 참조
 **[참조] 테스트:** 테스트 파일 작성·수정 시 `agents/TESTING.md` 참조
 
 **[TanStack Query] 쿼리 정의:** 도메인별 `server/[feature]/[feature].queries.ts`에 키(`keys`)와 `queryOptions` · mutation 함께 정의 · `useQuery(userQueries.detail(id))` 형태로 사용 · 키 문자열 직접 사용 금지 · 계층 구조(`all→lists→detail(id)`)로 범위 무효화 가능하게 유지
 **[Zustand] 셀렉터·useShallow:** 필요한 값만 셀렉터로 구독(`useStore(s => s.count)`) · 복수 값 반환 시 `useShallow` 필수(`useStore(useShallow(s => ({ a: s.a, b: s.b })))`) · 셀렉터 없이 스토어 전체 구독 금지
+**스타일:** 컴포넌트 파일(`.tsx`)과 반드시 동일 폴더에 `[ComponentName].module.scss` 쌍으로 생성 · 인라인 `style={{}}` 금지 → CSS Modules 사용 · 전역 스타일은 `globals.css`에만 작성

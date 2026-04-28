@@ -1,4 +1,6 @@
 import type { Item } from "@/types/item";
+import { ITEMS } from "@/constants/items";
+import { ITEM_TYPE } from "@/constants/item";
 
 export interface ShopItemDef {
   id: string;
@@ -30,59 +32,29 @@ export const SHOP_CATALOG: ShopItemDef[] = [
     healMp: 50,
   },
   {
-    id: "iron_sword",
-    name: "철제 검",
-    icon: "⚔️",
-    price: 150,
-    desc: "ATK +12",
-    grantItem: {
-      id: "iron_sword",
-      name: "철제 검",
-      type: "weapon",
-      icon: "⚔️",
-      atk: 12,
-      def: 0,
-      hpBonus: 0,
-    },
-  },
-  {
-    id: "iron_armor",
-    name: "철제 갑옷",
-    icon: "🛡️",
-    price: 120,
-    desc: "DEF +7",
-    grantItem: {
-      id: "iron_armor",
-      name: "철제 갑옷",
-      type: "armor",
-      icon: "🛡️",
-      atk: 0,
-      def: 7,
-      hpBonus: 0,
-    },
-  },
-  {
-    id: "life_ring",
-    name: "생명의 반지",
-    icon: "💍",
-    price: 100,
-    desc: "MaxHP +40",
-    grantItem: {
-      id: "life_ring",
-      name: "생명의 반지",
-      type: "ring",
-      icon: "💍",
-      atk: 0,
-      def: 0,
-      hpBonus: 40,
-    },
-  },
-  {
     id: "enhance_rune",
     name: "강화의 룬",
     icon: "✨",
     price: 200,
     desc: "baseATK +5 (영구)",
     enhanceAtk: 5,
+  },
+  {
+    ...ITEMS[ITEM_TYPE.WEAPON].iron_sword,
+    price: 150,
+    desc: "ATK +12",
+    grantItem: ITEMS[ITEM_TYPE.WEAPON].iron_sword,
+  },
+  {
+    ...ITEMS[ITEM_TYPE.ARMOR].iron_armor,
+    price: 120,
+    desc: "DEF +7",
+    grantItem: ITEMS[ITEM_TYPE.ARMOR].iron_armor,
+  },
+  {
+    ...ITEMS[ITEM_TYPE.RING].life_ring,
+    price: 100,
+    desc: "MaxHP +40",
+    grantItem: ITEMS[ITEM_TYPE.RING].life_ring,
   },
 ];

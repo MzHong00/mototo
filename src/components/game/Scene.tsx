@@ -1,20 +1,29 @@
 import { useRef, useEffect, Suspense } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useThree, type RootState } from "@react-three/fiber";
 import { Canvas } from "@react-three/fiber";
-import { Sky } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { playerPositionRef } from "@/stores/worldRefs";
+import { RigidBody } from "@react-three/rapier";
 import { Character } from "@/components/game/character/Character";
-import { Map } from "@/components/game/map/Map";
-import { Monsters } from "@/components/game/monster/Monsters";
 import { SkillEffects } from "@/components/game/effects/SkillEffects";
-import { Portal } from "@/components/game/map/Portal";
-import { NpcMesh } from "@/components/game/map/Npc";
+import { EvergreenMeadow } from "@/components/game/maps/EvergreenMeadow";
+import { TwilightWasteland } from "@/components/game/maps/TwilightWasteland";
+import { RedGuardianChamber } from "@/components/game/maps/RedGuardianChamber";
+import type { ReactElement } from "react";
+import type { MapId } from "@/types/map";
 
 const CAM_MIN = 6;
 const CAM_MAX = 28;
 const CAM_YAW = 0;
 const CAM_PITCH = 0.75;
+
+function SceneBackground({ mapId }: { mapId: MapId }) {
+  const get = useThree((s: RootState) => s.get);
+  useEffect(() => {
+    if (mapId !== "redGuardianChamber") get().scene.background = null;
+  }, [mapId, get]);
+  return null;
+}
 
 function FollowCamera() {
   const { camera, gl } = useThree();
@@ -46,16 +55,22 @@ function FollowCamera() {
   return null;
 }
 
+type MapContentProps = { onPortalEnter: () => void; onBossExit: () => void };
+
+const MAP_COMPONENTS: Record<MapId, (props: MapContentProps) => ReactElement> = {
+  evergreenMeadow: ({ onPortalEnter }) => <EvergreenMeadow onPortalEnter={onPortalEnter} />,
+  twilightWasteland: ({ onPortalEnter }) => <TwilightWasteland onPortalEnter={onPortalEnter} />,
+  redGuardianChamber: ({ onBossExit }) => <RedGuardianChamber onBossExit={onBossExit} />,
+};
+
 interface SceneProps {
-  zone: number;
+  mapId: MapId;
   onPortalEnter: () => void;
+  onBossExit: () => void;
 }
 
-export function Scene({ zone, onPortalEnter }: SceneProps) {
-  const skyColor =
-    zone === 2
-      ? ([80, 15, 10] as [number, number, number])
-      : ([100, 20, 100] as [number, number, number]);
+export function Scene({ mapId, onPortalEnter, onBossExit }: SceneProps) {
+  const MapContent = MAP_COMPONENTS[mapId];
 
   return (
     <Canvas
@@ -64,24 +79,19 @@ export function Scene({ zone, onPortalEnter }: SceneProps) {
       style={{ width: "100%", height: "100%" }}
     >
       <FollowCamera />
-      <ambientLight intensity={zone === 2 ? 0.4 : 0.6} />
-      <directionalLight
-        position={[10, 20, 10]}
-        intensity={zone === 2 ? 0.9 : 1.2}
-        castShadow
-        shadow-mapSize={[2048, 2048]}
-      />
-      <Sky sunPosition={skyColor} />
-
+      <SceneBackground mapId={mapId} />
       <Suspense fallback={null}>
         <Physics gravity={[0, -9.81, 0]}>
-          <Map zone={zone} />
+          {/* 씬 전환 중에도 항상 유지되는 물리 바닥 — 공백 낙하 방지 */}
+          <RigidBody type="fixed" colliders="cuboid">
+            <mesh position={[0, -0.5, 0]} visible={false}>
+              <boxGeometry args={[2000, 1, 2000]} />
+            </mesh>
+          </RigidBody>
           <Character />
+          <MapContent onPortalEnter={onPortalEnter} onBossExit={onBossExit} />
         </Physics>
-        <Monsters zone={zone} />
         <SkillEffects />
-        <Portal zone={zone} onEnter={onPortalEnter} />
-        {zone === 1 && <NpcMesh />}
       </Suspense>
     </Canvas>
   );

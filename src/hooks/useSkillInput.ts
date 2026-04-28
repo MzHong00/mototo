@@ -6,6 +6,8 @@ import {
   playerFacingRef,
   monsterPositions,
   monsterDamageFns,
+  bossPositionRef,
+  bossDamageFn,
 } from "@/stores/worldRefs";
 import {
   SLASH_RANGE,
@@ -68,6 +70,21 @@ export function useSkillInput() {
             const delay = (along / proj.maxDist) * proj.durationMs;
             setTimeout(() => monsterDamageFns.get(mid)?.(dmg), delay);
           });
+          // 보스 히트 체크
+          if (bossPositionRef.current && bossDamageFn) {
+            const bpos = bossPositionRef.current;
+            const toMon = new THREE.Vector3(bpos.x - ppos.x, 0, bpos.z - ppos.z);
+            const along = f.dot(toMon);
+            if (
+              along > 0 &&
+              along <= proj.maxDist &&
+              toMon.lengthSq() - along * along <= PROJECTILE_HIT_RADIUS ** 2
+            ) {
+              const delay = (along / proj.maxDist) * proj.durationMs;
+              const fn = bossDamageFn;
+              setTimeout(() => fn(dmg), delay);
+            }
+          }
         } else {
           monsterPositions.forEach((mpos, mid) => {
             const toMon = new THREE.Vector3(mpos.x - ppos.x, 0, mpos.z - ppos.z);
@@ -75,6 +92,14 @@ export function useSkillInput() {
             if (f.dot(toMon.normalize()) < 0.5) return;
             monsterDamageFns.get(mid)?.(dmg);
           });
+          // 보스 히트 체크
+          if (bossPositionRef.current && bossDamageFn) {
+            const bpos = bossPositionRef.current;
+            const toMon = new THREE.Vector3(bpos.x - ppos.x, 0, bpos.z - ppos.z);
+            if (toMon.length() <= SLASH_RANGE && f.dot(toMon.normalize()) >= 0.5) {
+              bossDamageFn(dmg);
+            }
+          }
         }
       }
 
@@ -94,6 +119,13 @@ export function useSkillInput() {
               if (dx * dx + dz * dz > blastProj.blastRadius ** 2) return;
               monsterDamageFns.get(mid)?.(dmg);
             });
+            // 보스 히트 체크
+            if (bossPositionRef.current && bossDamageFn) {
+              const bpos = bossPositionRef.current;
+              const dx = bpos.x - bx;
+              const dz = bpos.z - bz;
+              if (dx * dx + dz * dz <= blastProj.blastRadius ** 2) bossDamageFn(dmg);
+            }
           }, blastProj.travelMs);
         } else {
           monsterPositions.forEach((mpos, mid) => {
@@ -102,6 +134,13 @@ export function useSkillInput() {
             if (f.dot(toMon.normalize()) < 0.26) return;
             monsterDamageFns.get(mid)?.(dmg);
           });
+          // 보스 히트 체크
+          if (bossPositionRef.current && bossDamageFn) {
+            const bpos = bossPositionRef.current;
+            const toMon = new THREE.Vector3(bpos.x - ppos.x, 0, bpos.z - ppos.z);
+            if (toMon.length() <= BLAST_RANGE && f.dot(toMon.normalize()) >= 0.26)
+              bossDamageFn(dmg);
+          }
         }
       }
 

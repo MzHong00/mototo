@@ -1,3 +1,50 @@
+import type { DamageType, TargetType, SkillType, SkillFXType } from "@/types/combat";
+
+export const DAMAGE_TYPE = {
+  PHYSICAL: "physical",
+  MAGIC: "magic",
+} as const satisfies Record<string, DamageType>;
+
+export const DAMAGE_TYPE_LABEL: Record<DamageType, string> = {
+  [DAMAGE_TYPE.PHYSICAL]: "물리",
+  [DAMAGE_TYPE.MAGIC]: "마법",
+};
+
+export const TARGET_TYPE = {
+  SINGLE: "single",
+  AOE: "aoe",
+} as const satisfies Record<string, TargetType>;
+
+export const TARGET_TYPE_LABEL: Record<TargetType, string> = {
+  [TARGET_TYPE.SINGLE]: "단일",
+  [TARGET_TYPE.AOE]: "광역",
+};
+
+export const SKILL_TYPE = {
+  ATTACK: "attack",
+  BUFF: "buff",
+  HEAL: "heal",
+  PASSIVE: "passive",
+} as const satisfies Record<string, SkillType>;
+
+export const SKILL_TYPE_LABEL: Record<SkillType, string> = {
+  [SKILL_TYPE.ATTACK]: "공격",
+  [SKILL_TYPE.BUFF]: "버프",
+  [SKILL_TYPE.HEAL]: "회복",
+  [SKILL_TYPE.PASSIVE]: "패시브",
+};
+
+export const SKILL_FX_TYPE = {
+  SLASH: "slash",
+  BLAST: "blast",
+  ARROW: "arrow",
+  ARROW_BLAST: "arrow_blast",
+  FIREBALL: "fireball",
+  METEOR: "meteor",
+  SHURIKEN: "shuriken",
+  SHURIKEN_BLAST: "shuriken_blast",
+} as const satisfies Record<string, SkillFXType>;
+
 export const SLASH_RANGE = 2.8;
 export const BLAST_RANGE = 4.5;
 export const PROJECTILE_HIT_RADIUS = 0.85;

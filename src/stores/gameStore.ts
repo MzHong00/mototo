@@ -3,6 +3,7 @@ import { respawnTrigger } from "@/stores/worldRefs";
 import type { JobClass, CharacterStats, EquipSlots, SkillState } from "@/types/character";
 import type { Item } from "@/types/item";
 import type { SkillFX, SkillFXType } from "@/types/combat";
+import type { MapId } from "@/types/map";
 import { EXP_PER_LEVEL, CLASS_CONFIG } from "@/constants/character";
 
 export type { JobClass, Item, SkillFX, SkillState, EquipSlots };
@@ -21,6 +22,9 @@ interface GameState {
   levelUpPending: boolean;
   shopOpen: boolean;
   fxList: SkillFX[];
+  clearedBosses: string[];
+  currentMapId: MapId;
+  previousFieldMapId: MapId;
 
   totalAtk: () => number;
   totalDef: () => number;
@@ -41,8 +45,18 @@ interface GameState {
   unequipItem: (slot: keyof EquipSlots) => void;
   setShopOpen: (v: boolean) => void;
   addFX: (type: SkillFXType, pos: [number, number, number], dir?: [number, number, number]) => void;
+  addFXBatch: (
+    items: Array<{
+      type: SkillFXType;
+      pos: [number, number, number];
+      dir?: [number, number, number];
+    }>,
+  ) => void;
   removeFX: (fxId: number) => void;
   clearLevelUp: () => void;
+  setBossCleared: (bossId: string) => void;
+  travelTo: (mapId: MapId) => void;
+  exitBoss: () => void;
 }
 
 const INVENTORY_MAX = 16;
@@ -75,6 +89,9 @@ export const useGameStore = create<GameState>((set, get) => ({
   levelUpPending: false,
   shopOpen: false,
   fxList: [],
+  clearedBosses: [],
+  currentMapId: "evergreenMeadow" as MapId,
+  previousFieldMapId: "evergreenMeadow" as MapId,
 
   totalAtk: () => {
     const { character, equipped } = get();
@@ -220,6 +237,27 @@ export const useGameStore = create<GameState>((set, get) => ({
     set((s) => ({
       fxList: [...s.fxList, { fxId: fxCounter++, type, pos, dir, startTime: Date.now() }],
     })),
+  addFXBatch: (items) =>
+    set((s) => ({
+      fxList: [
+        ...s.fxList,
+        ...items.map((it) => ({
+          fxId: fxCounter++,
+          type: it.type,
+          pos: it.pos,
+          dir: it.dir ?? ([0, 0, -1] as [number, number, number]),
+          startTime: Date.now(),
+        })),
+      ],
+    })),
   removeFX: (id) => set((s) => ({ fxList: s.fxList.filter((f) => f.fxId !== id) })),
   clearLevelUp: () => set({ levelUpPending: false }),
+  setBossCleared: (bossId) => set((s) => ({ clearedBosses: [...s.clearedBosses, bossId] })),
+  travelTo: (mapId) =>
+    set((s) =>
+      mapId === "redGuardianChamber"
+        ? { currentMapId: mapId, previousFieldMapId: s.currentMapId }
+        : { currentMapId: mapId },
+    ),
+  exitBoss: () => set((s) => ({ currentMapId: s.previousFieldMapId })),
 }));

@@ -2,7 +2,12 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { RigidBody, type RapierRigidBody } from "@react-three/rapier";
 import * as THREE from "three";
-import { playerPositionRef, playerFacingRef, respawnTrigger } from "@/stores/worldRefs";
+import {
+  playerPositionRef,
+  playerFacingRef,
+  respawnTrigger,
+  bossEnterTrigger,
+} from "@/stores/worldRefs";
 import { useGameStore } from "@/stores/gameStore";
 
 const SPEED = 5;
@@ -33,6 +38,19 @@ export function Character() {
       body.setTranslation({ x: 0, y: 1, z: 0 }, true);
       body.setLinvel({ x: 0, y: 0, z: 0 }, true);
       respawnTrigger.pending = false;
+    }
+
+    if (bossEnterTrigger.pending) {
+      body.setTranslation({ x: 0, y: 2, z: 8 }, true);
+      body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      bossEnterTrigger.pending = false;
+    }
+
+    // y < -3 낙사 방지 — 맵 위(y=2)로 복구
+    const pos = body.translation();
+    if (pos.y < -3) {
+      body.setTranslation({ x: pos.x, y: 2, z: pos.z }, true);
+      body.setLinvel({ x: 0, y: 0, z: 0 }, true);
     }
 
     if (isDead) return;

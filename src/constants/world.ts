@@ -1,67 +1,58 @@
 import type { MonsterConfig, MonsterType } from "@/types/monster";
 import type { Item } from "@/types/item";
+import { MONSTER_TYPE } from "@/constants/monster";
+import { ITEMS } from "@/constants/items";
+import { ITEM_TYPE } from "@/constants/item";
 
 // ── 몬스터 스폰 ───────────────────────────────────────────────
 export const ZONE1_SPAWNS: MonsterConfig[] = [
-  { id: 1, type: "green", position: [-4, 0.35, -3] },
-  { id: 2, type: "green", position: [3, 0.35, -5] },
-  { id: 3, type: "green", position: [-2, 0.35, 4] },
-  { id: 4, type: "blue", position: [6, 0.45, -2] },
-  { id: 5, type: "blue", position: [-7, 0.45, 1] },
-  { id: 6, type: "blue", position: [2, 0.45, 6] },
-  { id: 7, type: "red", position: [8, 0.55, -7] },
-  { id: 8, type: "red", position: [-8, 0.55, -5] },
+  { id: 1, type: MONSTER_TYPE.SLIME, position: [-4, 0.35, -3] },
+  { id: 2, type: MONSTER_TYPE.SLIME, position: [3, 0.35, -5] },
+  { id: 3, type: MONSTER_TYPE.SLIME, position: [-2, 0.35, 4] },
+  { id: 4, type: MONSTER_TYPE.GOBLIN, position: [6, 0.45, -2] },
+  { id: 5, type: MONSTER_TYPE.GOBLIN, position: [-7, 0.45, 1] },
+  { id: 6, type: MONSTER_TYPE.GOBLIN, position: [2, 0.45, 6] },
+  { id: 7, type: MONSTER_TYPE.ORC, position: [8, 0.55, -7] },
+  { id: 8, type: MONSTER_TYPE.ORC, position: [-8, 0.55, -5] },
 ];
 
 export const ZONE2_SPAWNS: MonsterConfig[] = [
-  { id: 11, type: "blue", position: [-5, 0.45, -4] },
-  { id: 12, type: "blue", position: [4, 0.45, -6] },
-  { id: 13, type: "blue", position: [-3, 0.45, 5] },
-  { id: 14, type: "blue", position: [7, 0.45, 3] },
-  { id: 15, type: "red", position: [5, 0.55, -3] },
-  { id: 16, type: "red", position: [-6, 0.55, 2] },
-  { id: 17, type: "red", position: [0, 0.55, -8] },
-  { id: 18, type: "red", position: [-9, 0.55, -6] },
+  { id: 11, type: MONSTER_TYPE.GOBLIN, position: [-5, 0.45, -4] },
+  { id: 12, type: MONSTER_TYPE.GOBLIN, position: [4, 0.45, -6] },
+  { id: 13, type: MONSTER_TYPE.GOBLIN, position: [-3, 0.45, 5] },
+  { id: 14, type: MONSTER_TYPE.GOBLIN, position: [7, 0.45, 3] },
+  { id: 15, type: MONSTER_TYPE.ORC, position: [5, 0.55, -3] },
+  { id: 16, type: MONSTER_TYPE.ORC, position: [-6, 0.55, 2] },
+  { id: 17, type: MONSTER_TYPE.ORC, position: [0, 0.55, -8] },
+  { id: 18, type: MONSTER_TYPE.ORC, position: [-9, 0.55, -6] },
 ];
 
 // ── 드롭 테이블 ───────────────────────────────────────────────
-export const DROP_TABLE: Record<MonsterType, { chance: number; items: Omit<Item, "uid">[] }> = {
-  green: {
-    chance: 0.35,
-    items: [
-      { id: "old_ring", name: "낡은 반지", type: "ring", icon: "💍", atk: 0, def: 0, hpBonus: 15 },
-      { id: "leather", name: "가죽 갑옷", type: "armor", icon: "🛡️", atk: 0, def: 2, hpBonus: 0 },
-    ],
-  },
-  blue: {
-    chance: 0.5,
-    items: [
-      { id: "dagger", name: "단검", type: "weapon", icon: "🗡️", atk: 8, def: 0, hpBonus: 0 },
-      { id: "chain", name: "사슬 갑옷", type: "armor", icon: "🛡️", atk: 0, def: 5, hpBonus: 0 },
-    ],
-  },
-  red: {
-    chance: 0.7,
-    items: [
-      {
-        id: "steel_sword",
-        name: "강철 검",
-        type: "weapon",
-        icon: "⚔️",
-        atk: 15,
-        def: 0,
-        hpBonus: 0,
-      },
-      { id: "plate", name: "판금 갑옷", type: "armor", icon: "🛡️", atk: 0, def: 9, hpBonus: 0 },
-      { id: "ruby_ring", name: "루비 반지", type: "ring", icon: "💍", atk: 0, def: 0, hpBonus: 35 },
-    ],
-  },
+export interface DropEntry {
+  chance: number;
+  item: Omit<Item, "uid">;
+}
+
+export const DROP_TABLE: Record<MonsterType, DropEntry[]> = {
+  [MONSTER_TYPE.SLIME]: [
+    { chance: 0.2, item: ITEMS[ITEM_TYPE.RING].old_ring },
+    { chance: 0.15, item: ITEMS[ITEM_TYPE.ARMOR].leather },
+  ],
+  [MONSTER_TYPE.GOBLIN]: [
+    { chance: 0.25, item: ITEMS[ITEM_TYPE.WEAPON].dagger },
+    { chance: 0.2, item: ITEMS[ITEM_TYPE.ARMOR].chain },
+  ],
+  [MONSTER_TYPE.ORC]: [
+    { chance: 0.3, item: ITEMS[ITEM_TYPE.WEAPON].steel_sword },
+    { chance: 0.25, item: ITEMS[ITEM_TYPE.ARMOR].plate },
+    { chance: 0.1, item: ITEMS[ITEM_TYPE.RING].ruby_ring },
+  ],
 };
 
 export const GOLD_TABLE: Record<MonsterType, [number, number]> = {
-  green: [3, 8],
-  blue: [10, 20],
-  red: [25, 50],
+  [MONSTER_TYPE.SLIME]: [3, 8],
+  [MONSTER_TYPE.GOBLIN]: [10, 20],
+  [MONSTER_TYPE.ORC]: [25, 50],
 };
 
 // ── 맵 오브젝트 ───────────────────────────────────────────────

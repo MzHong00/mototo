@@ -1,4 +1,5 @@
-export type MonsterType = "green" | "blue" | "red";
+export type MonsterType = "slime" | "goblin" | "orc";
+export type MonsterRank = "normal" | "elite" | "boss";
 
 export interface MonsterConfig {
   id: number;
