@@ -1,14 +1,13 @@
 import { Sky } from "@react-three/drei";
+
 import { Map } from "@/components/game/map/Map";
-import { Monsters } from "@/components/game/monster/Monsters";
-import { Portal } from "@/components/game/map/Portal";
-import { GateKeeperNPC } from "@/components/game/npc/GateKeeperNPC";
+import type { MapId } from "@/types/map";
 
 interface TwilightWastelandProps {
-  onPortalEnter: () => void;
+  onPortalEnter: (dest: MapId, spawnPos?: [number, number, number]) => void;
 }
 
-export function TwilightWasteland({ onPortalEnter }: TwilightWastelandProps) {
+export function TwilightWasteland({ onPortalEnter: _onPortalEnter }: TwilightWastelandProps) {
   return (
     <>
       <ambientLight intensity={0.4} />
@@ -19,10 +18,7 @@ export function TwilightWasteland({ onPortalEnter }: TwilightWastelandProps) {
         shadow-mapSize={[2048, 2048]}
       />
       <Sky sunPosition={[80, 15, 10]} />
-      <Map zone={2} />
-      <Monsters zone={2} />
-      <Portal zone={2} onEnter={onPortalEnter} />
-      <GateKeeperNPC />
+      <Map mapId="twilightWasteland" />
     </>
   );
 }

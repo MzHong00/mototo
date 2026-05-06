@@ -1,15 +1,21 @@
 import { useRef, useEffect, Suspense } from "react";
-import { useFrame, useThree, type RootState } from "@react-three/fiber";
-import { Canvas } from "@react-three/fiber";
-import { Physics } from "@react-three/rapier";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Physics, RigidBody } from "@react-three/rapier";
+
 import { playerPositionRef } from "@/stores/worldRefs";
-import { RigidBody } from "@react-three/rapier";
 import { Character } from "@/components/game/character/Character";
 import { SkillEffects } from "@/components/game/effects/SkillEffects";
+import { EvergreenVillage } from "@/components/game/maps/EvergreenVillage";
 import { EvergreenMeadow } from "@/components/game/maps/EvergreenMeadow";
+import { EvergreenForest } from "@/components/game/maps/EvergreenForest";
+import { EvergreenSwamp } from "@/components/game/maps/EvergreenSwamp";
+import { EvergreenRuins } from "@/components/game/maps/EvergreenRuins";
 import { TwilightWasteland } from "@/components/game/maps/TwilightWasteland";
-import { RedGuardianChamber } from "@/components/game/maps/RedGuardianChamber";
+import { KingBearChamber } from "@/components/game/maps/KingBearChamber";
+import { MAP_ID } from "@/constants/maps";
+
 import type { ReactElement } from "react";
+import type { RootState } from "@react-three/fiber";
 import type { MapId } from "@/types/map";
 
 const CAM_MIN = 6;
@@ -20,7 +26,7 @@ const CAM_PITCH = 0.75;
 function SceneBackground({ mapId }: { mapId: MapId }) {
   const get = useThree((s: RootState) => s.get);
   useEffect(() => {
-    if (mapId !== "redGuardianChamber") get().scene.background = null;
+    if (mapId !== MAP_ID.KING_BEAR_CHAMBER) get().scene.background = null;
   }, [mapId, get]);
   return null;
 }
@@ -55,17 +61,24 @@ function FollowCamera() {
   return null;
 }
 
-type MapContentProps = { onPortalEnter: () => void; onBossExit: () => void };
+type MapContentProps = {
+  onPortalEnter: (dest: MapId, spawnPos?: [number, number, number]) => void;
+  onBossExit: () => void;
+};
 
 const MAP_COMPONENTS: Record<MapId, (props: MapContentProps) => ReactElement> = {
+  evergreenVillage: ({ onPortalEnter }) => <EvergreenVillage onPortalEnter={onPortalEnter} />,
   evergreenMeadow: ({ onPortalEnter }) => <EvergreenMeadow onPortalEnter={onPortalEnter} />,
+  evergreenForest: ({ onPortalEnter }) => <EvergreenForest onPortalEnter={onPortalEnter} />,
+  evergreenSwamp: ({ onPortalEnter }) => <EvergreenSwamp onPortalEnter={onPortalEnter} />,
+  evergreenRuins: ({ onPortalEnter }) => <EvergreenRuins onPortalEnter={onPortalEnter} />,
   twilightWasteland: ({ onPortalEnter }) => <TwilightWasteland onPortalEnter={onPortalEnter} />,
-  redGuardianChamber: ({ onBossExit }) => <RedGuardianChamber onBossExit={onBossExit} />,
+  kingBearChamber: ({ onBossExit }) => <KingBearChamber onBossExit={onBossExit} />,
 };
 
 interface SceneProps {
   mapId: MapId;
-  onPortalEnter: () => void;
+  onPortalEnter: (dest: MapId, spawnPos?: [number, number, number]) => void;
   onBossExit: () => void;
 }
 

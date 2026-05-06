@@ -2,26 +2,50 @@ import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text, Billboard } from "@react-three/drei";
 import * as THREE from "three";
+
 import { playerPositionRef } from "@/stores/worldRefs";
-import { PORTAL_ZONE1_POS, PORTAL_ZONE2_POS, PORTAL_ENTER_RANGE } from "@/constants/world";
+import { KEYS } from "@/utils/keyState";
+import { getControlsState } from "@/stores/controlsStore";
+import { PORTAL_ENTER_RANGE } from "@/constants/world";
 
 const PORTAL_COOLDOWN_MS = 3000;
 
+export type PortalType = "town" | "field" | "boss";
+
+const PORTAL_PRESETS: Record<PortalType, { primary: string; secondary: string }> = {
+  town: { primary: "#5BA3FF", secondary: "#FF9900" },
+  field: { primary: "#FF9900", secondary: "#5BA3FF" },
+  boss: { primary: "#CC2222", secondary: "#FF6600" },
+};
+
 interface PortalProps {
-  zone: number;
-  onEnter: () => void;
+  position: [number, number, number];
+  label: string;
+  portalType?: PortalType;
+  primaryColor?: string;
+  secondaryColor?: string;
+  spawnPos?: [number, number, number];
+  onEnter: (spawnPos?: [number, number, number]) => void;
 }
 
-export function Portal({ zone, onEnter }: PortalProps) {
-  const pos = zone === 1 ? PORTAL_ZONE1_POS : PORTAL_ZONE2_POS;
-  const label = zone === 1 ? "다음 구역 →" : "← 이전 구역";
-  const outerColor = zone === 1 ? "#FF9900" : "#5BA3FF";
-
+export function Portal({
+  position,
+  label,
+  portalType,
+  primaryColor,
+  secondaryColor,
+  spawnPos,
+  onEnter,
+}: PortalProps) {
+  const preset = portalType ? PORTAL_PRESETS[portalType] : null;
+  const resolvedPrimary = primaryColor ?? preset?.primary ?? "#5BA3FF";
+  const resolvedSecondary = secondaryColor ?? preset?.secondary ?? "#FF9900";
   const outerRef = useRef<THREE.Mesh>(null);
   const innerRef = useRef<THREE.Mesh>(null);
   const triggered = useRef(false);
-  const posVec = useRef(new THREE.Vector3(...pos));
-  const [glow, setGlow] = useState(false);
+  const posVec = useRef(new THREE.Vector3(...position));
+  const prevInteract = useRef(false);
+  const [isNear, setIsNear] = useState(false);
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime;
@@ -35,11 +59,17 @@ export function Portal({ zone, onEnter }: PortalProps) {
     }
 
     const dist = playerPositionRef.current.distanceTo(posVec.current);
-    setGlow(dist < PORTAL_ENTER_RANGE * 2);
+    const near = dist < PORTAL_ENTER_RANGE * 2;
+    setIsNear(near);
 
-    if (dist < PORTAL_ENTER_RANGE && !triggered.current) {
+    // 상호작용 키 엣지 감지
+    const interactNow = KEYS.has(getControlsState().bindings.interact);
+    const justPressed = interactNow && !prevInteract.current;
+    prevInteract.current = interactNow;
+
+    if (near && justPressed && !triggered.current) {
       triggered.current = true;
-      onEnter();
+      onEnter(spawnPos);
       setTimeout(() => {
         triggered.current = false;
       }, PORTAL_COOLDOWN_MS);
@@ -47,19 +77,19 @@ export function Portal({ zone, onEnter }: PortalProps) {
   });
 
   return (
-    <group position={pos}>
+    <group position={position}>
       <mesh ref={outerRef}>
         <torusGeometry args={[1.4, 0.18, 8, 32]} />
-        <meshBasicMaterial color={glow ? "#FFD700" : outerColor} />
+        <meshBasicMaterial color={isNear ? "#FFD700" : resolvedPrimary} />
       </mesh>
       <mesh ref={innerRef}>
         <torusGeometry args={[1.0, 0.08, 6, 24]} />
-        <meshBasicMaterial color={zone === 1 ? "#5BA3FF" : "#FF9900"} />
+        <meshBasicMaterial color={resolvedSecondary} />
       </mesh>
       <mesh>
         <circleGeometry args={[0.95, 32]} />
         <meshBasicMaterial
-          color={zone === 1 ? "#2255AA" : "#AA5500"}
+          color={resolvedSecondary}
           transparent
           opacity={0.45}
           side={THREE.DoubleSide}
@@ -67,18 +97,22 @@ export function Portal({ zone, onEnter }: PortalProps) {
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.85, 0]}>
         <circleGeometry args={[2, 32]} />
-        <meshBasicMaterial color={glow ? "#FFD700" : outerColor} transparent opacity={0.15} />
+        <meshBasicMaterial
+          color={isNear ? "#FFD700" : resolvedPrimary}
+          transparent
+          opacity={0.15}
+        />
       </mesh>
       <Billboard position={[0, 2.4, 0]}>
         <Text
           fontSize={0.26}
-          color={glow ? "#FFD700" : "#FFFFFF"}
+          color={isNear ? "#FFD700" : "#FFFFFF"}
           outlineWidth={0.04}
           outlineColor="#000000"
           anchorX="center"
           anchorY="middle"
         >
-          {label}
+          {isNear ? `${label}\n[Space] 입장` : label}
         </Text>
       </Billboard>
     </group>
