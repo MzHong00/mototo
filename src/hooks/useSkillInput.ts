@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from "react";
 import * as THREE from "three";
+
 import { useGameStore } from "@/stores/gameStore";
 import {
   playerPositionRef,
@@ -8,6 +9,7 @@ import {
   monsterDamageFns,
   bossPositionRef,
   bossDamageFn,
+  dashTrigger,
 } from "@/stores/worldRefs";
 import {
   SLASH_RANGE,
@@ -16,7 +18,10 @@ import {
   PROJECTILE_PARAMS,
   BLAST_PROJECTILE_PARAMS,
 } from "@/constants/combat";
+import { SLASH_DMG_MULT, BLAST_DMG_MULT, HEAL_PCT } from "@/constants/growth";
 import { SKILL_CODES } from "@/constants/skill";
+import { getControlsState } from "@/stores/controlsStore";
+
 import type { JobClass } from "@/types/character";
 import type { SkillFXType } from "@/types/combat";
 
@@ -54,11 +59,12 @@ export function useSkillInput() {
       const dir: [number, number, number] = [f.x, f.y, f.z];
       const atk = totalAtk();
       const cls = jobClass ?? "warrior";
+      const skillLevel = skills.find((sk) => sk?.id === id)?.level ?? 1;
 
       if (id === "slash") {
         const fxType = SLASH_FX_BY_CLASS[cls];
         addFX(fxType, pos, dir);
-        const dmg = Math.floor(atk * 0.8 + Math.random() * 6);
+        const dmg = Math.floor(atk * SLASH_DMG_MULT(skillLevel) + Math.random() * 6);
         const proj = PROJECTILE_PARAMS[fxType as keyof typeof PROJECTILE_PARAMS];
 
         if (proj) {
@@ -106,7 +112,7 @@ export function useSkillInput() {
       if (id === "blast") {
         const fxType = BLAST_FX_BY_CLASS[cls];
         addFX(fxType, pos, dir);
-        const dmg = Math.floor(atk * 1.6 + Math.random() * 12);
+        const dmg = Math.floor(atk * BLAST_DMG_MULT(skillLevel) + Math.random() * 12);
         const blastProj = BLAST_PROJECTILE_PARAMS[fxType as keyof typeof BLAST_PROJECTILE_PARAMS];
 
         if (blastProj) {
@@ -145,15 +151,29 @@ export function useSkillInput() {
       }
 
       if (id === "shield") activateShield();
-      if (id === "heal") healHp(Math.floor(maxHp * 0.3));
+      if (id === "heal") healHp(Math.floor(maxHp * HEAL_PCT(skillLevel)));
+      if (id === "dash") dashTrigger.pending = true;
     },
-    [triggerSkill, addFX, activateShield, healHp, totalAtk, jobClass, maxHp],
+    [triggerSkill, addFX, activateShield, healHp, totalAtk, jobClass, maxHp, skills],
   );
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      const { bindings } = getControlsState();
+      // 스킬 슬롯 1-5: controlsStore 바인딩 우선
+      const skillActions = ["skill1", "skill2", "skill3", "skill4", "skill5"] as const;
+      for (let i = 0; i < skillActions.length; i++) {
+        const sk = skills[i];
+        if (e.code === bindings[skillActions[i]] && sk) {
+          fireSkill(sk.id);
+          return;
+        }
+      }
+      // 슬롯 6+ (Q, W, E, R, A, S, D, F): 기존 SKILL_CODES 방식
       const idx = SKILL_CODES.indexOf(e.code as (typeof SKILL_CODES)[number]);
-      if (idx !== -1 && skills[idx]) fireSkill(skills[idx].id);
+      if (idx === -1 || idx < 5) return;
+      const sk = skills[idx];
+      if (sk) fireSkill(sk.id);
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);

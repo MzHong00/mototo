@@ -17,6 +17,17 @@ export const JOB_CLASS_LABEL: Record<JobClass, string> = {
   [JOB_CLASS.ROGUE]: "도적",
 };
 
+const DASH_SKILL: SkillState = {
+  id: "dash",
+  key: "5",
+  label: "대쉬",
+  skillType: SKILL_TYPE.BUFF,
+  mpCost: 5,
+  cooldown: 0.5,
+  lastUsed: 0,
+  level: 1,
+};
+
 interface ClassConfig {
   hp: number;
   mp: number;
@@ -42,6 +53,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 0,
         cooldown: 0.5,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "shield",
@@ -51,6 +63,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 8,
         cooldown: 8,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "heal",
@@ -60,6 +73,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 10,
         cooldown: 10,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "blast",
@@ -71,7 +85,9 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 20,
         cooldown: 18,
         lastUsed: 0,
+        level: 1,
       },
+      DASH_SKILL,
     ],
   },
   [JOB_CLASS.ARCHER]: {
@@ -90,6 +106,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 0,
         cooldown: 0.4,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "shield",
@@ -99,6 +116,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 12,
         cooldown: 10,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "heal",
@@ -108,6 +126,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 15,
         cooldown: 12,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "blast",
@@ -119,7 +138,9 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 25,
         cooldown: 20,
         lastUsed: 0,
+        level: 1,
       },
+      DASH_SKILL,
     ],
   },
   [JOB_CLASS.MAGE]: {
@@ -138,6 +159,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 5,
         cooldown: 0.6,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "shield",
@@ -147,6 +169,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 15,
         cooldown: 12,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "heal",
@@ -156,6 +179,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 0,
         cooldown: 15,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "blast",
@@ -167,7 +191,9 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 40,
         cooldown: 25,
         lastUsed: 0,
+        level: 1,
       },
+      DASH_SKILL,
     ],
   },
   [JOB_CLASS.ROGUE]: {
@@ -186,6 +212,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 0,
         cooldown: 0.3,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "shield",
@@ -195,6 +222,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 12,
         cooldown: 10,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "heal",
@@ -204,6 +232,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 0,
         cooldown: 18,
         lastUsed: 0,
+        level: 1,
       },
       {
         id: "blast",
@@ -215,7 +244,9 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         mpCost: 30,
         cooldown: 15,
         lastUsed: 0,
+        level: 1,
       },
+      DASH_SKILL,
     ],
   },
 };

@@ -32,6 +32,7 @@ export interface SkillState {
   mpCost: number;
   cooldown: number;
   lastUsed: number;
+  level: number;
   damageType?: DamageType;
   targetType?: TargetType;
 }

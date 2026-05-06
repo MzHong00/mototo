@@ -17,6 +17,15 @@ export const SKILL_COLOR: Record<string, string> = {
   shield: "var(--accent2)",
   heal: "var(--exp)",
   blast: "var(--danger)",
+  dash: "#9B59B6",
+};
+
+export const SKILL_DESCRIPTIONS: Record<string, string> = {
+  slash: "전방 적에게 물리 데미지",
+  shield: "일정 시간 피해 무효화",
+  heal: "HP 30% 즉시 회복",
+  blast: "광역 강력한 공격",
+  dash: "진행 방향으로 빠르게 돌진",
 };
 
 // 1~9, Q W E R, A S D F 순서

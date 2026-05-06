@@ -1,27 +1,46 @@
 import { create } from "zustand";
-import { respawnTrigger } from "@/stores/worldRefs";
+import { useShallow } from "zustand/react/shallow";
+
+import { respawnTrigger, pushPlayerDamage } from "@/stores/worldRefs";
+import { EXP_PER_LEVEL, CLASS_CONFIG } from "@/constants/character";
+import { MAPS } from "@/constants/maps";
+import {
+  SKILL_LEVEL_MAX,
+  PASSIVE_LEVEL_MAX,
+  SKILL_UPGRADE_CATEGORY,
+  COOLDOWN_MULT,
+  PASSIVE_CONFIG,
+  PASSIVE_STATS,
+} from "@/constants/growth";
+
 import type { JobClass, CharacterStats, EquipSlots, SkillState } from "@/types/character";
 import type { Item } from "@/types/item";
 import type { SkillFX, SkillFXType } from "@/types/combat";
 import type { MapId } from "@/types/map";
-import { EXP_PER_LEVEL, CLASS_CONFIG } from "@/constants/character";
+import type { PassiveStat } from "@/constants/growth";
 
 export type { JobClass, Item, SkillFX, SkillState, EquipSlots };
 
 let fxCounter = 0;
 
-interface GameState {
+const TOTAL_SLOTS = 17;
+
+export interface GameState {
   character: CharacterStats;
-  skills: SkillState[];
+  allSkills: SkillState[];
+  skills: (SkillState | null)[];
   inventory: Item[];
   equipped: EquipSlots;
   gold: number;
   isShielded: boolean;
   shieldEndTime: number;
   isDead: boolean;
-  levelUpPending: boolean;
+
   shopOpen: boolean;
+  bossEntryId: string | null;
   fxList: SkillFX[];
+  skillPoints: number;
+  passiveUpgrades: Record<PassiveStat, number>;
   clearedBosses: string[];
   currentMapId: MapId;
   previousFieldMapId: MapId;
@@ -30,6 +49,9 @@ interface GameState {
   totalDef: () => number;
 
   selectClass: (cls: JobClass) => void;
+  assignSkill: (slotIdx: number, skill: SkillState) => void;
+  swapSkillSlots: (a: number, b: number) => void;
+  removeSkillFromSlot: (slotIdx: number) => void;
   takeDamage: (amount: number) => void;
   gainExp: (amount: number) => void;
   addGold: (amount: number) => void;
@@ -44,6 +66,7 @@ interface GameState {
   equipItem: (item: Item) => void;
   unequipItem: (slot: keyof EquipSlots) => void;
   setShopOpen: (v: boolean) => void;
+  setBossEntryId: (bossId: string | null) => void;
   addFX: (type: SkillFXType, pos: [number, number, number], dir?: [number, number, number]) => void;
   addFXBatch: (
     items: Array<{
@@ -53,10 +76,12 @@ interface GameState {
     }>,
   ) => void;
   removeFX: (fxId: number) => void;
-  clearLevelUp: () => void;
+
   setBossCleared: (bossId: string) => void;
   travelTo: (mapId: MapId) => void;
   exitBoss: () => void;
+  upgradeSkill: (skillId: string) => void;
+  upgradePassive: (stat: PassiveStat) => void;
 }
 
 const INVENTORY_MAX = 16;
@@ -65,7 +90,7 @@ const LEVEL_MP_BONUS = 10;
 const LEVEL_ATK_BONUS = 3;
 const SHIELD_DURATION_MS = 4000;
 
-export const useGameStore = create<GameState>((set, get) => ({
+const gameStore = create<GameState>((set, get) => ({
   character: {
     name: "플레이어",
     jobClass: null,
@@ -79,27 +104,47 @@ export const useGameStore = create<GameState>((set, get) => ({
     baseAtk: 15,
     baseDef: 0,
   },
-  skills: CLASS_CONFIG.warrior.skills,
+  allSkills: CLASS_CONFIG.warrior.skills,
+  skills: [
+    ...CLASS_CONFIG.warrior.skills,
+    ...Array<null>(TOTAL_SLOTS - CLASS_CONFIG.warrior.skills.length).fill(null),
+  ],
   inventory: [],
   equipped: { weapon: null, armor: null, ring: null },
   gold: 0,
   isShielded: false,
   shieldEndTime: 0,
   isDead: false,
-  levelUpPending: false,
+
   shopOpen: false,
+  bossEntryId: null,
   fxList: [],
+  skillPoints: 0,
+  passiveUpgrades: Object.fromEntries(PASSIVE_STATS.map((k) => [k, 0])) as Record<
+    PassiveStat,
+    number
+  >,
   clearedBosses: [],
-  currentMapId: "evergreenMeadow" as MapId,
+  currentMapId: "evergreenVillage" as MapId,
   previousFieldMapId: "evergreenMeadow" as MapId,
 
   totalAtk: () => {
-    const { character, equipped } = get();
-    return character.baseAtk + character.level * 2 + (equipped.weapon?.atk ?? 0);
+    const { character, equipped, passiveUpgrades } = get();
+    return (
+      character.baseAtk +
+      character.level * 2 +
+      (equipped.weapon?.atk ?? 0) +
+      passiveUpgrades.atk * PASSIVE_CONFIG.atk.bonusPerLevel
+    );
   },
   totalDef: () => {
-    const { character, equipped } = get();
-    return character.baseDef + (equipped.armor?.def ?? 0) + (equipped.ring?.def ?? 0);
+    const { character, equipped, passiveUpgrades } = get();
+    return (
+      character.baseDef +
+      (equipped.armor?.def ?? 0) +
+      (equipped.ring?.def ?? 0) +
+      passiveUpgrades.def * PASSIVE_CONFIG.def.bonusPerLevel
+    );
   },
 
   selectClass: (cls) => {
@@ -115,14 +160,37 @@ export const useGameStore = create<GameState>((set, get) => ({
         baseAtk: cfg.atk,
         baseDef: cfg.def,
       },
-      skills: cfg.skills,
+      allSkills: cfg.skills,
+      skills: [...cfg.skills, ...Array<null>(TOTAL_SLOTS - cfg.skills.length).fill(null)],
     }));
   },
+
+  assignSkill: (slotIdx, skill) =>
+    set((s) => {
+      const skills = [...s.skills];
+      skills[slotIdx] = { ...skill, lastUsed: 0 };
+      return { skills };
+    }),
+
+  swapSkillSlots: (a, b) =>
+    set((s) => {
+      const skills = [...s.skills];
+      [skills[a], skills[b]] = [skills[b], skills[a]];
+      return { skills };
+    }),
+
+  removeSkillFromSlot: (slotIdx) =>
+    set((s) => {
+      const skills = [...s.skills];
+      skills[slotIdx] = null;
+      return { skills };
+    }),
 
   takeDamage: (amount) =>
     set((s) => {
       if (s.isShielded || s.isDead) return {};
       const actual = Math.max(1, amount - get().totalDef());
+      pushPlayerDamage(actual);
       const newHp = Math.max(0, s.character.hp - actual);
       return { character: { ...s.character, hp: newHp }, isDead: newHp <= 0 };
     }),
@@ -137,7 +205,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         const mhp = character.maxHp + LEVEL_HP_BONUS;
         const mmp = character.maxMp + LEVEL_MP_BONUS;
         return {
-          levelUpPending: true,
+          skillPoints: s.skillPoints + 1,
           character: {
             ...character,
             level: lv,
@@ -172,13 +240,13 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   useSkill: (id) => {
     const { skills, character } = get();
-    const skill = skills.find((s) => s.id === id);
+    const skill = skills.find((s): s is SkillState => s?.id === id);
     if (!skill) return false;
     if ((Date.now() - skill.lastUsed) / 1000 < skill.cooldown) return false;
     if (character.mp < skill.mpCost) return false;
     set((s) => ({
       character: { ...s.character, mp: s.character.mp - skill.mpCost },
-      skills: s.skills.map((sk) => (sk.id === id ? { ...sk, lastUsed: Date.now() } : sk)),
+      skills: s.skills.map((sk) => (sk?.id === id ? { ...sk, lastUsed: Date.now() } : sk)),
     }));
     return true;
   },
@@ -232,6 +300,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     }),
 
   setShopOpen: (v) => set({ shopOpen: v }),
+  setBossEntryId: (bossId) => set({ bossEntryId: bossId }),
 
   addFX: (type, pos, dir = [0, 0, -1]) =>
     set((s) => ({
@@ -251,13 +320,65 @@ export const useGameStore = create<GameState>((set, get) => ({
       ],
     })),
   removeFX: (id) => set((s) => ({ fxList: s.fxList.filter((f) => f.fxId !== id) })),
-  clearLevelUp: () => set({ levelUpPending: false }),
+
   setBossCleared: (bossId) => set((s) => ({ clearedBosses: [...s.clearedBosses, bossId] })),
+
+  upgradeSkill: (skillId) =>
+    set((s) => {
+      if (s.skillPoints < 1) return {};
+      const current = s.allSkills.find((sk) => sk.id === skillId);
+      if (!current || current.level >= SKILL_LEVEL_MAX) return {};
+
+      const nextLevel = current.level + 1;
+      const baseCooldown = s.character.jobClass
+        ? (CLASS_CONFIG[s.character.jobClass].skills.find((sk) => sk.id === skillId)?.cooldown ??
+          current.cooldown)
+        : current.cooldown;
+      const newCooldown =
+        SKILL_UPGRADE_CATEGORY[skillId] === "cooldown"
+          ? parseFloat((baseCooldown * COOLDOWN_MULT(nextLevel)).toFixed(2))
+          : current.cooldown;
+
+      const apply = (sk: SkillState | null): SkillState | null => {
+        if (!sk || sk.id !== skillId) return sk;
+        return { ...sk, level: nextLevel, cooldown: newCooldown };
+      };
+      return {
+        skillPoints: s.skillPoints - 1,
+        allSkills: s.allSkills.map((sk) =>
+          sk.id === skillId ? { ...sk, level: nextLevel, cooldown: newCooldown } : sk,
+        ),
+        skills: s.skills.map(apply),
+      };
+    }),
+
+  upgradePassive: (stat) =>
+    set((s) => {
+      if (s.skillPoints < 1) return {};
+      if (s.passiveUpgrades[stat] >= PASSIVE_LEVEL_MAX) return {};
+      const bonus = PASSIVE_CONFIG[stat].bonusPerLevel;
+      const passiveUpgrades = { ...s.passiveUpgrades, [stat]: s.passiveUpgrades[stat] + 1 };
+      let { character } = s;
+      if (stat === "hp") {
+        character = { ...character, maxHp: character.maxHp + bonus, hp: character.hp + bonus };
+      } else if (stat === "mp") {
+        character = { ...character, maxMp: character.maxMp + bonus, mp: character.mp + bonus };
+      }
+      return { skillPoints: s.skillPoints - 1, passiveUpgrades, character };
+    }),
+
   travelTo: (mapId) =>
     set((s) =>
-      mapId === "redGuardianChamber"
+      MAPS[mapId].type === "boss"
         ? { currentMapId: mapId, previousFieldMapId: s.currentMapId }
         : { currentMapId: mapId },
     ),
+
   exitBoss: () => set((s) => ({ currentMapId: s.previousFieldMapId })),
 }));
+
+export const useGameStore = <T>(selector: (s: GameState) => T) =>
+  gameStore(useShallow(selector));
+
+export const getGameState = () => gameStore.getState();
+export const setGameState = gameStore.setState.bind(gameStore);
