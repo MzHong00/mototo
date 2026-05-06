@@ -1,0 +1,381 @@
+.panel {
+  position: fixed;
+  width: 380px;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-bg);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow:
+    0 4px 24px rgba(91, 163, 255, 0.2),
+    0 0 0 1px rgba(255, 215, 0, 0.3);
+  z-index: 120;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: 10px 14px;
+  background: var(--panel-blue);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  border-bottom: 1px solid rgba(91, 163, 255, 0.2);
+  cursor: move;
+  user-select: none;
+}
+
+.title {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text);
+  flex: 1;
+}
+
+.sp {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 12px;
+  color: var(--accent);
+  background: rgba(255, 153, 0, 0.15);
+  padding: 2px 8px;
+  border-radius: var(--r-full);
+  border: 1px solid rgba(255, 153, 0, 0.3);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--r-sm);
+  &:hover {
+    background: rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* ─── 탭 ─── */
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(91, 163, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px;
+  background: none;
+  border: none;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 0.1s,
+    color 0.1s;
+  &:hover {
+    background: var(--panel-blue);
+    color: var(--text);
+  }
+}
+
+.active {
+  color: var(--text);
+  border-bottom: 2px solid var(--accent);
+  background: rgba(255, 153, 0, 0.06);
+}
+
+/* ─── 스킬 탭 (드래그) ─── */
+
+.hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+  padding: 8px 14px 0;
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+  overflow-y: auto;
+  padding: var(--sp-sm) var(--sp-md) var(--sp-md);
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: var(--sp-sm) var(--sp-sm);
+  background: var(--panel-blue);
+  border: 2px solid var(--border-blue);
+  border-radius: var(--r-md);
+  cursor: grab;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    transform 0.1s;
+  user-select: none;
+
+  &:hover {
+    border-color: var(--skill-color, var(--accent));
+    box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.2);
+    transform: translateX(2px);
+  }
+
+  &:active {
+    cursor: grabbing;
+    transform: scale(0.98);
+  }
+}
+
+.equipped {
+  border-color: var(--skill-color, var(--accent));
+  background: rgba(255, 153, 0, 0.06);
+}
+
+.cardIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--r-md);
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cardNameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cardName {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.cardStars {
+  display: flex;
+  gap: 1px;
+}
+
+.cardDesc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cardStats {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.mp {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--mp);
+}
+.cd {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.equippedBadge {
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--accent);
+  background: rgba(255, 153, 0, 0.15);
+  padding: 1px 5px;
+  border-radius: var(--r-full);
+}
+
+/* ─── 강화 / 패시브 탭 공통 ─── */
+
+.body {
+  overflow-y: auto;
+  padding: var(--sp-sm) var(--sp-md) var(--sp-md);
+}
+
+/* ─── 강화 탭 ─── */
+
+.skillList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+}
+
+.skillRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: var(--sp-sm);
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  &:hover {
+    background: var(--panel-blue);
+    border-color: rgba(91, 163, 255, 0.2);
+  }
+}
+
+.skillIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--r-md);
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.skillInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.skillName {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.skillDesc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.skillNext {
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.skillRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.levelStars {
+  display: flex;
+  gap: 1px;
+}
+.starOn {
+  color: var(--accent);
+  font-size: 11px;
+}
+.starOff {
+  color: #ccc;
+  font-size: 11px;
+}
+
+/* ─── 패시브 탭 ─── */
+
+.passiveList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+}
+
+.passiveRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: var(--sp-sm);
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  &:hover {
+    background: var(--panel-blue);
+    border-color: rgba(91, 163, 255, 0.2);
+  }
+}
+
+.passiveIcon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.passiveInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.passiveName {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.passiveDesc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.passiveNext {
+  color: var(--accent);
+}
+
+.passiveRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.passiveLevel {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── 공통 버튼 ─── */
+
+.upgradeBtn {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+  border: 2px solid var(--accent);
+  background: rgba(255, 153, 0, 0.1);
+  color: var(--accent);
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    transform 0.1s;
+  white-space: nowrap;
+  &:hover:not(:disabled) {
+    background: rgba(255, 153, 0, 0.25);
+    transform: translateY(-1px);
+  }
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.disabled {
+  border-color: #ccc;
+  color: #aaa;
+  background: transparent;
+  cursor: not-allowed;
+}

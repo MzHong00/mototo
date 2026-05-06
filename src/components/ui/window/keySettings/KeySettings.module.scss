@@ -1,0 +1,124 @@
+.panel {
+  position: fixed;
+  width: 380px;
+  z-index: 120;
+  background: var(--panel-bg);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow:
+    0 4px 24px rgba(91, 163, 255, 0.2),
+    0 0 0 1px rgba(255, 215, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--panel-blue);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  border-bottom: 1px solid rgba(91, 163, 255, 0.2);
+  cursor: move;
+  user-select: none;
+}
+
+.title {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--r-sm);
+  &:hover {
+    background: rgba(0, 0, 0, 0.08);
+  }
+}
+
+.body {
+  padding: var(--sp-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-md);
+  max-height: calc(80vh - 48px);
+  overflow-y: auto;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px var(--sp-sm);
+  border-radius: var(--r-sm);
+  &:hover {
+    background: var(--panel-blue);
+  }
+}
+
+.label {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.keyBadge {
+  min-width: 48px;
+  padding: 4px 10px;
+  background: var(--panel-blue);
+  border: 2px solid var(--border-blue);
+  border-radius: var(--r-sm);
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 12px;
+  color: var(--text);
+  text-align: center;
+  cursor: grab;
+  user-select: none;
+  transition:
+    border-color 0.12s,
+    box-shadow 0.12s;
+
+  &:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.3);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.resetBtn {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 13px;
+  padding: 9px;
+  border-radius: var(--r-full);
+  border: 2px solid var(--border-blue);
+  background: var(--panel-bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: filter 0.12s;
+  &:hover {
+    filter: brightness(0.95);
+    background: var(--panel-blue);
+  }
+}

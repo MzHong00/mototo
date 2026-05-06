@@ -1,0 +1,97 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  animation: fadeIn 0.15s ease;
+}
+
+.panel {
+  background: var(--panel-bg, rgba(255, 255, 255, 0.97));
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-lg);
+  min-width: 300px;
+  max-width: 480px;
+  text-align: center;
+  font-family: var(--font-ui);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.2s ease;
+}
+
+.title {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: var(--sp-xs);
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-md);
+}
+
+.actions {
+  display: flex;
+  gap: var(--sp-sm);
+  justify-content: center;
+}
+
+.confirmBtn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-full);
+  padding: 9px 24px;
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
+  transition: filter 0.15s;
+
+  &:hover {
+    filter: brightness(1.15);
+  }
+}
+
+.cancelBtn {
+  background: var(--panel-bg);
+  color: var(--text);
+  border: 2px solid var(--border-blue);
+  border-radius: var(--r-full);
+  padding: 9px 24px;
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
+  transition: filter 0.15s;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

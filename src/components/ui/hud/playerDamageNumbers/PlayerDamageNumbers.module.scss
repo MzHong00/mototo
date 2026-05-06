@@ -1,0 +1,34 @@
+.container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.number {
+  position: absolute;
+  top: 46%;
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 22px;
+  color: #ff3333;
+  text-shadow:
+    0 0 3px #000,
+    1px 1px 0 #000;
+  white-space: nowrap;
+  animation: floatUp 0.85s ease-out forwards;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-56px);
+  }
+}
