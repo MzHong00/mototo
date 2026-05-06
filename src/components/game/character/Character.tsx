@@ -1,36 +1,39 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { RigidBody, type RapierRigidBody } from "@react-three/rapier";
+import { RigidBody } from "@react-three/rapier";
 import * as THREE from "three";
+
 import {
   playerPositionRef,
   playerFacingRef,
+  playerScreenPos,
   respawnTrigger,
   bossEnterTrigger,
+  portalTravelTrigger,
+  dashTrigger,
 } from "@/stores/worldRefs";
+import { KEYS } from "@/utils/keyState";
+import { getControlsState } from "@/stores/controlsStore";
 import { useGameStore } from "@/stores/gameStore";
 
-const SPEED = 5;
-const JUMP_FORCE = 7;
-const KEYS = new Set<string>();
+import type { RapierRigidBody } from "@react-three/rapier";
 
-if (typeof window !== "undefined") {
-  window.addEventListener("keydown", (e) => KEYS.add(e.code));
-  window.addEventListener("keyup", (e) => KEYS.delete(e.code));
-}
+const SPEED = 5;
+const DASH_SPEED = 24;
+const DASH_DURATION_MS = 220;
 
 export function Character() {
   const bodyRef = useRef<RapierRigidBody>(null);
   const meshRef = useRef<THREE.Mesh>(null);
   const shieldRef = useRef<THREE.Mesh>(null);
   const shieldMat = useRef<THREE.MeshBasicMaterial>(null);
-  const isGrounded = useRef(true);
+  const dashUntil = useRef(0);
 
   const isShielded = useGameStore((s) => s.isShielded);
   const isDead = useGameStore((s) => s.isDead);
   const tickShield = useGameStore((s) => s.tickShield);
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock, camera, size }) => {
     const body = bodyRef.current;
     if (!body) return;
 
@@ -46,7 +49,19 @@ export function Character() {
       bossEnterTrigger.pending = false;
     }
 
-    // y < -3 낙사 방지 — 맵 위(y=2)로 복구
+    if (portalTravelTrigger.pending) {
+      const [px, py, pz] = portalTravelTrigger.spawnPos;
+      body.setTranslation({ x: px, y: py, z: pz }, true);
+      body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      portalTravelTrigger.pending = false;
+    }
+
+    if (dashTrigger.pending) {
+      dashUntil.current = Date.now() + DASH_DURATION_MS;
+      dashTrigger.pending = false;
+    }
+
+    // y < -3 낙사 방지
     const pos = body.translation();
     if (pos.y < -3) {
       body.setTranslation({ x: pos.x, y: 2, z: pos.z }, true);
@@ -57,28 +72,33 @@ export function Character() {
 
     const vel = body.linvel();
     const t = body.translation();
-    isGrounded.current = Math.abs(vel.y) < 0.5 && t.y < 1.8;
 
-    if (KEYS.has("Space") && isGrounded.current) {
-      body.applyImpulse({ x: 0, y: JUMP_FORCE, z: 0 }, true);
-      isGrounded.current = false;
-    }
+    const isDashing = Date.now() < dashUntil.current;
 
-    let vx = 0,
-      vz = 0;
-    if (KEYS.has("ArrowUp")) vz -= SPEED;
-    if (KEYS.has("ArrowDown")) vz += SPEED;
-    if (KEYS.has("ArrowLeft")) vx -= SPEED;
-    if (KEYS.has("ArrowRight")) vx += SPEED;
+    if (isDashing) {
+      const f = playerFacingRef.current;
+      body.setLinvel({ x: f.x * DASH_SPEED, y: vel.y, z: f.z * DASH_SPEED }, true);
+    } else {
+      const b = getControlsState().bindings;
+      let vx = 0,
+        vz = 0;
+      if (KEYS.has(b.moveUp)) vz -= SPEED;
+      if (KEYS.has(b.moveDown)) vz += SPEED;
+      if (KEYS.has(b.moveLeft)) vx -= SPEED;
+      if (KEYS.has(b.moveRight)) vx += SPEED;
 
-    body.setLinvel({ x: vx, y: vel.y, z: vz }, true);
+      body.setLinvel({ x: vx, y: vel.y, z: vz }, true);
 
-    if (vx !== 0 || vz !== 0) {
-      playerFacingRef.current.set(vx, 0, vz).normalize();
-      if (meshRef.current) meshRef.current.rotation.y = Math.atan2(vx, vz);
+      if (vx !== 0 || vz !== 0) {
+        playerFacingRef.current.set(vx, 0, vz).normalize();
+        if (meshRef.current) meshRef.current.rotation.y = Math.atan2(vx, vz);
+      }
     }
 
     playerPositionRef.current.set(t.x, t.y, t.z);
+    const projected = playerPositionRef.current.clone().project(camera);
+    playerScreenPos.x = (projected.x * 0.5 + 0.5) * size.width;
+    playerScreenPos.y = (-projected.y * 0.5 + 0.5) * size.height;
 
     if (shieldRef.current && shieldMat.current) {
       shieldRef.current.visible = isShielded;
