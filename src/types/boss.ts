@@ -1,7 +1,7 @@
 import type { Item } from "@/types/item";
 
 export type BossPhase = 1 | 2 | 3;
-export type BossType = "red_guardian";
+export type BossType = "king_bear" | "giant_turtle" | "king_deer";
 
 export interface BossState {
   hp: number;

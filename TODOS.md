@@ -2,9 +2,7 @@
 
 ## 현황
 
-Phase 1–5 구현 완료.
-Phase 1–6 구현 완료.
-Phase 7 구현 완료.
+Phase 1–8 구현 완료.
 
 ---
 
@@ -158,15 +156,72 @@ Phase 7 구현 완료.
 
 ---
 
-## Phase 8 — 다음 콘텐츠 후보
+## ~~Phase 8 — 에버그린 세계 완성 · UX 개선~~ ✅ 완료
 
-> office-hours에서 선정한 우선순위 순서
+### ~~세계 구조 재편~~ ✅
 
-### 던전/추가 맵 + 보스 시스템 확장 ⬜
+- `evergreenVillage` → `evergreenMeadow` → `evergreenForest` → `evergreenSwamp` → `evergreenRuins` → `kingBearChamber`
+- 포탈 입장 시 반대편 좌표에 스폰 (앞 포탈 → 새 맵 앞, 뒤 포탈 → 새 맵 뒤)
+- 기존 슬라임·고블린·오크 전부 제거
 
-- 보스 아레나 외 2~3개 던전 구역 추가
-- 구역별 고유 몬스터 + 배경 테마
+### ~~동물 몬스터 8종~~ ✅
 
-### 캐릭터 성장 심화 ⬜
+- 에버그린 초원: 닭(Lv1), 수탉(Lv2)
+- 에버그린 숲: 양(Lv3), 숫양(Lv4)
+- 에버그린 늪지: 사슴(Lv5), 엘크(Lv6)
+- 에버그린 유적: 돼지(Lv7), 멧돼지(Lv8)
 
-- 스킬 강화 (레벨업 포인트 투자)
+### ~~대쉬 스킬 전 직업 추가~~ ✅
+
+- 5번 슬롯 공통. MP 5, 쿨타임 0.5초, 지속 220ms DASH_SPEED=24
+- `setLinvel` 덮어쓰기 문제 → 시간 기반(`dashUntil` ref)으로 해결
+
+### ~~상호작용 키 시스템~~ ✅
+
+- Space → NPC 상점 · 포탈 입장 통합 상호작용 키
+- `controlsStore` (Zustand persist) + `inputState.ts` KEYS Set 공유
+- 포탈 엣지 감지(`prevInteract.current`) — 근접만으로 자동 트리거 방지
+
+### ~~키 리매핑 UI~~ ✅
+
+- `KeySettings.tsx` — 11개 액션 드래그 앤 드롭으로 키 교환
+- `MenuButton.tsx` — 우상단 햄버거 버튼 (열리면 ✕ 애니메이션)
+- `GameMenu.tsx` — 인벤토리 / 설정 드롭다운
+- `HUD.tsx` / `App.tsx` — `bindings.inventory`, `bindings.interact` 사용
+
+### ~~피격 데미지 표시~~ ✅
+
+- 캐릭터 피격 시 빨간 숫자 떠오르는 애니메이션
+- `playerDamageEvents[]` ref 큐 → `PlayerDamageNumbers.tsx` 폴링
+
+---
+
+## ~~Phase 9 — 캐릭터 성장 심화~~ ✅ 완료
+
+### ~~스킬 포인트 시스템~~ ✅
+
+- 레벨업 시 SP +1 획득
+- 레벨업 이펙트에 "스킬 포인트 +1" 표시
+- SP 보유 시 캐릭터 패널에 뱃지 깜빡임
+
+### ~~스킬 강화 (1→5레벨)~~ ✅
+
+- 공격 스킬 (베기 계열): 데미지 배율 0.80× → 1.00×
+- 광역 스킬 (회오리 계열): 데미지 배율 1.60× → 2.40×
+- 방어·대쉬 스킬: 쿨타임 최대 40% 감소
+- 회복 스킬: 회복량 maxHP 30% → 50%
+- `SkillState.level` 필드 추가, `upgradeSkill` 액션
+- `useSkillInput` — 스킬 레벨 반영 데미지·회복 계산
+
+### ~~패시브 트리 (각 10레벨)~~ ✅
+
+- ❤️ HP +30 · 💙 MP +20 · ⚔️ ATK +5 · 🛡️ DEF +2 (레벨당)
+- `passiveUpgrades` 스토어, `upgradePassive` 액션
+- `totalAtk` / `totalDef` — 패시브 보너스 반영
+
+### ~~성장 패널 UI~~ ✅
+
+- `K`키 → 스킬 창 → **강화** / **패시브** 탭에 통합
+- 스킬 강화 · 패시브 탭 전환
+- 현재 효과 → 다음 레벨 미리보기
+- 드래그 이동 가능 (useDraggable)

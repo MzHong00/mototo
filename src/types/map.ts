@@ -1,5 +1,13 @@
-export type MapId = "evergreenMeadow" | "twilightWasteland" | "redGuardianChamber";
-export type MapType = "normal" | "boss";
+export type MapId =
+  | "evergreenVillage"
+  | "evergreenMeadow"
+  | "evergreenForest"
+  | "evergreenSwamp"
+  | "evergreenRuins"
+  | "twilightWasteland"
+  | "kingBearChamber";
+
+export type MapType = "village" | "field" | "boss";
 
 export interface MapConfig {
   id: MapId;

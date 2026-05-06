@@ -3,106 +3,102 @@
 ## 폴더 구조
 
 ```
-├── index.html                  # Vite 진입점 (Google Fonts <link> 포함)
-├── vite.config.ts              # Vite 설정 (플러그인, @/ 알리아스)
+src/
+├── main.tsx / App.tsx / main.scss
 │
-└── src/                        # 모든 소스 파일
-    ├── main.tsx                # 앱 진입점 (createRoot)
-    ├── App.tsx                 # 루트 컴포넌트 (존 관리, 오버레이 렌더)
-    ├── globals.css             # 전역 CSS (디자인 토큰)
-    │
-    ├── components/             # UI 컴포넌트
-    │   └── game/               # 게임 전용 컴포넌트
-    │       ├── Scene.tsx           # R3F Canvas 루트 + 카메라
-    │       ├── Inventory.tsx       # 인벤토리 UI
-    │       ├── Shop.tsx            # NPC 상점 UI
-    │       │
-    │       ├── hud/                # HUD 오버레이 (HTML)
-    │       │   ├── HUD.tsx             # HUD 조합 루트 (useSkillInput, useMpRegen 호출)
-    │       │   ├── CharacterPanel.tsx  # 캐릭터 이름·HP/MP/EXP 패널
-    │       │   ├── SkillBar.tsx        # 하단 스킬 슬롯 바
-    │       │   ├── SkillSlot.tsx       # 개별 스킬 슬롯 + EmptySlot
-    │       │   ├── StatBar.tsx         # 재사용 상태 바 (HP/MP/EXP)
-    │       │   ├── GoldDisplay.tsx     # 골드 카운터
-    │       │   ├── NpcPrompt.tsx       # "F 상점 열기" 프롬프트
-    │       │   └── HelpHint.tsx        # 조작 힌트
-    │       │
-    │       ├── character/          # 플레이어 캐릭터 (R3F)
-    │       │   └── Character.tsx       # 이동·물리·방어막
-    │       │
-    │       ├── map/                # 맵 요소 (R3F)
-    │       │   ├── Map.tsx             # 지형·나무·보이지 않는 벽
-    │       │   ├── Portal.tsx          # 존 이동 포탈
-    │       │   └── Npc.tsx             # NPC 메시
-    │       │
-    │       ├── monster/            # 몬스터 (R3F)
-    │       │   ├── Monsters.tsx        # 몬스터 목록 관리·리스폰
-    │       │   └── Monster.tsx         # 개별 몬스터 AI·HP
-    │       │
-    │       ├── effects/            # 스킬 이펙트 (R3F)
-    │       │   ├── SkillEffects.tsx    # FX 레지스트리·클린업 루프
-    │       │   └── fx/                 # 개별 FX 컴포넌트
-    │       │       ├── SlashFX.tsx
-    │       │       ├── BlastFX.tsx
-    │       │       ├── ArrowFX.tsx
-    │       │       ├── ArrowBlastFX.tsx
-    │       │       ├── FireballFX.tsx
-    │       │       ├── MeteorFX.tsx
-    │       │       ├── ShurikenFX.tsx
-    │       │       └── ShurikenBlastFX.tsx
-    │       │
-    │       └── screen/             # 풀스크린 오버레이
-    │           ├── ClassSelect.tsx     # 직업 선택 화면
-    │           ├── DeathScreen.tsx     # 사망·리스폰 화면
-    │           └── LevelUpEffect.tsx   # 레벨업 연출
-    │
-    ├── stores/                 # Zustand 전역 상태
-    │   ├── gameStore.ts        # 게임 상태 (HP, EXP, 레벨, 인벤토리, 스킬)
-    │   └── worldRefs.ts        # R3F 씬 간 공유 ref (playerPositionRef 등)
-    │
-    ├── hooks/                  # 커스텀 훅
-    │   ├── useMpRegen.ts       # MP 자동 회복 (1초마다 +2)
-    │   ├── useNpcProximity.ts  # NPC 근접 여부 폴링
-    │   └── useSkillInput.ts    # 키 입력 → 스킬 발동·히트 판정
-    │
-    ├── types/                  # 타입 정의
-    │   ├── character.ts        # JobClass, CharacterStats, EquipSlots, SkillState
-    │   ├── item.ts             # Item, ItemType
-    │   ├── combat.ts           # SkillFXType, SkillFX
-    │   └── monster.ts          # MonsterType, MonsterConfig
-    │
-    ├── constants/              # 상수
-    │   ├── character.ts        # EXP_PER_LEVEL, CLASS_CONFIG (직업별 스탯·스킬)
-    │   ├── combat.ts           # 공격 범위, 발사체 파라미터
-    │   ├── monster.ts          # MONSTER_STATS, 어그로·공격 범위, 리스폰 시간
-    │   ├── world.ts            # 존 스폰·드롭·나무·벽 위치, 포탈·NPC 위치
-    │   ├── skill.ts            # FX_DURATION, SKILL_COLOR, 단축키 그룹
-    │   └── shop.ts             # SHOP_CATALOG (ShopItemDef[])
-    │
-    └── utils/                  # 순수 유틸 함수 (부수효과 없음)
-        ├── format.ts           # 날짜·숫자·문자열 포맷
-        └── validator.ts        # 공통 유효성 검사
-
-# @/* → src/ 기준 (tsconfig paths: "@/*": ["./src/*"])
-# 예) @/components/game/hud/HUD → src/components/game/hud/HUD
+├── components/
+│   ├── game/                       # R3F Canvas 안 — Three.js 전용
+│   │   ├── Scene.tsx               # Canvas 루트 + 카메라
+│   │   ├── character/              # 플레이어 (이동·물리·대시)
+│   │   ├── map/                    # Map.tsx (지형), Portal.tsx (존 이동)
+│   │   ├── maps/                   # 존별 씬 조합
+│   │   │                           #   Evergreen(Village·Meadow·Forest·Swamp·Ruins)
+│   │   │                           #   TwilightWasteland, KingBearChamber
+│   │   ├── monster/                # Monsters.tsx (관리·리스폰), Monster.tsx (AI·HP)
+│   │   │   ├── boss/               # KingBearBoss.tsx
+│   │   │   └── normal/             # 8종 (Chicken·Rooster·Sheep·Ram·Deer·Elk·Pig·WildBoar)
+│   │   ├── npc/                    # LucasNPC.tsx, ShopkeeperNPC.tsx
+│   │   └── effects/                # SkillEffects.tsx + fx/ (8종 FX)
+│   │
+│   └── ui/                         # DOM 오버레이 — position: absolute
+│       ├── hud/                    # 항상 표시 (HUD.tsx 조합 루트)
+│       │   ├── characterPanel/     # 이름·HP/MP/EXP
+│       │   ├── helpHint/           # 조작 힌트
+│       │   ├── menu/               # 게임 메뉴
+│       │   ├── playerDamageNumbers/# 피격 데미지 팝업
+│       │   ├── skillBar/           # 하단 스킬 슬롯 바
+│       │   ├── skillSlot/          # 개별 슬롯
+│       │   └── statBar/            # 재사용 HP/MP/EXP 바
+│       ├── overlay/                # 풀스크린 오버레이
+│       │   ├── bossEntry/          # 보스 입장 연출
+│       │   ├── classSelect/        # 직업 선택
+│       │   └── deathScreen/        # 사망·리스폰
+│       ├── window/                 # 드래그 가능한 윈도우
+│       │   ├── WindowManager.tsx   # 윈도우 조합 루트
+│       │   ├── inventoryWindow/
+│       │   ├── equipmentWindow/
+│       │   ├── shopWindow/
+│       │   ├── skillWindow/
+│       │   └── keySettings/
+│       ├── modal/                  # Modal.tsx
+│       └── toast/                  # Toast.tsx
+│
+├── stores/                         # Zustand 전역 상태
+│   ├── gameStore.ts                # HP·EXP·레벨·인벤토리·스킬
+│   ├── worldRefs.ts                # 씬 간 공유 ref (위치·방향 — 리렌더 불필요)
+│   ├── controlsStore.ts            # 키 바인딩
+│   ├── modalStore.ts               # 모달 열림 상태
+│   └── toastStore.ts               # 토스트 큐
+│
+├── hooks/
+│   ├── useDraggable.ts             # 윈도우 드래그
+│   ├── useModal.ts                 # 모달 제어
+│   ├── useMpRegen.ts               # MP 자동 회복
+│   ├── useNpcProximity.ts          # NPC 근접 폴링
+│   ├── useSkillInput.ts            # 키 입력 → 스킬 발동·히트 판정
+│   └── useToast.ts                 # 토스트 제어
+│
+├── types/                          # boss · character · combat · item · job · map · monster
+├── constants/                      # boss · character · combat · controls · growth
+│                                   # item · items · maps · monster · shop · skill · world
+└── utils/keyState.ts               # KEYS Set — useFrame용 non-reactive 키 상태
+                                    # (Zustand 대신 Set: 매 프레임 읽어도 리렌더 없음)
 ```
+
+`@/*` → `src/` 기준 (tsconfig paths: `"@/*": ["./src/*"]`)
+
+---
+
+## 컴포넌트 레이어 분리 원칙
+
+| 폴더 | 렌더 환경 | 설명 |
+|------|-----------|------|
+| `components/game/` | R3F Canvas 안 | Three.js 객체만. DOM 접근 금지 |
+| `components/ui/` | DOM (Canvas 위) | HTML/CSS만. R3F hook(`useFrame` 등) 사용 금지 |
+
+두 레이어는 **Zustand store**와 **worldRefs**를 통해서만 통신한다.
+
+---
 
 ## 상태 관리 기준
 
-| 상태 유형    | 도구            | 기준                             |
-| ------------ | --------------- | -------------------------------- |
-| 서버 상태    | TanStack Query  | API에서 가져오는 모든 데이터     |
-| 전역 UI 상태 | Zustand         | 여러 컴포넌트에서 공유되는 상태  |
-| 로컬 상태    | useState        | 단일 컴포넌트 내에서만 사용      |
-| 폼 상태      | React Hook Form | 폼 입력값 및 유효성 검사         |
+| 상태 유형 | 도구 | 기준 |
+|-----------|------|------|
+| 게임 전역 상태 | Zustand (`gameStore`) | HP, EXP, 레벨, 인벤토리, 스킬 |
+| 씬 간 공유 ref | `worldRefs.ts` (plain ref) | 위치·방향처럼 매 프레임 쓰는 값 — 리렌더 불필요 |
+| 키 입력 상태 | `utils/keyState.ts` (Set) | `useFrame` 안에서 polling — Zustand 쓰면 60fps 리렌더 발생 |
+| 로컬 UI 상태 | `useState` | 단일 컴포넌트 내부 |
+
+---
 
 ## 레이어 의존 방향
 
 ```
 Component → Hook → Store / Constants / Types
+                 → utils/keyState  (R3F 전용 직접 참조 허용)
 ```
 
 - 컴포넌트는 UI만 담당 — 비즈니스 로직은 Hook으로 분리
 - Hook은 Store 구독 + 도메인 로직 담당
 - 타입·상수는 어디서든 가져다 쓸 수 있는 순수 모듈
-- R3F(3D) 컴포넌트와 HTML 오버레이는 서로 다른 레이어 — Canvas 밖에서 DOM을 직접 건드리지 않음
+- `utils/keyState`는 `useFrame` 콜백 안에서만 직접 참조 허용

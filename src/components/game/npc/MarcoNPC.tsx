@@ -2,12 +2,13 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text, Billboard } from "@react-three/drei";
 import * as THREE from "three";
+
 import { playerPositionRef, npcProximity } from "@/stores/worldRefs";
 import { NPC_POS, NPC_INTERACT_RANGE } from "@/constants/world";
 
 const NPC_VEC = new THREE.Vector3(...NPC_POS);
 
-export function ShopkeeperNPC() {
+export function MarcoNPC() {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(({ clock }) => {
@@ -42,7 +43,7 @@ export function ShopkeeperNPC() {
           anchorX="center"
           anchorY="middle"
         >
-          상인
+          Marco 상인
         </Text>
       </Billboard>
     </group>
