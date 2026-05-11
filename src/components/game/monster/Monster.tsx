@@ -1,8 +1,8 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text, Billboard } from "@react-three/drei";
-import type { ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
+
 import { playerPositionRef, monsterPositions, monsterDamageFns } from "@/stores/worldRefs";
 import { useGameStore } from "@/stores/gameStore";
 import {
@@ -12,7 +12,25 @@ import {
   ATTACK_RANGE,
   ATTACK_CD,
 } from "@/constants/monster";
+
+import type { ThreeEvent } from "@react-three/fiber";
 import type { MonsterConfig } from "@/types/monster";
+
+// Three.js는 CSS 변수 미지원 — 파일 내 상수로 추출
+const COLOR_DMG = "#FFD700";
+const COLOR_DMG_OUTLINE = "#000000";
+const COLOR_HP_BAR_BG = "#C8DCFF";
+const COLOR_EYE_AGGRO = "#FF2200";
+const COLOR_EYE_DEFAULT = "#111111";
+const HIT_SCALE_MULT = 1.18;
+const FLOAT_FREQUENCY = 0.002;
+const FLOAT_AMPLITUDE = 0.08;
+
+function getHpBarColor(pct: number): string {
+  if (pct > 0.5) return "#33BB55";
+  if (pct > 0.25) return "#FFAA00";
+  return "#FF3333";
+}
 
 interface DamageNumber {
   id: number;
@@ -42,10 +60,8 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
   const dmgId = useRef(0);
   const _dir = useRef(new THREE.Vector3());
   const deadRef = useRef(false);
-  const eyeMatRefs = [
-    useRef<THREE.MeshStandardMaterial>(null),
-    useRef<THREE.MeshStandardMaterial>(null),
-  ];
+  const eyeMat0Ref = useRef<THREE.MeshStandardMaterial>(null);
+  const eyeMat1Ref = useRef<THREE.MeshStandardMaterial>(null);
 
   useEffect(() => {
     monsterPositions.set(id, posRef.current);
@@ -63,7 +79,7 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
         if (next <= 0 && !deadRef.current) {
           deadRef.current = true;
           setDead(true);
-          setTimeout(() => onDeath(id, stats.exp), 350);
+          setTimeout(() => onDeath(id, stats.exp), 1000);
         }
         return next;
       });
@@ -77,6 +93,15 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
   }, [id, onDeath, stats.exp, stats.scale]);
 
   useFrame((_, delta) => {
+    // 데미지 숫자 페이드는 dead 여부와 무관하게 항상 업데이트
+    setDamages((prev) =>
+      prev.length === 0
+        ? prev
+        : prev
+            .map((d) => ({ ...d, y: d.y + 0.02, opacity: d.opacity - 0.022 }))
+            .filter((d) => d.opacity > 0),
+    );
+
     if (dead || !groupRef.current) return;
 
     const player = playerPositionRef.current;
@@ -101,22 +126,13 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
 
     groupRef.current.position.set(
       posRef.current.x,
-      posRef.current.y + Math.sin(Date.now() * 0.002 + id) * 0.08,
+      posRef.current.y + Math.sin(Date.now() * FLOAT_FREQUENCY + id) * FLOAT_AMPLITUDE,
       posRef.current.z,
     );
 
-    const eyeColor = aggroRef.current ? "#FF2200" : "#111111";
-    eyeMatRefs.forEach((r) => {
-      if (r.current) r.current.color.set(eyeColor);
-    });
-
-    setDamages((prev) =>
-      prev.length === 0
-        ? prev
-        : prev
-            .map((d) => ({ ...d, y: d.y + 0.02, opacity: d.opacity - 0.022 }))
-            .filter((d) => d.opacity > 0),
-    );
+    const eyeColor = aggroRef.current ? COLOR_EYE_AGGRO : COLOR_EYE_DEFAULT;
+    eyeMat0Ref.current?.color.set(eyeColor);
+    eyeMat1Ref.current?.color.set(eyeColor);
   });
 
   const handleClick = useCallback(
@@ -135,6 +151,21 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
           <sphereGeometry args={[0.5, 8, 8]} />
           <meshStandardMaterial color={stats.color} transparent opacity={0.3} />
         </mesh>
+        {damages.map((d) => (
+          <Billboard key={d.id} position={[0, d.y, 0]}>
+            <Text
+              fontSize={0.3}
+              color={COLOR_DMG}
+              outlineWidth={0.05}
+              outlineColor={COLOR_DMG_OUTLINE}
+              anchorX="center"
+              anchorY="middle"
+              fillOpacity={d.opacity}
+            >
+              {d.value}
+            </Text>
+          </Billboard>
+        ))}
       </group>
     );
   }
@@ -143,7 +174,7 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
 
   return (
     <group ref={groupRef} position={position}>
-      <mesh scale={hit ? stats.scale * 1.18 : stats.scale} onClick={handleClick} castShadow>
+      <mesh scale={hit ? stats.scale * HIT_SCALE_MULT : stats.scale} onClick={handleClick} castShadow>
         <sphereGeometry args={[0.5, 10, 8]} />
         <meshStandardMaterial
           color={hit ? "#FFFFFF" : stats.color}
@@ -154,20 +185,18 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
       {([-0.15, 0.15] as number[]).map((x, i) => (
         <mesh key={i} position={[x * stats.scale, 0.12 * stats.scale, 0.42 * stats.scale]}>
           <sphereGeometry args={[0.06, 6, 6]} />
-          <meshStandardMaterial ref={eyeMatRefs[i]} color="#111111" />
+          <meshStandardMaterial ref={i === 0 ? eyeMat0Ref : eyeMat1Ref} color={COLOR_EYE_DEFAULT} />
         </mesh>
       ))}
 
       <Billboard position={[0, stats.scale * 1.35, 0]}>
         <mesh>
           <planeGeometry args={[0.8, 0.1]} />
-          <meshBasicMaterial color="#C8DCFF" />
+          <meshBasicMaterial color={COLOR_HP_BAR_BG} />
         </mesh>
         <mesh position={[(hpPct - 1) * 0.4, 0, 0.001]} scale={[hpPct, 1, 1]}>
           <planeGeometry args={[0.8, 0.1]} />
-          <meshBasicMaterial
-            color={hpPct > 0.5 ? "#33BB55" : hpPct > 0.25 ? "#FFAA00" : "#FF3333"}
-          />
+          <meshBasicMaterial color={getHpBarColor(hpPct)} />
         </mesh>
       </Billboard>
 
@@ -175,9 +204,9 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
         <Billboard key={d.id} position={[0, d.y, 0]}>
           <Text
             fontSize={0.3}
-            color="#FFD700"
+            color={COLOR_DMG}
             outlineWidth={0.05}
-            outlineColor="#000000"
+            outlineColor={COLOR_DMG_OUTLINE}
             anchorX="center"
             anchorY="middle"
             fillOpacity={d.opacity}
