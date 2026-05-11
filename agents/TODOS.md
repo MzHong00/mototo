@@ -171,3 +171,104 @@
 - [ ] 만료 매물 (`expires_at < now()`) 폴링 시 자동 필터링
 - [ ] buyListing atomic 처리 (Supabase RPC — `status = 'active'` WHERE 조건)
 - [ ] 전체 Toast 피드백 (구매 완료, 등록 완료, 취소 완료, 한도 초과)
+
+---
+
+## Phase 14 — 인증 + 서버 연동 + 데이터 저장
+
+> **전략:** Supabase Auth (Phase 13 동일 인스턴스 재사용) + Google OAuth 오픈베타
+> 웹소켓 미사용 — 게임 종료 전 명시적 저장 방식으로 캐릭터 데이터 영속화
+
+### Week 1 — Supabase Auth + Google OAuth
+
+- [ ] Supabase 프로젝트에서 Google OAuth Provider 활성화
+- [ ] `src/constants/config.ts` — `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` 래핑 (Phase 13과 공유)
+- [ ] `src/server/auth/auth.client.ts` — Supabase 클라이언트 싱글턴 (Phase 13 `auction.client.ts`와 통합 고려)
+- [ ] `src/server/auth/auth.queries.ts` — `signInWithGoogle()`, `signOut()`, `getSession()`, `onAuthStateChange()`
+- [ ] `src/stores/authStore.ts` — `session`, `user`, `isLoading` (zustand, persist 제외 — 세션은 Supabase가 관리)
+- [ ] `src/components/ui/overlay/loginScreen/LoginScreen.tsx` + `.module.scss`
+  - 다크 글래스 패널 패턴 적용
+  - 구글 로그인 버튼 (Primary 버튼 스타일)
+  - 오픈베타 안내 문구
+- [ ] `src/hooks/useAuth.ts` — 세션 감지 + `authStore` 동기화
+- [ ] `App.tsx` — 비로그인 시 `LoginScreen` 렌더, 로그인 완료 시 게임 진입
+
+### Week 2 — DB 스키마 + 캐릭터 데이터 저장
+
+- [ ] Supabase `characters` 테이블 마이그레이션
+  ```sql
+  characters(
+    id uuid PRIMARY KEY,
+    user_id uuid REFERENCES auth.users,
+    name text,
+    job_class text,
+    level int, hp int, max_hp int, exp int,
+    base_atk int, base_def int,
+    gold int,
+    inventory jsonb,        -- Item[]
+    equipped jsonb,         -- EquipSlots
+    skills jsonb,           -- SkillState[]
+    passive_upgrades jsonb, -- Record<PassiveStat, number>
+    key_bindings jsonb,     -- controlsStore bindings
+    current_map_id text,
+    cleared_bosses text[],
+    updated_at timestamptz DEFAULT now()
+  )
+  ```
+- [ ] `src/server/character/character.queries.ts` — `fetchCharacter(userId)`, `saveCharacter(data)`, `createCharacter(data)`
+- [ ] `src/hooks/useCharacterSync.ts` — 저장 로직 담당 훅
+  - `saveToServer()` — gameStore 현재 상태 → `saveCharacter()` 호출
+  - `loadFromServer()` — DB 데이터 → gameStore `setState()` 적용
+  - `beforeunload` 이벤트 리스너 등록 (게임 종료 전 자동 저장)
+- [ ] `App.tsx` — 로그인 직후 `loadFromServer()` 호출, 캐릭터 없으면 캐릭터 생성 화면으로
+
+### Week 3 — 명시적 저장 UI + 소셜 로그인 확장 준비
+
+- [ ] **메뉴에 저장 버튼 추가** (`GameMenu.tsx`)
+  - "저장" 버튼 클릭 → `saveToServer()` 호출 + Toast 피드백 ("저장 완료")
+  - 저장 중 로딩 상태 표시
+- [ ] **자동 저장 인터벌** (5분마다 백그라운드 저장, Visibility API 탭 비활성 시 중단)
+- [ ] **키 설정 저장** — `controlsStore` bindings도 `characters.key_bindings`에 포함
+- [ ] **소셜 로그인 확장 준비** — `auth.queries.ts`에 `signInWithKakao()`, `signInWithNaver()` 스텁 추가
+  - 카카오/네이버는 Supabase Custom OAuth Provider로 추후 활성화
+  - 로그인 버튼 UI는 disabled 상태로 미리 배치 ("준비 중")
+
+---
+
+## Phase 15 — 캐릭터 생성 페이지
+
+> 로그인 후 DB에 캐릭터 없을 때 진입. 직업 선택 → 닉네임 입력 → 서버 저장 → 게임 시작.
+> 기존 `ClassSelect` 오버레이를 대체하는 전용 페이지 흐름.
+
+### Week 1 — 직업 선택 스텝
+
+- [ ] `src/components/ui/overlay/characterCreate/CharacterCreate.tsx` + `.module.scss`
+  - 다크 글래스 풀스크린 오버레이 패턴
+  - Step 1 / Step 2 스텝 인디케이터
+- [ ] `CharacterCreate` Step 1 — 직업 선택
+  - 기존 `ClassSelect`의 직업 카드 UI 재활용 (warrior/archer/mage/rogue)
+  - 직업 카드: 직업명(Shippori Mincho) + 기본 스탯(HP/ATK/DEF) + 대표 스킬 목록
+  - 직업 hover 시 3D 모델 프리뷰 (R3F 미니 캔버스 or 이미지)
+  - "다음" 버튼 → Step 2로 전환
+
+### Week 2 — 닉네임 입력 + 서버 저장
+
+- [ ] `CharacterCreate` Step 2 — 닉네임 입력
+  - 텍스트 입력 (2~12자, 한글/영문/숫자, 특수문자 금지)
+  - 실시간 유효성 검사 + 중복 체크 (`characters` 테이블 name 조회)
+  - "이전" 버튼 → Step 1 복귀
+  - "캐릭터 생성" 버튼 → 서버 저장 후 게임 시작
+- [ ] `src/server/character/character.queries.ts` — `checkNameDuplicate(name)` 추가
+- [ ] 캐릭터 생성 완료 시
+  - `createCharacter()` 호출 → DB 저장
+  - `gameStore.selectClass()` + 닉네임 반영 → 게임 인트로 시작
+  - 기존 `ClassSelect` 오버레이 제거 (CharacterCreate로 대체)
+
+### Week 3 — 기존 ClassSelect 제거 + 연동 마무리
+
+- [ ] `ClassSelect.tsx` 삭제, `App.tsx`에서 `CharacterCreate` 조건부 렌더로 교체
+  - 로그인 O + 캐릭터 없음 → `CharacterCreate`
+  - 로그인 O + 캐릭터 있음 → 바로 게임
+  - 로그인 X → `LoginScreen`
+- [ ] `gameStore.selectClass()` — 닉네임 파라미터 추가 (`selectClass(cls, name)`)
+- [ ] 전체 Toast 피드백 (캐릭터 생성 완료, 닉네임 중복, 유효성 오류)
