@@ -1,7 +1,44 @@
-import type { JobClass, SkillState } from "@/types/character";
+import type { JobClass } from "@/types/job";
+import type { SkillState } from "@/types/character";
 import { SKILL_TYPE, DAMAGE_TYPE, TARGET_TYPE } from "@/constants/combat";
 
 export const EXP_PER_LEVEL = (lv: number) => lv * 100;
+
+export const CHARACTER_MODELS: Record<JobClass, string> = {
+  warrior: "/models/characters/warrior/model.glb",
+  archer:  "/models/characters/archer/model.glb",
+  mage:    "/models/characters/mage/model.glb",
+  rogue:   "/models/characters/rogue/model.glb",
+};
+
+export const CHARACTER_ANIMATIONS = {
+  // 공유 리그 애니메이션
+  general:       "/models/characters/shared/animations/general.glb",
+  movement:      "/models/characters/shared/animations/movement.glb",
+  // 직업별 공격 애니메이션
+  warriorAttack: "/models/characters/warrior/animations/slash.glb",
+} as const;
+
+export interface WeaponConfig {
+  mainHand: string;
+  offHand?: string;
+}
+
+export const WEAPON_MODELS: Record<JobClass, WeaponConfig> = {
+  warrior: {
+    mainHand: "/models/weapons/warrior/sword_1handed.glb",
+    offHand:  "/models/weapons/warrior/shield_round.glb",
+  },
+  archer: {
+    mainHand: "/models/weapons/archer/bow_withString.glb",
+  },
+  mage: {
+    mainHand: "/models/weapons/mage/staff.glb",
+  },
+  rogue: {
+    mainHand: "/models/weapons/rogue/dagger.glb",
+  },
+};
 
 export const JOB_CLASS = {
   WARRIOR: "warrior",
@@ -22,15 +59,14 @@ const DASH_SKILL: SkillState = {
   key: "5",
   label: "대쉬",
   skillType: SKILL_TYPE.BUFF,
-  mpCost: 5,
   cooldown: 0.5,
   lastUsed: 0,
   level: 1,
+  requiredLevel: 1,
 };
 
 interface ClassConfig {
   hp: number;
-  mp: number;
   atk: number;
   def: number;
   skills: SkillState[];
@@ -39,7 +75,6 @@ interface ClassConfig {
 export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
   [JOB_CLASS.WARRIOR]: {
     hp: 150,
-    mp: 30,
     atk: 20,
     def: 5,
     skills: [
@@ -50,30 +85,30 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         skillType: SKILL_TYPE.ATTACK,
         damageType: DAMAGE_TYPE.PHYSICAL,
         targetType: TARGET_TYPE.SINGLE,
-        mpCost: 0,
         cooldown: 0.5,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 1,
       },
       {
         id: "shield",
         key: "2",
         label: "방패막기",
         skillType: SKILL_TYPE.BUFF,
-        mpCost: 8,
         cooldown: 8,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 10,
       },
       {
         id: "heal",
         key: "3",
         label: "투지",
         skillType: SKILL_TYPE.HEAL,
-        mpCost: 10,
         cooldown: 10,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 20,
       },
       {
         id: "blast",
@@ -82,17 +117,16 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         skillType: SKILL_TYPE.ATTACK,
         damageType: DAMAGE_TYPE.PHYSICAL,
         targetType: TARGET_TYPE.AOE,
-        mpCost: 20,
         cooldown: 18,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 30,
       },
       DASH_SKILL,
     ],
   },
   [JOB_CLASS.ARCHER]: {
     hp: 100,
-    mp: 60,
     atk: 22,
     def: 2,
     skills: [
@@ -103,30 +137,30 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         skillType: SKILL_TYPE.ATTACK,
         damageType: DAMAGE_TYPE.PHYSICAL,
         targetType: TARGET_TYPE.SINGLE,
-        mpCost: 0,
         cooldown: 0.4,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 1,
       },
       {
         id: "shield",
         key: "2",
         label: "회피",
         skillType: SKILL_TYPE.BUFF,
-        mpCost: 12,
         cooldown: 10,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 10,
       },
       {
         id: "heal",
         key: "3",
         label: "치료약",
         skillType: SKILL_TYPE.HEAL,
-        mpCost: 15,
         cooldown: 12,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 20,
       },
       {
         id: "blast",
@@ -135,17 +169,16 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         skillType: SKILL_TYPE.ATTACK,
         damageType: DAMAGE_TYPE.PHYSICAL,
         targetType: TARGET_TYPE.AOE,
-        mpCost: 25,
         cooldown: 20,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 30,
       },
       DASH_SKILL,
     ],
   },
   [JOB_CLASS.MAGE]: {
     hp: 80,
-    mp: 120,
     atk: 30,
     def: 0,
     skills: [
@@ -156,30 +189,30 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         skillType: SKILL_TYPE.ATTACK,
         damageType: DAMAGE_TYPE.MAGIC,
         targetType: TARGET_TYPE.SINGLE,
-        mpCost: 5,
         cooldown: 0.6,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 1,
       },
       {
         id: "shield",
         key: "2",
         label: "냉기장벽",
         skillType: SKILL_TYPE.BUFF,
-        mpCost: 15,
         cooldown: 12,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 10,
       },
       {
         id: "heal",
         key: "3",
         label: "마나흡수",
         skillType: SKILL_TYPE.HEAL,
-        mpCost: 0,
         cooldown: 15,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 20,
       },
       {
         id: "blast",
@@ -188,17 +221,16 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         skillType: SKILL_TYPE.ATTACK,
         damageType: DAMAGE_TYPE.MAGIC,
         targetType: TARGET_TYPE.AOE,
-        mpCost: 40,
         cooldown: 25,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 30,
       },
       DASH_SKILL,
     ],
   },
   [JOB_CLASS.ROGUE]: {
     hp: 90,
-    mp: 80,
     atk: 26,
     def: 1,
     skills: [
@@ -209,30 +241,30 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         skillType: SKILL_TYPE.ATTACK,
         damageType: DAMAGE_TYPE.PHYSICAL,
         targetType: TARGET_TYPE.SINGLE,
-        mpCost: 0,
         cooldown: 0.3,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 1,
       },
       {
         id: "shield",
         key: "2",
         label: "은신",
         skillType: SKILL_TYPE.BUFF,
-        mpCost: 12,
         cooldown: 10,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 10,
       },
       {
         id: "heal",
         key: "3",
         label: "회복약",
         skillType: SKILL_TYPE.HEAL,
-        mpCost: 0,
         cooldown: 18,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 20,
       },
       {
         id: "blast",
@@ -241,10 +273,10 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         skillType: SKILL_TYPE.ATTACK,
         damageType: DAMAGE_TYPE.PHYSICAL,
         targetType: TARGET_TYPE.AOE,
-        mpCost: 30,
         cooldown: 15,
         lastUsed: 0,
         level: 1,
+        requiredLevel: 30,
       },
       DASH_SKILL,
     ],

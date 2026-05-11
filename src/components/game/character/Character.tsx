@@ -1,115 +1,150 @@
-import { useRef } from "react";
+import { useRef, useEffect, Suspense, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
-import { RigidBody } from "@react-three/rapier";
+import { RigidBody, CuboidCollider } from "@react-three/rapier";
+import { useGLTF, useAnimations, Billboard, Text } from "@react-three/drei";
 import * as THREE from "three";
 
-import {
-  playerPositionRef,
-  playerFacingRef,
-  playerScreenPos,
-  respawnTrigger,
-  bossEnterTrigger,
-  portalTravelTrigger,
-  dashTrigger,
-} from "@/stores/worldRefs";
-import { KEYS } from "@/utils/keyState";
-import { getControlsState } from "@/stores/controlsStore";
+import { CHARACTER_MODELS, WEAPON_MODELS, CHARACTER_ANIMATIONS } from "@/constants/character";
 import { useGameStore } from "@/stores/gameStore";
+import { useCharacterAnimation } from "@/hooks/useCharacterAnimation";
+import { useCharacterPhysics } from "@/hooks/useCharacterPhysics";
 
 import type { RapierRigidBody } from "@react-three/rapier";
+import type { JobClass } from "@/types/job";
+import type { DmgEntry } from "@/hooks/useCharacterPhysics";
 
-const SPEED = 5;
-const DASH_SPEED = 24;
-const DASH_DURATION_MS = 220;
+// ── 상수 ────────────────────────────────────────────────────────
+const MODEL_SCALE = 0.6;
+const MODEL_Y_OFFSET = -0.6;
+// 색상 — Three.js는 CSS 변수 미지원이므로 파일 내 상수로 추출
+const COLOR_FALLBACK_CHAR = "#5BA3FF";
+const COLOR_SHIELD = "#4488FF";
+const COLOR_DMG_TEXT = "#FF3333";
+const COLOR_DMG_OUTLINE = "#000000";
+// WeaponSlot offset — 배열 리터럴을 JSX에 직접 쓰면 렌더마다 새 참조 생성 → useEffect 매번 재실행
+const SHIELD_OFFSET: [number, number, number] = [0, 0, 0.1];
 
+// ── 앱 진입 시 GLB 선로드 ───────────────────────────────────────
+Object.values(CHARACTER_MODELS).forEach((p) => useGLTF.preload(p));
+Object.values(CHARACTER_ANIMATIONS).forEach((p) => useGLTF.preload(p));
+Object.values(WEAPON_MODELS).forEach(({ mainHand, offHand }) => {
+  useGLTF.preload(mainHand);
+  if (offHand) useGLTF.preload(offHand);
+});
+
+// ── Props 인터페이스 ─────────────────────────────────────────────
+interface WeaponSlotProps {
+  charScene: THREE.Group;
+  weaponPath: string;
+  boneName: string;
+  offset?: [number, number, number];
+}
+
+interface CharacterModelProps {
+  jobClass: JobClass | null;
+  groupRef: React.RefObject<THREE.Group | null>;
+  isDead: boolean;
+}
+
+// ── WeaponSlot ───────────────────────────────────────────────────
+// GLB 무기를 캐릭터 스켈레톤 본에 명령형으로 부착. R3F 안에서 null 반환.
+function WeaponSlot({ charScene, weaponPath, boneName, offset }: WeaponSlotProps) {
+  const { scene: weaponScene } = useGLTF(weaponPath);
+
+  useEffect(() => {
+    const bone = charScene.getObjectByName(boneName);
+    if (!bone) return;
+    const clone = weaponScene.clone(true);
+    if (offset) clone.position.set(...offset);
+    bone.add(clone);
+    return () => {
+      bone.remove(clone);
+    };
+  }, [charScene, weaponScene, boneName, offset]);
+
+  return null;
+}
+
+// ── CharacterModel ───────────────────────────────────────────────
+// GLB 모델 렌더링 + 애니메이션 상태 머신. 물리는 부모 Character가 담당.
+function CharacterModel({ jobClass, groupRef, isDead }: CharacterModelProps) {
+  const path = jobClass ? CHARACTER_MODELS[jobClass] : CHARACTER_MODELS.warrior;
+  const { scene } = useGLTF(path);
+  const { animations: generalAnims } = useGLTF(CHARACTER_ANIMATIONS.general);
+  const { animations: movementAnims } = useGLTF(CHARACTER_ANIMATIONS.movement);
+  const { animations: warriorSlashAnims } = useGLTF(CHARACTER_ANIMATIONS.warriorAttack);
+
+  const clips = useMemo(() => {
+    // Mixamo GLB의 클립명 "mixamo.com" → "Slash"로 rename해서 병합
+    const slashClips = warriorSlashAnims.map((c) => {
+      const renamed = c.clone();
+      renamed.name = "Slash";
+      return renamed;
+    });
+    return [...generalAnims, ...movementAnims, ...slashClips];
+  }, [generalAnims, movementAnims, warriorSlashAnims]);
+
+  const { actions } = useAnimations(clips, groupRef);
+
+  // 애니메이션 상태 머신 — useFrame 구독 포함
+  useCharacterAnimation({ actions, isDead, jobClass });
+
+  const weaponCfg = jobClass ? WEAPON_MODELS[jobClass] : null;
+  return (
+    <>
+      <primitive object={scene} scale={MODEL_SCALE} position={[0, MODEL_Y_OFFSET, 0]} />
+      {weaponCfg && (
+        <WeaponSlot charScene={scene} weaponPath={weaponCfg.mainHand} boneName="handslotr" />
+      )}
+      {weaponCfg?.offHand && (
+        <WeaponSlot
+          charScene={scene}
+          weaponPath={weaponCfg.offHand}
+          boneName="handslotl"
+          offset={SHIELD_OFFSET}
+        />
+      )}
+    </>
+  );
+}
+
+// ── Character ────────────────────────────────────────────────────
+// 물리 RigidBody 루트. 이동·데미지 수치는 useCharacterPhysics에 위임.
+// 실드는 Three.js 직접 조작이므로 로컬 useFrame에서 처리.
 export function Character() {
   const bodyRef = useRef<RapierRigidBody>(null);
-  const meshRef = useRef<THREE.Mesh>(null);
+  const modelGroupRef = useRef<THREE.Group>(null);
   const shieldRef = useRef<THREE.Mesh>(null);
   const shieldMat = useRef<THREE.MeshBasicMaterial>(null);
-  const dashUntil = useRef(0);
 
-  const isShielded = useGameStore((s) => s.isShielded);
-  const isDead = useGameStore((s) => s.isDead);
-  const tickShield = useGameStore((s) => s.tickShield);
+  const { isDead, jobClass, isShielded, tickShield } = useGameStore((s) => ({
+    isDead: s.isDead,
+    jobClass: s.character.jobClass,
+    isShielded: s.isShielded,
+    tickShield: s.tickShield,
+  }));
 
-  useFrame(({ clock, camera, size }) => {
-    const body = bodyRef.current;
-    if (!body) return;
+  // useFrame 클로저 stale 방지 — isShielded를 ref로 추적
+  const isShieldedRef = useRef(isShielded);
+  useEffect(() => {
+    isShieldedRef.current = isShielded;
+  }, [isShielded]);
 
-    if (respawnTrigger.pending) {
-      body.setTranslation({ x: 0, y: 1, z: 0 }, true);
-      body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      respawnTrigger.pending = false;
+  // 물리·이동·데미지 수치 로직 — useFrame 구독 포함
+  const { damages } = useCharacterPhysics({ bodyRef, modelGroupRef });
+
+  // 실드 이펙트 — Three.js 직접 조작이므로 props ref 변이 lint 우회를 위해 로컬 유지
+  useFrame(({ clock }) => {
+    const shield = shieldRef.current;
+    const mat = shieldMat.current;
+    if (!shield || !mat) return;
+    const shielded = isShieldedRef.current;
+    shield.visible = shielded;
+    if (shielded) {
+      mat.opacity = 0.3 + Math.sin(clock.elapsedTime * 4) * 0.1;
+      shield.scale.setScalar(1 + Math.sin(clock.elapsedTime * 3) * 0.04);
+      tickShield();
     }
-
-    if (bossEnterTrigger.pending) {
-      body.setTranslation({ x: 0, y: 2, z: 8 }, true);
-      body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      bossEnterTrigger.pending = false;
-    }
-
-    if (portalTravelTrigger.pending) {
-      const [px, py, pz] = portalTravelTrigger.spawnPos;
-      body.setTranslation({ x: px, y: py, z: pz }, true);
-      body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      portalTravelTrigger.pending = false;
-    }
-
-    if (dashTrigger.pending) {
-      dashUntil.current = Date.now() + DASH_DURATION_MS;
-      dashTrigger.pending = false;
-    }
-
-    // y < -3 낙사 방지
-    const pos = body.translation();
-    if (pos.y < -3) {
-      body.setTranslation({ x: pos.x, y: 2, z: pos.z }, true);
-      body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-    }
-
-    if (isDead) return;
-
-    const vel = body.linvel();
-    const t = body.translation();
-
-    const isDashing = Date.now() < dashUntil.current;
-
-    if (isDashing) {
-      const f = playerFacingRef.current;
-      body.setLinvel({ x: f.x * DASH_SPEED, y: vel.y, z: f.z * DASH_SPEED }, true);
-    } else {
-      const b = getControlsState().bindings;
-      let vx = 0,
-        vz = 0;
-      if (KEYS.has(b.moveUp)) vz -= SPEED;
-      if (KEYS.has(b.moveDown)) vz += SPEED;
-      if (KEYS.has(b.moveLeft)) vx -= SPEED;
-      if (KEYS.has(b.moveRight)) vx += SPEED;
-
-      body.setLinvel({ x: vx, y: vel.y, z: vz }, true);
-
-      if (vx !== 0 || vz !== 0) {
-        playerFacingRef.current.set(vx, 0, vz).normalize();
-        if (meshRef.current) meshRef.current.rotation.y = Math.atan2(vx, vz);
-      }
-    }
-
-    playerPositionRef.current.set(t.x, t.y, t.z);
-    const projected = playerPositionRef.current.clone().project(camera);
-    playerScreenPos.x = (projected.x * 0.5 + 0.5) * size.width;
-    playerScreenPos.y = (-projected.y * 0.5 + 0.5) * size.height;
-
-    if (shieldRef.current && shieldMat.current) {
-      shieldRef.current.visible = isShielded;
-      if (isShielded) {
-        const pulse = 0.3 + Math.sin(clock.elapsedTime * 4) * 0.1;
-        shieldMat.current.opacity = pulse;
-        shieldRef.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 3) * 0.04);
-      }
-    }
-
-    tickShield();
   });
 
   return (
@@ -117,21 +152,47 @@ export function Character() {
       ref={bodyRef}
       position={[0, 1, 0]}
       enabledRotations={[false, false, false]}
-      colliders="cuboid"
+      colliders={false}
     >
-      <mesh ref={meshRef} castShadow>
-        <boxGeometry args={[0.6, 1.2, 0.6]} />
-        <meshStandardMaterial color="#5BA3FF" />
-      </mesh>
-      <mesh position={[0, 0.8, 0]} castShadow>
-        <sphereGeometry args={[0.32, 16, 16]} />
-        <meshStandardMaterial color="#FFD700" />
-      </mesh>
+      <CuboidCollider args={[0.3, 0.6, 0.3]} />
+      <group ref={modelGroupRef}>
+        <Suspense
+          fallback={
+            <mesh castShadow>
+              <boxGeometry args={[0.6, 1.2, 0.6]} />
+              <meshStandardMaterial color={COLOR_FALLBACK_CHAR} />
+            </mesh>
+          }
+        >
+          <CharacterModel jobClass={jobClass} groupRef={modelGroupRef} isDead={isDead} />
+        </Suspense>
+      </group>
+
+      {/* ── 피격 데미지 수치 (3D Billboard) ─────────────────────
+           RigidBody 좌표계 기준 y 오프셋으로 렌더링.
+           Billboard로 카메라를 항상 향하므로 어떤 각도에서도 잘 보임. */}
+      {damages.map((d: DmgEntry) => (
+        <Billboard key={d.id} position={[0, d.y, 0]}>
+          <Text
+            fontSize={0.32}
+            color={COLOR_DMG_TEXT}
+            outlineWidth={0.05}
+            outlineColor={COLOR_DMG_OUTLINE}
+            anchorX="center"
+            anchorY="middle"
+            fillOpacity={d.opacity}
+          >
+            -{d.amount}
+          </Text>
+        </Billboard>
+      ))}
+
+      {/* ── 실드 이펙트 메시 ───────────────────────────────────── */}
       <mesh ref={shieldRef} visible={false}>
         <sphereGeometry args={[0.9, 16, 12]} />
         <meshBasicMaterial
           ref={shieldMat}
-          color="#4488FF"
+          color={COLOR_SHIELD}
           transparent
           opacity={0.3}
           side={THREE.BackSide}
