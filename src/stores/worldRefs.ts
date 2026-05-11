@@ -16,17 +16,33 @@ export const dashTrigger = { pending: false };
 // 플레이어 피격 데미지 이벤트 큐
 let _dmgId = 0;
 export const playerDamageEvents: { id: number; amount: number }[] = [];
+
+// 캐릭터 애니메이션 신호 — CharacterModel의 useFrame이 읽음
+export const playerAnimSignals = {
+  hitCount: 0,    // 증가할 때마다 Hit_A 트리거
+  dashUntil: 0,   // 대시 종료 timestamp
+  attackCount: 0, // 증가할 때마다 공격 애니메이션 트리거
+  attackUntil: 0, // 공격 애니메이션 종료 timestamp — 이동 잠금용
+};
+
 export function pushPlayerDamage(amount: number) {
   playerDamageEvents.push({ id: _dmgId++, amount });
+  playerAnimSignals.hitCount++;
 }
 export const npcProximity = { isNear: false };
 export const bossGateProximity = { isNear: false };
 
-export let bossDamageFn: ((dmg: number) => void) | null = null;
+export const bossDamageFnRef: { current: ((dmg: number) => void) | null } = { current: null };
 export function registerBossDamageFn(fn: ((dmg: number) => void) | null) {
-  bossDamageFn = fn;
+  bossDamageFnRef.current = fn;
+}
+
+export function consumePlayerDamageEvents(): { id: number; amount: number }[] {
+  const events = [...playerDamageEvents];
+  playerDamageEvents.length = 0;
+  return events;
 }
 
 export const bossPositionRef: { current: THREE.Vector3 | null } = { current: null };
 
-export const playerScreenPos = { x: 0.5, y: 0.5 }; // normalized (0~1)
+export const playerScreenPos = { x: 0, y: 0 }; // 픽셀 단위 (size.width/height 기준) — UI 위치 계산용
