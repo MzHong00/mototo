@@ -3,19 +3,17 @@ import { useEffect } from "react";
 import { useGameStore } from "@/stores/gameStore";
 import { getControlsState } from "@/stores/controlsStore";
 import { useSkillInput } from "@/hooks/useSkillInput";
-import { useMpRegen } from "@/hooks/useMpRegen";
 import { useNpcProximity } from "@/hooks/useNpcProximity";
-import { CharacterPanel } from "@/components/ui/hud/characterPanel/CharacterPanel";
 import { SkillBar } from "@/components/ui/hud/skillBar/SkillBar";
-import { HelpHint } from "@/components/ui/hud/helpHint/HelpHint";
-import { PlayerDamageNumbers } from "@/components/ui/hud/playerDamageNumbers/PlayerDamageNumbers";
+import { ExpBar } from "@/components/ui/hud/expBar/ExpBar";
+import { CharInfo } from "@/components/ui/hud/charInfo/CharInfo";
+import { MiniMap } from "@/components/ui/hud/miniMap/MiniMap";
 
 export function HUD() {
   const setShopOpen = useGameStore((s) => s.setShopOpen);
   const npcNear = useNpcProximity();
 
   useSkillInput();
-  useMpRegen();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -28,10 +26,10 @@ export function HUD() {
 
   return (
     <>
-      <CharacterPanel />
+      <MiniMap />
+      <CharInfo />
       <SkillBar />
-      <HelpHint />
-      <PlayerDamageNumbers />
+      <ExpBar />
     </>
   );
 }

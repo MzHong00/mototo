@@ -6,21 +6,6 @@
   background: var(--bg);
 }
 
-.zoneLabel {
-  position: absolute;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 16px;
-  background: rgba(255, 255, 255, 0.85);
-  border: 2px solid var(--border-blue);
-  border-radius: var(--r-full);
-  font-family: var(--font-ui);
-  font-weight: 900;
-  font-size: 11px;
-  color: var(--text-muted);
-  z-index: 10;
-}
 
 .flash {
   position: absolute;

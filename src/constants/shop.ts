@@ -9,7 +9,6 @@ export interface ShopItemDef {
   price: number;
   desc: string;
   healHp?: number;
-  healMp?: number;
   enhanceAtk?: number;
   grantItem?: Omit<Item, "uid">;
 }
@@ -22,14 +21,6 @@ export const SHOP_CATALOG: ShopItemDef[] = [
     price: 50,
     desc: "HP를 80 회복합니다",
     healHp: 80,
-  },
-  {
-    id: "mp_potion",
-    name: "MP 포션",
-    icon: "💧",
-    price: 30,
-    desc: "MP를 50 회복합니다",
-    healMp: 50,
   },
   {
     id: "enhance_rune",

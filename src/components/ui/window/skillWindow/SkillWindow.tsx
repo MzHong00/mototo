@@ -2,7 +2,8 @@ import { useState } from "react";
 
 import { useGameStore } from "@/stores/gameStore";
 import { useDraggable } from "@/hooks/useDraggable";
-import { SKILL_COLOR, SKILL_DESCRIPTIONS } from "@/constants/skill";
+import { SKILL_COLOR, SKILL_DESCRIPTIONS, SKILL_ICON } from "@/constants/skill";
+import { CLASS_CONFIG } from "@/constants/character";
 import {
   SKILL_LEVEL_MAX,
   PASSIVE_LEVEL_MAX,
@@ -32,11 +33,21 @@ export function SkillWindow({ onClose }: SkillWindowProps) {
   const passiveUpgrades = useGameStore((s) => s.passiveUpgrades);
   const upgradeSkill = useGameStore((s) => s.upgradeSkill);
   const upgradePassive = useGameStore((s) => s.upgradePassive);
+  const { level, jobClass } = useGameStore((s) => ({
+    level: s.character.level,
+    jobClass: s.character.jobClass,
+  }));
 
   const equippedMap = new Map<string, number>();
   skills.forEach((sk, idx) => {
     if (sk) equippedMap.set(sk.id, idx);
   });
+
+  const lockedSkills = jobClass
+    ? CLASS_CONFIG[jobClass].skills.filter(
+        (sk) => (sk.requiredLevel ?? 1) > level && !allSkills.some((as) => as.id === sk.id),
+      )
+    : [];
 
   return (
     <div className={styles.panel} style={{ left: pos.x, top: pos.y }}>
@@ -71,10 +82,13 @@ export function SkillWindow({ onClose }: SkillWindowProps) {
 
       {tab === "skills" && (
         <>
-          <p className={styles.hint}>카드 드래그 → 하단 스킬바 슬롯에 드롭. 슬롯 우클릭 = 해제.</p>
+          <p className={styles.hint}>스킬 카드를 하단 스킬바의 원하는 키 슬롯에 드래그해서 배치하세요. 슬롯 우클릭 = 해제.</p>
           <div className={styles.list}>
             {allSkills.map((skill) => (
               <SkillCard key={skill.id} skill={skill} equippedSlot={equippedMap.get(skill.id)} />
+            ))}
+            {lockedSkills.map((skill) => (
+              <LockedSkillCard key={skill.id} skill={skill} />
             ))}
           </div>
         </>
@@ -89,7 +103,9 @@ export function SkillWindow({ onClose }: SkillWindowProps) {
               const canUpgrade = skillPoints > 0 && !maxed;
               return (
                 <div key={skill.id} className={styles.skillRow}>
-                  <div className={styles.skillIcon} style={{ background: color }} />
+                  <div className={styles.skillIcon} style={{ background: color }}>
+                    <span className={styles.cardIconEmoji}>{SKILL_ICON[skill.id] ?? "?"}</span>
+                  </div>
                   <div className={styles.skillInfo}>
                     <div className={styles.skillName}>{skill.label}</div>
                     <div className={styles.skillDesc}>
@@ -166,6 +182,26 @@ export function SkillWindow({ onClose }: SkillWindowProps) {
   );
 }
 
+function LockedSkillCard({ skill }: { skill: SkillState }) {
+  const color = SKILL_COLOR[skill.id] ?? "var(--accent)";
+  return (
+    <div className={`${styles.card} ${styles.locked}`}>
+      <div className={styles.cardIcon} style={{ background: color, opacity: 0.3 }}>
+        <span className={styles.cardIconEmoji}>{SKILL_ICON[skill.id] ?? "?"}</span>
+      </div>
+      <div className={styles.cardBody}>
+        <div className={styles.cardNameRow}>
+          <span className={styles.cardName} style={{ opacity: 0.4 }}>{skill.label}</span>
+          <span className={styles.lockBadge}>🔒 Lv.{skill.requiredLevel} 해금</span>
+        </div>
+        <span className={styles.cardDesc} style={{ opacity: 0.4 }}>
+          {SKILL_DESCRIPTIONS[skill.id] ?? ""}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function SkillCard({
   skill,
   equippedSlot,
@@ -191,7 +227,9 @@ function SkillCard({
         e.dataTransfer.effectAllowed = "copy";
       }}
     >
-      <div className={styles.cardIcon} style={{ background: color }} />
+      <div className={styles.cardIcon} style={{ background: color }}>
+        <span className={styles.cardIconEmoji}>{SKILL_ICON[skill.id] ?? "?"}</span>
+      </div>
       <div className={styles.cardBody}>
         <div className={styles.cardNameRow}>
           <span className={styles.cardName}>{skill.label}</span>
@@ -205,7 +243,6 @@ function SkillCard({
         </div>
         <span className={styles.cardDesc}>{SKILL_DESCRIPTIONS[skill.id] ?? ""}</span>
         <div className={styles.cardStats}>
-          {skill.mpCost > 0 && <span className={styles.mp}>MP {skill.mpCost}</span>}
           <span className={styles.cd}>쿨 {skill.cooldown}s</span>
           {isEquipped && <span className={styles.equippedBadge}>슬롯 {equippedSlot + 1}</span>}
         </div>

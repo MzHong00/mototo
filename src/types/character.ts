@@ -10,8 +10,6 @@ export interface CharacterStats {
   level: number;
   hp: number;
   maxHp: number;
-  mp: number;
-  maxMp: number;
   exp: number;
   expToNext: number;
   baseAtk: number;
@@ -26,13 +24,13 @@ export interface EquipSlots {
 
 export interface SkillState {
   id: string;
-  key: string;
+  key?: string;
   label: string;
   skillType: SkillType;
-  mpCost: number;
   cooldown: number;
   lastUsed: number;
   level: number;
+  requiredLevel?: number;
   damageType?: DamageType;
   targetType?: TargetType;
 }

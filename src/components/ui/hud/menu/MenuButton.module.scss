@@ -1,52 +1,52 @@
 .btn {
   position: fixed;
-  top: var(--sp-md);
-  right: var(--sp-md);
+  top: 16px;
+  right: 16px;
   z-index: 100;
-  width: 40px;
-  height: 40px;
-  background: var(--panel-bg);
-  border: 2px solid var(--border);
+  width: 34px;
+  height: 34px;
+  background: none;
+  border: none;
   border-radius: var(--r-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 4px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(91, 163, 255, 0.2);
   transition:
-    border-color 0.12s,
-    box-shadow 0.12s;
+    border-color 0.15s,
+    box-shadow 0.15s;
 
-  &:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.3);
-  }
+}
 
-  span {
-    display: block;
-    width: 18px;
-    height: 2px;
-    background: var(--text);
-    border-radius: 2px;
-    transition:
-      transform 0.2s,
-      opacity 0.2s;
-  }
+.bar {
+  display: block;
+  width: 16px;
+  height: 3px;
+  background: linear-gradient(180deg, #c8eaff 0%, #74b9e8 45%, #3a7db0 100%);
+  border-radius: 2px;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
 }
 
 .active {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.3);
 
-  span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
+  .bar {
+    background: var(--accent);
   }
-  span:nth-child(2) {
+
+  .bar:nth-child(1) {
+    transform: translateY(5.5px) rotate(45deg);
+  }
+  .bar:nth-child(2) {
     opacity: 0;
   }
-  span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
+  .bar:nth-child(3) {
+    transform: translateY(-5.5px) rotate(-45deg);
   }
 }

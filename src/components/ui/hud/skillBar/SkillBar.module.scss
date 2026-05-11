@@ -1,23 +1,71 @@
 .bar {
   position: absolute;
-  bottom: 16px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(4px);
-  border: 2px solid var(--border);
-  border-radius: var(--r-lg);
-  box-shadow:
-    0 2px 12px rgba(91, 163, 255, 0.15),
-    0 0 0 1px rgba(255, 215, 0, 0.3);
+  gap: 3px;
   z-index: 10;
+}
+
+/* HP 바 — .bar와 동일한 너비로 자동 stretch */
+.hpBar {
+  position: relative;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(116, 185, 232, 0.2);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.hpFill {
+  position: absolute;
+  inset: 0;
+  width: 0;
+  background: linear-gradient(90deg, #cc1111, #ff4444);
+  border-radius: inherit;
+  transition: width 0.15s ease;
+}
+
+.hpText {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.hpLabel {
+  color: rgba(116, 185, 232, 0.85);
+  margin-right: 2px;
+}
+
+.hpMax {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* 스킬 슬롯 두 그룹 */
+.slots {
+  display: flex;
+  gap: 6px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .row {
   display: flex;
-  gap: 4px;
+  gap: 2px;
 }

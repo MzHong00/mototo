@@ -1,15 +1,18 @@
+/* ─── 공통 패널 ─── */
 .panel {
   position: fixed;
   width: 380px;
   max-height: 82vh;
   display: flex;
   flex-direction: column;
-  background: var(--panel-bg);
-  border: 2px solid var(--border);
+  background: rgba(10, 16, 30, 0.93);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(116, 185, 232, 0.2);
   border-radius: var(--r-lg);
   box-shadow:
-    0 4px 24px rgba(91, 163, 255, 0.2),
-    0 0 0 1px rgba(255, 215, 0, 0.3);
+    0 0 0 1px rgba(116, 185, 232, 0.06),
+    0 20px 56px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(116, 185, 232, 0.12);
   z-index: 120;
 }
 
@@ -18,50 +21,48 @@
   align-items: center;
   gap: var(--sp-sm);
   padding: 10px 14px;
-  background: var(--panel-blue);
+  background: rgba(6, 10, 22, 0.6);
   border-radius: var(--r-lg) var(--r-lg) 0 0;
-  border-bottom: 1px solid rgba(91, 163, 255, 0.2);
+  border-bottom: 1px solid rgba(116, 185, 232, 0.1);
   cursor: move;
   user-select: none;
 }
 
 .title {
-  font-family: var(--font-title);
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--text);
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 14px;
+  color: #d8ecff;
   flex: 1;
 }
 
 .sp {
   font-family: var(--font-ui);
   font-weight: 900;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--accent);
-  background: rgba(255, 153, 0, 0.15);
+  background: rgba(116, 185, 232, 0.12);
   padding: 2px 8px;
   border-radius: var(--r-full);
-  border: 1px solid rgba(255, 153, 0, 0.3);
+  border: 1px solid rgba(116, 185, 232, 0.3);
 }
 
 .closeBtn {
   background: none;
   border: none;
-  font-size: 16px;
-  color: var(--text-muted);
+  font-size: 14px;
+  color: rgba(140, 170, 200, 0.5);
   cursor: pointer;
   padding: 2px 6px;
   border-radius: var(--r-sm);
-  &:hover {
-    background: rgba(0, 0, 0, 0.08);
-  }
+  transition: color 0.12s;
+  &:hover { color: var(--accent); }
 }
 
 /* ─── 탭 ─── */
-
 .tabs {
   display: flex;
-  border-bottom: 1px solid rgba(91, 163, 255, 0.15);
+  border-bottom: 1px solid rgba(116, 185, 232, 0.1);
   flex-shrink: 0;
 }
 
@@ -72,29 +73,26 @@
   border: none;
   font-family: var(--font-ui);
   font-weight: 700;
-  font-size: 13px;
-  color: var(--text-muted);
+  font-size: 12px;
+  color: rgba(140, 170, 200, 0.55);
   cursor: pointer;
-  transition:
-    background 0.1s,
-    color 0.1s;
+  transition: color 0.1s, background 0.1s;
   &:hover {
-    background: var(--panel-blue);
-    color: var(--text);
+    background: rgba(116, 185, 232, 0.05);
+    color: rgba(180, 210, 240, 0.85);
   }
 }
 
 .active {
-  color: var(--text);
+  color: var(--accent);
   border-bottom: 2px solid var(--accent);
-  background: rgba(255, 153, 0, 0.06);
+  background: rgba(116, 185, 232, 0.06);
 }
 
-/* ─── 스킬 탭 (드래그) ─── */
-
+/* ─── 스킬 탭 ─── */
 .hint {
   font-size: 11px;
-  color: var(--text-muted);
+  color: rgba(140, 170, 200, 0.5);
   margin: 0;
   padding: 8px 14px 0;
   line-height: 1.5;
@@ -104,7 +102,7 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-sm);
+  gap: 6px;
   overflow-y: auto;
   padding: var(--sp-sm) var(--sp-md) var(--sp-md);
 }
@@ -113,32 +111,31 @@
   display: flex;
   align-items: center;
   gap: var(--sp-sm);
-  padding: var(--sp-sm) var(--sp-sm);
-  background: var(--panel-blue);
-  border: 2px solid var(--border-blue);
+  padding: var(--sp-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(116, 185, 232, 0.12);
   border-radius: var(--r-md);
   cursor: grab;
   transition:
     border-color 0.15s,
     box-shadow 0.15s,
+    background 0.15s,
     transform 0.1s;
   user-select: none;
 
   &:hover {
     border-color: var(--skill-color, var(--accent));
-    box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.2);
+    background: rgba(116, 185, 232, 0.07);
+    box-shadow: 0 0 0 1px rgba(116, 185, 232, 0.15);
     transform: translateX(2px);
   }
 
-  &:active {
-    cursor: grabbing;
-    transform: scale(0.98);
-  }
+  &:active { cursor: grabbing; transform: scale(0.98); }
 }
 
 .equipped {
   border-color: var(--skill-color, var(--accent));
-  background: rgba(255, 153, 0, 0.06);
+  background: rgba(116, 185, 232, 0.08);
 }
 
 .cardIcon {
@@ -146,7 +143,16 @@
   height: 34px;
   border-radius: var(--r-md);
   flex-shrink: 0;
-  opacity: 0.85;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardIconEmoji {
+  font-size: 18px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
 }
 
 .cardBody {
@@ -167,17 +173,14 @@
   font-family: var(--font-ui);
   font-weight: 900;
   font-size: 13px;
-  color: var(--text);
+  color: #d0e8ff;
 }
 
-.cardStars {
-  display: flex;
-  gap: 1px;
-}
+.cardStars { display: flex; gap: 1px; }
 
 .cardDesc {
   font-size: 11px;
-  color: var(--text-muted);
+  color: rgba(140, 170, 200, 0.6);
 }
 
 .cardStats {
@@ -186,50 +189,66 @@
   margin-top: 2px;
 }
 
-.mp {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--mp);
-}
 .cd {
   font-size: 10px;
-  color: var(--text-muted);
+  color: rgba(140, 170, 200, 0.5);
 }
 
 .equippedBadge {
   font-size: 10px;
   font-weight: 900;
   color: var(--accent);
-  background: rgba(255, 153, 0, 0.15);
+  background: rgba(116, 185, 232, 0.12);
   padding: 1px 5px;
   border-radius: var(--r-full);
 }
 
-/* ─── 강화 / 패시브 탭 공통 ─── */
+.locked {
+  opacity: 0.6;
+  cursor: default;
+  border-style: dashed;
+  &:hover {
+    border-color: rgba(116, 185, 232, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: none;
+    transform: none;
+  }
+}
 
+.lockBadge {
+  font-size: 10px;
+  font-weight: 900;
+  color: rgba(140, 170, 200, 0.5);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(116, 185, 232, 0.15);
+  padding: 1px 6px;
+  border-radius: var(--r-full);
+  white-space: nowrap;
+}
+
+/* ─── 강화 / 패시브 탭 ─── */
 .body {
   overflow-y: auto;
   padding: var(--sp-sm) var(--sp-md) var(--sp-md);
 }
 
-/* ─── 강화 탭 ─── */
-
-.skillList {
+.skillList, .passiveList {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-sm);
+  gap: 6px;
 }
 
-.skillRow {
+.skillRow, .passiveRow {
   display: flex;
   align-items: center;
   gap: var(--sp-sm);
   padding: var(--sp-sm);
   border-radius: var(--r-md);
   border: 1px solid transparent;
+  transition: background 0.1s, border-color 0.1s;
   &:hover {
-    background: var(--panel-blue);
-    border-color: rgba(91, 163, 255, 0.2);
+    background: rgba(116, 185, 232, 0.06);
+    border-color: rgba(116, 185, 232, 0.15);
   }
 }
 
@@ -238,10 +257,13 @@
   height: 34px;
   border-radius: var(--r-md);
   flex-shrink: 0;
-  opacity: 0.85;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.skillInfo {
+.skillInfo, .passiveInfo {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -249,133 +271,67 @@
   min-width: 0;
 }
 
-.skillName {
+.skillName, .passiveName {
   font-family: var(--font-ui);
   font-weight: 900;
   font-size: 13px;
-  color: var(--text);
+  color: #d0e8ff;
 }
 
-.skillDesc {
+.skillDesc, .passiveDesc {
   font-size: 11px;
-  color: var(--text-muted);
+  color: rgba(140, 170, 200, 0.6);
 }
-.skillNext {
+
+.skillNext, .passiveNext {
   font-size: 11px;
   color: var(--accent);
 }
 
-.skillRight {
+.skillRight, .passiveRight {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 4px;
 }
 
-.levelStars {
-  display: flex;
-  gap: 1px;
-}
-.starOn {
-  color: var(--accent);
-  font-size: 11px;
-}
-.starOff {
-  color: #ccc;
-  font-size: 11px;
-}
+.levelStars { display: flex; gap: 1px; }
+.starOn  { color: var(--accent); font-size: 11px; }
+.starOff { color: rgba(140, 170, 200, 0.25); font-size: 11px; }
 
-/* ─── 패시브 탭 ─── */
-
-.passiveList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-sm);
-}
-
-.passiveRow {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-sm);
-  padding: var(--sp-sm);
-  border-radius: var(--r-md);
-  border: 1px solid transparent;
-  &:hover {
-    background: var(--panel-blue);
-    border-color: rgba(91, 163, 255, 0.2);
-  }
-}
-
-.passiveIcon {
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.passiveInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.passiveName {
-  font-family: var(--font-ui);
-  font-weight: 900;
-  font-size: 13px;
-  color: var(--text);
-}
-
-.passiveDesc {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-.passiveNext {
-  color: var(--accent);
-}
-
-.passiveRight {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
+.passiveIcon { font-size: 22px; flex-shrink: 0; }
 
 .passiveLevel {
   font-family: var(--font-ui);
   font-weight: 900;
   font-size: 11px;
-  color: var(--text-muted);
+  color: rgba(140, 170, 200, 0.6);
   font-variant-numeric: tabular-nums;
 }
 
-/* ─── 공통 버튼 ─── */
-
+/* ─── 버튼 ─── */
 .upgradeBtn {
   font-family: var(--font-ui);
   font-weight: 900;
   font-size: 11px;
   padding: 4px 10px;
   border-radius: var(--r-full);
-  border: 2px solid var(--accent);
-  background: rgba(255, 153, 0, 0.1);
+  border: 1px solid rgba(116, 185, 232, 0.4);
+  background: rgba(116, 185, 232, 0.1);
   color: var(--accent);
   cursor: pointer;
-  transition:
-    background 0.12s,
-    transform 0.1s;
+  transition: background 0.12s, transform 0.1s;
   white-space: nowrap;
   &:hover:not(:disabled) {
-    background: rgba(255, 153, 0, 0.25);
+    background: rgba(116, 185, 232, 0.22);
     transform: translateY(-1px);
   }
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
+  &:active:not(:disabled) { transform: translateY(0); }
 }
 
 .disabled {
-  border-color: #ccc;
-  color: #aaa;
+  border-color: rgba(116, 185, 232, 0.12);
+  color: rgba(140, 170, 200, 0.3);
   background: transparent;
   cursor: not-allowed;
 }

@@ -102,7 +102,6 @@ export default function App() {
         />
       )}
 
-      <div className={styles.zoneLabel}>{MAPS[currentMapId].label}</div>
       {flash && (
         <div className={styles.flash} style={{ background: MAPS[currentMapId].flashColor }} />
       )}

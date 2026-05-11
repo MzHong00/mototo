@@ -1,25 +1,118 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { FX_DURATION } from "@/constants/skill";
 import type { SkillFX } from "@/types/combat";
 
+// 초승달 호 각도 ~216°
+const ARC = Math.PI * 1.2;
+
 export function SlashFX({ fx }: { fx: SkillFX }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const matRef = useRef<THREE.MeshBasicMaterial>(null);
+  const travelRef = useRef<THREE.Group>(null);
+  const xRef      = useRef<THREE.Group>(null);
+  const flashRef  = useRef<THREE.Mesh>(null);
+
+  const dir = useMemo(
+    () => new THREE.Vector3(fx.dir[0], 0, fx.dir[2]).normalize(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+  const yaw = Math.atan2(dir.x, dir.z);
+
+  // 3-layer 재질: outer bloom → mid glow → core
+  const bloomMat = useMemo(
+    () => new THREE.MeshBasicMaterial({ color: "#4488BB", transparent: true, side: THREE.DoubleSide }),
+    []
+  );
+  const glowMat = useMemo(
+    () => new THREE.MeshBasicMaterial({ color: "#AADDFF", transparent: true, side: THREE.DoubleSide }),
+    []
+  );
+  const coreMat = useMemo(
+    () => new THREE.MeshBasicMaterial({ color: "#FFFFFF", transparent: true, side: THREE.DoubleSide }),
+    []
+  );
+  const flashMat = useMemo(
+    () => new THREE.MeshBasicMaterial({ color: "#FFFFFF", transparent: true }),
+    []
+  );
 
   useFrame(() => {
-    if (!meshRef.current || !matRef.current) return;
     const age = (Date.now() - fx.startTime) / FX_DURATION.slash;
-    meshRef.current.scale.setScalar(0.5 + age * 2.5);
-    meshRef.current.rotation.y += 0.18;
-    matRef.current.opacity = Math.max(0, 1 - age * 1.2);
+    const t   = Math.min(age, 1);
+
+    // 전방으로 빠르게 이동 (world 좌표)
+    if (travelRef.current) {
+      travelRef.current.position.set(
+        fx.pos[0] + dir.x * t * 8,
+        fx.pos[1] + 0.9,
+        fx.pos[2] + dir.z * t * 8,
+      );
+      // 발사 순간 0.12초 안에 팽창
+      travelRef.current.scale.setScalar(t < 0.12 ? t / 0.12 : 1);
+    }
+
+    // X 형태가 전진 방향(Z)으로 반 바퀴 자전 → 날아가는 느낌
+    if (xRef.current) {
+      xRef.current.rotation.z = t * Math.PI;
+    }
+
+    // 약간 딜레이 후 페이드 아웃
+    const fade = Math.max(0, 1 - Math.max(0, t - 0.08) * 1.25);
+    coreMat.opacity  = fade;
+    glowMat.opacity  = fade * 0.6;
+    bloomMat.opacity = fade * 0.22;
+
+    // 발사 플래시 — 빠르게 팽창·소멸
+    if (flashRef.current) {
+      flashRef.current.scale.setScalar(1 + t * 3.5);
+      flashMat.opacity = Math.max(0, 0.95 - t * 10);
+    }
   });
 
   return (
-    <mesh ref={meshRef} position={[fx.pos[0], 0.5, fx.pos[2]]}>
-      <torusGeometry args={[1, 0.08, 6, 24, Math.PI * 1.2]} />
-      <meshBasicMaterial ref={matRef} color="#FF9900" transparent side={THREE.DoubleSide} />
-    </mesh>
+    <>
+      {/* 발사 위치 플래시 — 이동하지 않음 */}
+      <group position={[fx.pos[0], fx.pos[1] + 0.9, fx.pos[2]]}>
+        <mesh ref={flashRef} material={flashMat}>
+          <sphereGeometry args={[0.28, 8, 6]} />
+        </mesh>
+      </group>
+
+      {/* 날아가는 X자 초승달 */}
+      <group
+        ref={travelRef}
+        rotation-y={yaw}
+        position={[fx.pos[0], fx.pos[1] + 0.9, fx.pos[2]]}
+      >
+        <group ref={xRef}>
+          {/* \ 방향 초승달 */}
+          <group rotation-z={Math.PI / 4}>
+            <mesh material={bloomMat}>
+              <torusGeometry args={[0.92, 0.06, 6, 64, ARC]} />
+            </mesh>
+            <mesh material={glowMat}>
+              <torusGeometry args={[0.76, 0.1, 6, 64, ARC]} />
+            </mesh>
+            <mesh material={coreMat}>
+              <torusGeometry args={[0.63, 0.13, 6, 64, ARC]} />
+            </mesh>
+          </group>
+
+          {/* / 방향 초승달 */}
+          <group rotation-z={-Math.PI / 4}>
+            <mesh material={bloomMat}>
+              <torusGeometry args={[0.92, 0.06, 6, 64, ARC]} />
+            </mesh>
+            <mesh material={glowMat}>
+              <torusGeometry args={[0.76, 0.1, 6, 64, ARC]} />
+            </mesh>
+            <mesh material={coreMat}>
+              <torusGeometry args={[0.63, 0.13, 6, 64, ARC]} />
+            </mesh>
+          </group>
+        </group>
+      </group>
+    </>
   );
 }

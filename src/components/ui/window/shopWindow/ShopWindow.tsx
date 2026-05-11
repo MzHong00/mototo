@@ -15,7 +15,6 @@ export function ShopWindow({ open, onClose }: ShopWindowProps) {
   const gold = useGameStore((s) => s.gold);
   const spendGold = useGameStore((s) => s.spendGold);
   const healHp = useGameStore((s) => s.healHp);
-  const healMp = useGameStore((s) => s.healMp);
   const addItem = useGameStore((s) => s.addItem);
   const { pos, onHeaderMouseDown } = useDraggable(Math.max(0, window.innerWidth / 2 - 190), 80);
 
@@ -27,7 +26,6 @@ export function ShopWindow({ open, onClose }: ShopWindowProps) {
     if (!spendGold(def.price)) return;
 
     if (def.healHp) healHp(def.healHp);
-    if (def.healMp) healMp(def.healMp);
     if (def.grantItem) addItem({ ...def.grantItem, uid: `${def.id}_${shopUidCounter++}` });
     if (def.enhanceAtk) {
       setGameState((s) => ({

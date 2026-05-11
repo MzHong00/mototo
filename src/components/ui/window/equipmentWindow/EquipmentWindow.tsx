@@ -69,7 +69,6 @@ export function EquipmentWindow({ onClose }: EquipmentWindowProps) {
             { label: "ATK", value: totalAtk(), color: "var(--accent)" },
             { label: "DEF", value: totalDef(), color: "var(--accent2)" },
             { label: "HP", value: character.maxHp, color: "var(--hp)" },
-            { label: "MP", value: character.maxMp, color: "var(--mp)" },
           ].map(({ label, value, color }) => (
             <div key={label} className={s.statRow} style={{ color }}>
               <span>{label}</span>

@@ -19,7 +19,9 @@ export function KeySettings({ onClose }: KeySettingsProps) {
   const dragSource = useRef<ActionKey | null>(null);
   const { pos, onHeaderMouseDown } = useDraggable(Math.max(0, window.innerWidth / 2 - 200), 80);
 
-  const actions = Object.keys(ACTION_LABELS) as ActionKey[];
+  const actions = (Object.keys(ACTION_LABELS) as ActionKey[]).filter(
+    (a) => !/^skill\d/.test(a)
+  );
 
   return (
     <div className={styles.panel} style={{ left: pos.x, top: pos.y }}>

@@ -7,7 +7,6 @@ import s from "./CharacterPanel.module.scss";
 
 const STAT_BARS = [
   { label: "HP", key: "hp" as const, maxKey: "maxHp" as const, colorVar: "--hp" },
-  { label: "MP", key: "mp" as const, maxKey: "maxMp" as const, colorVar: "--mp" },
   { label: "EXP", key: "exp" as const, maxKey: "expToNext" as const, colorVar: "--exp" },
 ];
 

@@ -57,7 +57,6 @@ export interface GameState {
   addGold: (amount: number) => void;
   spendGold: (amount: number) => boolean;
   healHp: (amount: number) => void;
-  healMp: (amount: number) => void;
   useSkill: (id: string) => boolean;
   activateShield: () => void;
   tickShield: () => void;
@@ -86,7 +85,6 @@ export interface GameState {
 
 const INVENTORY_MAX = 16;
 const LEVEL_HP_BONUS = 20;
-const LEVEL_MP_BONUS = 10;
 const LEVEL_ATK_BONUS = 3;
 const SHIELD_DURATION_MS = 4000;
 
@@ -97,18 +95,13 @@ const gameStore = create<GameState>((set, get) => ({
     level: 1,
     hp: 100,
     maxHp: 100,
-    mp: 50,
-    maxMp: 50,
     exp: 0,
     expToNext: EXP_PER_LEVEL(1),
     baseAtk: 15,
     baseDef: 0,
   },
-  allSkills: CLASS_CONFIG.warrior.skills,
-  skills: [
-    ...CLASS_CONFIG.warrior.skills,
-    ...Array<null>(TOTAL_SLOTS - CLASS_CONFIG.warrior.skills.length).fill(null),
-  ],
+  allSkills: [],
+  skills: Array<null>(TOTAL_SLOTS).fill(null),
   inventory: [],
   equipped: { weapon: null, armor: null, ring: null },
   gold: 0,
@@ -149,19 +142,19 @@ const gameStore = create<GameState>((set, get) => ({
 
   selectClass: (cls) => {
     const cfg = CLASS_CONFIG[cls];
+    const lv = get().character.level;
+    const learned = cfg.skills.filter((sk) => (sk.requiredLevel ?? 1) <= lv);
     set((s) => ({
       character: {
         ...s.character,
         jobClass: cls,
         hp: cfg.hp,
         maxHp: cfg.hp,
-        mp: cfg.mp,
-        maxMp: cfg.mp,
         baseAtk: cfg.atk,
         baseDef: cfg.def,
       },
-      allSkills: cfg.skills,
-      skills: [...cfg.skills, ...Array<null>(TOTAL_SLOTS - cfg.skills.length).fill(null)],
+      allSkills: learned,
+      skills: Array<null>(TOTAL_SLOTS).fill(null),
     }));
   },
 
@@ -203,7 +196,16 @@ const gameStore = create<GameState>((set, get) => ({
       if (newExp >= needed) {
         const lv = character.level + 1;
         const mhp = character.maxHp + LEVEL_HP_BONUS;
-        const mmp = character.maxMp + LEVEL_MP_BONUS;
+
+        // 새 레벨에서 해금되는 스킬 자동 추가
+        const newlyLearned = character.jobClass
+          ? CLASS_CONFIG[character.jobClass].skills.filter(
+              (sk) =>
+                (sk.requiredLevel ?? 1) === lv &&
+                !s.allSkills.some((as) => as.id === sk.id),
+            )
+          : [];
+
         return {
           skillPoints: s.skillPoints + 1,
           character: {
@@ -213,10 +215,9 @@ const gameStore = create<GameState>((set, get) => ({
             expToNext: EXP_PER_LEVEL(lv),
             maxHp: mhp,
             hp: mhp,
-            maxMp: mmp,
-            mp: mmp,
             baseAtk: character.baseAtk + LEVEL_ATK_BONUS,
           },
+          allSkills: [...s.allSkills, ...newlyLearned],
         };
       }
       return { character: { ...character, exp: newExp } };
@@ -233,19 +234,13 @@ const gameStore = create<GameState>((set, get) => ({
     set((s) => ({
       character: { ...s.character, hp: Math.min(s.character.maxHp, s.character.hp + n) },
     })),
-  healMp: (n) =>
-    set((s) => ({
-      character: { ...s.character, mp: Math.min(s.character.maxMp, s.character.mp + n) },
-    })),
 
   useSkill: (id) => {
-    const { skills, character } = get();
+    const { skills } = get();
     const skill = skills.find((s): s is SkillState => s?.id === id);
     if (!skill) return false;
     if ((Date.now() - skill.lastUsed) / 1000 < skill.cooldown) return false;
-    if (character.mp < skill.mpCost) return false;
     set((s) => ({
-      character: { ...s.character, mp: s.character.mp - skill.mpCost },
       skills: s.skills.map((sk) => (sk?.id === id ? { ...sk, lastUsed: Date.now() } : sk)),
     }));
     return true;
@@ -259,7 +254,7 @@ const gameStore = create<GameState>((set, get) => ({
   respawn: () => {
     const { character } = get();
     respawnTrigger.pending = true;
-    set({ isDead: false, character: { ...character, hp: character.maxHp, mp: character.maxMp } });
+    set({ isDead: false, character: { ...character, hp: character.maxHp } });
   },
 
   addItem: (item) =>
@@ -361,8 +356,6 @@ const gameStore = create<GameState>((set, get) => ({
       let { character } = s;
       if (stat === "hp") {
         character = { ...character, maxHp: character.maxHp + bonus, hp: character.hp + bonus };
-      } else if (stat === "mp") {
-        character = { ...character, maxMp: character.maxMp + bonus, mp: character.mp + bonus };
       }
       return { skillPoints: s.skillPoints - 1, passiveUpgrades, character };
     }),

@@ -1,10 +1,14 @@
 .modal {
   position: fixed;
   width: 380px;
-  background: var(--panel-bg);
-  border: 2px solid var(--border);
+  background: rgba(10, 16, 30, 0.93);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(116, 185, 232, 0.2);
   border-radius: var(--r-lg);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(116, 185, 232, 0.06),
+    0 20px 56px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(116, 185, 232, 0.12);
   z-index: 100;
 }
 
@@ -12,9 +16,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: var(--panel-blue);
-  border-bottom: 1px solid rgba(91, 163, 255, 0.2);
+  padding: 10px 14px;
+  background: rgba(6, 10, 22, 0.6);
+  border-bottom: 1px solid rgba(116, 185, 232, 0.1);
   border-radius: var(--r-lg) var(--r-lg) 0 0;
   cursor: move;
   user-select: none;
@@ -27,17 +31,17 @@
 }
 
 .shopTitle {
-  font-family: var(--font-title);
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--text);
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 14px;
+  color: #d8ecff;
 }
 
 .gold {
   font-family: var(--font-ui);
   font-weight: 900;
-  font-size: 14px;
-  color: #ffb300;
+  font-size: 13px;
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
 
@@ -45,21 +49,23 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 18px;
-  color: var(--text-muted);
+  font-size: 14px;
+  color: rgba(140, 170, 200, 0.5);
+  transition: color 0.12s;
+  &:hover { color: var(--accent); }
 }
 
 .grid {
-  padding: 16px;
+  padding: 14px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 6px;
 }
 
 .item {
-  padding: 12px 14px;
-  background: var(--panel-blue);
-  border: 2px solid var(--border-blue);
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(116, 185, 232, 0.12);
   border-radius: var(--r-md);
   cursor: pointer;
   display: flex;
@@ -67,61 +73,52 @@
   gap: 10px;
   transition:
     border-color 0.15s,
-    transform 0.1s;
+    background 0.15s;
 
   &:hover {
-    border-color: var(--accent);
+    border-color: rgba(116, 185, 232, 0.4);
+    background: rgba(116, 185, 232, 0.07);
   }
 
   &.disabled {
-    background: rgba(200, 200, 200, 0.3);
-    border-color: #ccc;
+    opacity: 0.4;
     cursor: not-allowed;
-    opacity: 0.6;
-
     &:hover {
-      border-color: #ccc;
+      border-color: rgba(116, 185, 232, 0.12);
+      background: rgba(255, 255, 255, 0.03);
     }
   }
 }
 
-.itemIcon {
-  font-size: 26px;
-}
+.itemIcon { font-size: 24px; }
 
-.itemContent {
-  flex: 1;
-}
+.itemContent { flex: 1; }
 
 .itemName {
   font-family: var(--font-ui);
   font-weight: 900;
   font-size: 12px;
-  color: var(--text);
+  color: #d0e8ff;
 }
 
 .itemDesc {
   font-family: var(--font-ui);
   font-size: 10px;
-  color: var(--text-muted);
+  color: rgba(140, 170, 200, 0.55);
 }
 
 .itemPrice {
   font-family: var(--font-ui);
   font-weight: 900;
   font-size: 11px;
-  color: #ffb300;
+  color: var(--accent);
   margin-top: 2px;
-
-  .disabled & {
-    color: #aaa;
-  }
 }
 
 .footer {
-  padding: 6px 16px 12px;
+  padding: 6px 14px 12px;
   font-family: var(--font-ui);
   font-size: 10px;
-  color: var(--text-muted);
+  color: rgba(140, 170, 200, 0.4);
   text-align: center;
 }

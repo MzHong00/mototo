@@ -1,4 +1,4 @@
-import type { ItemType, ItemRarity } from "@/types/item";
+import type { ItemType, ItemRarity, ItemTrade } from "@/types/item";
 
 export const ITEM_TYPE = {
   WEAPON: "weapon",
@@ -22,4 +22,14 @@ export const ITEM_RARITY_LABEL: Record<ItemRarity, string> = {
   [ITEM_RARITY.COMMON]: "일반",
   [ITEM_RARITY.RARE]: "희귀",
   [ITEM_RARITY.EPIC]: "영웅",
+};
+
+export const ITEM_TRADE = {
+  TRADEABLE:   "tradeable",
+  UNTRADEABLE: "untradeable",
+} as const satisfies Record<string, ItemTrade>;
+
+export const ITEM_TRADE_LABEL: Record<ItemTrade, string> = {
+  [ITEM_TRADE.TRADEABLE]:   "교환 가능",
+  [ITEM_TRADE.UNTRADEABLE]: "교환 불가",
 };

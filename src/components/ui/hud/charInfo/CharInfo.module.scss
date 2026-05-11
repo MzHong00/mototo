@@ -1,0 +1,77 @@
+.wrap {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px 5px 12px;
+  background: rgba(10, 16, 30, 0.78);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(116, 185, 232, 0.15);
+  border-radius: 0 var(--r-md) 0 0;
+  z-index: 10;
+
+  &.shielded {
+    border-color: rgba(116, 185, 232, 0.4);
+  }
+}
+
+.level {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 10px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.job {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 10px;
+  color: rgba(160, 195, 230, 0.7);
+  flex-shrink: 0;
+}
+
+.name {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 10px;
+  color: #d0e8ff;
+  white-space: nowrap;
+}
+
+.badge {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 9px;
+  color: var(--accent);
+  background: rgba(116, 185, 232, 0.15);
+  padding: 1px 5px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--accent);
+  flex-shrink: 0;
+}
+
+.sp {
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 9px;
+  color: var(--accent);
+  background: rgba(116, 185, 232, 0.15);
+  padding: 1px 5px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--accent);
+  flex-shrink: 0;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

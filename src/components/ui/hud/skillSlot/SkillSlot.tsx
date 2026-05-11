@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { getGameState } from "@/stores/gameStore";
-import { SKILL_COLOR } from "@/constants/skill";
+import { SKILL_COLOR, SKILL_ICON } from "@/constants/skill";
 
 import type { SkillState } from "@/types/character";
 
@@ -80,10 +80,8 @@ export function SkillSlot({ skill, hotkey, slotIdx }: SkillSlotProps) {
           style={{ "--fill-h": `${(1 - pct) * 100}%` } as React.CSSProperties}
         />
       )}
-      <span className={s.label}>{skill.label}</span>
-      <span className={s.remaining}>
-        {remaining > 0 ? `${remaining.toFixed(1)}s` : skill.mpCost > 0 ? `MP${skill.mpCost}` : ""}
-      </span>
+      <span className={s.icon}>{SKILL_ICON[skill.id] ?? "?"}</span>
+      {remaining > 0 && <span className={s.remaining}>{remaining.toFixed(1)}s</span>}
       <div className={s.hotkey}>{hotkey}</div>
     </div>
   );

@@ -2,7 +2,7 @@ import type { SkillFXType } from "@/types/combat";
 import { SKILL_FX_TYPE } from "@/constants/combat";
 
 export const FX_DURATION: Record<SkillFXType, number> = {
-  [SKILL_FX_TYPE.SLASH]: 400,
+  [SKILL_FX_TYPE.SLASH]: 480,
   [SKILL_FX_TYPE.BLAST]: 600,
   [SKILL_FX_TYPE.ARROW]: 450,
   [SKILL_FX_TYPE.ARROW_BLAST]: 700,
@@ -18,6 +18,14 @@ export const SKILL_COLOR: Record<string, string> = {
   heal: "var(--exp)",
   blast: "var(--danger)",
   dash: "#9B59B6",
+};
+
+export const SKILL_ICON: Record<string, string> = {
+  slash: "⚔️",
+  shield: "🛡️",
+  heal: "✨",
+  blast: "💥",
+  dash: "⚡",
 };
 
 export const SKILL_DESCRIPTIONS: Record<string, string> = {

@@ -1,5 +1,6 @@
 @AGENTS.md
 @DESIGN.md
+@agents/TODOS.md
 
 ## Skill routing
 

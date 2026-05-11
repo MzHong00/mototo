@@ -33,12 +33,6 @@ export const PASSIVE_CONFIG = {
     bonusPerLevel: 30,
     desc: (lv: number) => `최대 HP +${lv * 30}`,
   },
-  mp: {
-    label: "MP 강화",
-    icon: "💙",
-    bonusPerLevel: 20,
-    desc: (lv: number) => `최대 MP +${lv * 20}`,
-  },
   atk: {
     label: "공격력 강화",
     icon: "⚔️",

@@ -1,24 +1,29 @@
 .slot {
   position: relative;
-  width: 46px;
-  height: 46px;
-  background: var(--panel-blue);
-  border: 2px solid var(--border-blue);
+  width: 36px;
+  height: 36px;
+  background: rgba(10, 16, 30, 0.35);
+  border: 1.5px solid rgba(116, 185, 232, 0.15);
   border-radius: var(--r-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1px;
+  gap: 2px;
   overflow: hidden;
-  transition: border-color 0.2s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 
   &.ready {
     border-color: var(--slot-color, var(--accent));
+    box-shadow:
+      0 0 10px var(--slot-color, var(--accent)),
+      0 0 3px var(--slot-color, var(--accent)) inset;
   }
 
   &.cooldown {
-    background: #9bb8cc;
+    background: rgba(5, 8, 16, 0.4);
   }
 }
 
@@ -28,49 +33,52 @@
   left: 0;
   right: 0;
   height: var(--fill-h, 0%);
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.55);
   transition: height 0.1s linear;
 }
 
-.label {
-  font-family: var(--font-ui);
-  font-weight: 900;
-  font-size: 10px;
+.icon {
+  font-size: 16px;
+  line-height: 1;
   z-index: 1;
-  color: var(--text-muted);
+  transition: filter 0.15s;
 
   .ready & {
-    color: var(--slot-color, var(--accent));
+    filter: drop-shadow(0 0 5px var(--slot-color, var(--accent)));
+  }
+
+  .cooldown & {
+    filter: grayscale(0.5) brightness(0.7);
   }
 }
 
 .remaining {
   font-family: var(--font-ui);
-  font-weight: 400;
-  font-size: 8px;
-  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 9px;
+  color: rgba(150, 170, 200, 0.7);
   z-index: 1;
 }
 
 .hotkey {
   position: absolute;
-  top: 1px;
-  right: 3px;
+  top: 2px;
+  right: 4px;
   font-family: var(--font-ui);
   font-weight: 900;
-  font-size: 8px;
-  color: var(--text-muted);
+  font-size: 9px;
+  color: rgba(116, 185, 232, 0.45);
   z-index: 1;
 }
 
 .empty {
   position: relative;
-  width: 46px;
-  height: 46px;
-  background: rgba(200, 220, 255, 0.3);
-  border: 1.5px dashed var(--border-blue);
+  width: 36px;
+  height: 36px;
+  background: rgba(10, 16, 30, 0.3);
+  border: 1.5px dashed rgba(116, 185, 232, 0.35);
   border-radius: var(--r-md);
-  opacity: 0.5;
+  opacity: 0.75;
   transition:
     border-color 0.1s,
     opacity 0.1s;
@@ -78,6 +86,6 @@
 
 .dragOver {
   border-color: var(--accent) !important;
-  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.4);
+  box-shadow: 0 0 0 2px rgba(116, 185, 232, 0.4) !important;
   opacity: 1 !important;
 }

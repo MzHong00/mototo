@@ -8,6 +8,13 @@ interface GameMenuProps {
   onClose: () => void;
 }
 
+const MENU_ITEMS = [
+  { icon: "🎒", label: "인벤토리", action: "inventory" },
+  { icon: "🗡️", label: "장비창", action: "equipment" },
+  { icon: "✨", label: "스킬", action: "skill" },
+  { icon: "⚙️", label: "설정", action: "settings" },
+] as const;
+
 export function GameMenu({
   onInventory,
   onEquipment,
@@ -15,45 +22,29 @@ export function GameMenu({
   onSettings,
   onClose,
 }: GameMenuProps) {
+  const handlers: Record<string, () => void> = {
+    inventory: onInventory,
+    equipment: onEquipment,
+    skill: onSkillWindow,
+    settings: onSettings,
+  };
+
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.panel} onClick={(e) => e.stopPropagation()}>
-        <button
-          className={styles.item}
-          onClick={() => {
-            onInventory();
-            onClose();
-          }}
-        >
-          🎒 인벤토리
-        </button>
-        <button
-          className={styles.item}
-          onClick={() => {
-            onEquipment();
-            onClose();
-          }}
-        >
-          🗡️ 장비창
-        </button>
-        <button
-          className={styles.item}
-          onClick={() => {
-            onSkillWindow();
-            onClose();
-          }}
-        >
-          ✨ 스킬
-        </button>
-        <button
-          className={styles.item}
-          onClick={() => {
-            onSettings();
-            onClose();
-          }}
-        >
-          ⚙️ 설정 (키 세팅)
-        </button>
+        {MENU_ITEMS.map(({ icon, label, action }) => (
+          <button
+            key={action}
+            className={styles.item}
+            onClick={() => {
+              handlers[action]();
+              onClose();
+            }}
+          >
+            <span className={styles.icon}>{icon}</span>
+            <span className={styles.label}>{label}</span>
+          </button>
+        ))}
       </div>
     </div>
   );

@@ -12,9 +12,9 @@ export function MenuButton({ open, onClick }: MenuButtonProps) {
       onClick={onClick}
       aria-label="메뉴"
     >
-      <span />
-      <span />
-      <span />
+      <span className={styles.bar} />
+      <span className={styles.bar} />
+      <span className={styles.bar} />
     </button>
   );
 }

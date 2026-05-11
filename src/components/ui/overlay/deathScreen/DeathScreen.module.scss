@@ -32,12 +32,12 @@
   font-weight: 900;
   font-size: 15px;
   padding: 12px 40px;
-  background: linear-gradient(135deg, #ff9900, #ffb300);
+  background: var(--accent);
   color: #fff;
   border: none;
   border-radius: var(--r-full);
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(255, 153, 0, 0.5);
+  box-shadow: 0 4px 20px rgba(116, 185, 232, 0.5);
   transition:
     transform 0.1s,
     filter 0.1s;
