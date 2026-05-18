@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { useShallow } from "zustand/react/shallow";
 
 import { Scene } from "@/components/game/Scene";
 import { HUD } from "@/components/ui/hud/HUD";
 
-import { ClassSelect } from "@/components/ui/overlay/classSelect/ClassSelect";
+import { CharacterCreate } from "@/components/ui/overlay/characterCreate/CharacterCreate";
 import { DeathScreen } from "@/components/ui/overlay/deathScreen/DeathScreen";
 import { WindowManager } from "@/components/ui/window/WindowManager";
 import { BossEntry } from "@/components/ui/overlay/bossEntry/BossEntry";
@@ -15,7 +14,7 @@ import { bossEnterTrigger, portalTravelTrigger } from "@/stores/worldRefs";
 import { MAPS } from "@/constants/maps";
 
 import type { MapId } from "@/types/map";
-import type { JobClass } from "@/types/character";
+import type { JobClass } from "@/types/job";
 import type { BossType } from "@/types/boss";
 
 import styles from "./App.module.scss";
@@ -25,17 +24,8 @@ const ZONE_FLASH_DURATION_MS = 400;
 export default function App() {
   const [flash, setFlash] = useState(false);
 
-  const {
-    isDead,
-    selectClass,
-    respawn,
-    jobClass,
-    currentMapId,
-    travelTo,
-    exitBoss,
-    bossEntryId,
-  } = useGameStore(
-    useShallow((s) => ({
+  const { isDead, selectClass, respawn, jobClass, currentMapId, travelTo, exitBoss, bossEntryId } =
+    useGameStore((s) => ({
       isDead: s.isDead,
       selectClass: s.selectClass,
       respawn: s.respawn,
@@ -44,8 +34,7 @@ export default function App() {
       travelTo: s.travelTo,
       exitBoss: s.exitBoss,
       bossEntryId: s.bossEntryId,
-    }))
-  );
+    }));
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -73,9 +62,12 @@ export default function App() {
     travelTo("kingBearChamber");
   }, [travelTo]);
 
-  const handleClassSelect = useCallback((cls: JobClass) => selectClass(cls), [selectClass]);
+  const handleCharacterCreate = useCallback(
+    (cls: JobClass, name: string) => selectClass(cls, name),
+    [selectClass],
+  );
 
-  if (!jobClass) return <ClassSelect onSelect={handleClassSelect} />;
+  if (!jobClass) return <CharacterCreate onConfirm={handleCharacterCreate} />;
 
   return (
     <div className={styles.root}>
