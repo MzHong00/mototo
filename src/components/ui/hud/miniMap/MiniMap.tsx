@@ -16,20 +16,17 @@ const HALF = 20; // 맵 반경 (-20 ~ +20)
 const SIZE = 120; // canvas px
 
 const MAP_BG: Record<string, string> = {
-  evergreenVillage:  "#0d2206",
-  evergreenMeadow:   "#0a1f04",
-  evergreenForest:   "#071a03",
-  evergreenSwamp:    "#0e1a0a",
-  evergreenRuins:    "#1c1c18",
+  evergreenVillage: "#0d2206",
+  evergreenMeadow: "#0a1f04",
+  evergreenForest: "#071a03",
+  evergreenSwamp: "#0e1a0a",
+  evergreenRuins: "#1c1c18",
   twilightWasteland: "#1e1006",
-  kingBearChamber:   "#140800",
+  kingBearChamber: "#140800",
 };
 
 function w2c(x: number, z: number): [number, number] {
-  return [
-    ((x + HALF) / (HALF * 2)) * SIZE,
-    ((z + HALF) / (HALF * 2)) * SIZE,
-  ];
+  return [((x + HALF) / (HALF * 2)) * SIZE, ((z + HALF) / (HALF * 2)) * SIZE];
 }
 
 export function MiniMap() {
@@ -58,8 +55,14 @@ export function MiniMap() {
       ctx.lineWidth = 0.5;
       const step = SIZE / 8;
       for (let i = step; i < SIZE; i += step) {
-        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, SIZE); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(SIZE, i); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, SIZE);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(SIZE, i);
+        ctx.stroke();
       }
 
       // 맵 경계

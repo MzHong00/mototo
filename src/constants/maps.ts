@@ -24,24 +24,24 @@ export const MAP_TYPE_LABEL: Record<MapType, string> = {
 
 export const MAP_MARKERS: Partial<Record<MapId, MapMarker[]>> = {
   evergreenVillage: [
-    { x: 0,   z: -8, type: "npc" },
-    { x: 13,  z: 5,  type: "portal_forward" },
+    { x: 0, z: -8, type: "npc" },
+    { x: 13, z: 5, type: "portal_forward" },
   ],
   evergreenMeadow: [
     { x: -13, z: -5, type: "portal_back" },
-    { x: 13,  z: 5,  type: "portal_forward" },
+    { x: 13, z: 5, type: "portal_forward" },
   ],
   evergreenForest: [
     { x: -13, z: -5, type: "portal_back" },
-    { x: 13,  z: 5,  type: "portal_forward" },
+    { x: 13, z: 5, type: "portal_forward" },
   ],
   evergreenSwamp: [
     { x: -13, z: -5, type: "portal_back" },
-    { x: 13,  z: 5,  type: "portal_forward" },
+    { x: 13, z: 5, type: "portal_forward" },
   ],
   evergreenRuins: [
     { x: -13, z: -5, type: "portal_back" },
-    { x: 15,  z: 0,  type: "portal_boss" },
+    { x: 15, z: 0, type: "portal_boss" },
   ],
 };
 

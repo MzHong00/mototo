@@ -42,7 +42,7 @@ export function BossEntry({
     useShallow((s) => ({
       clearedBosses: s.clearedBosses,
       setBossEntryId: s.setBossEntryId,
-    }))
+    })),
   );
 
   const isCleared = clearedBosses.includes(bossId);

@@ -39,7 +39,9 @@
   color: rgba(140, 170, 200, 0.5);
   line-height: 1;
   transition: color 0.12s;
-  &:hover { color: var(--accent); }
+  &:hover {
+    color: var(--accent);
+  }
 }
 
 .body {
@@ -91,7 +93,9 @@
   align-items: center;
   gap: var(--sp-sm);
   padding: 0 var(--sp-sm);
-  transition: border-color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
 
   &.equipped {
     background: rgba(116, 185, 232, 0.07);
@@ -104,7 +108,9 @@
   }
 }
 
-.itemIcon { font-size: 22px; }
+.itemIcon {
+  font-size: 22px;
+}
 
 .itemInfo {
   display: flex;

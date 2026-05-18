@@ -82,7 +82,9 @@ export function SkillWindow({ onClose }: SkillWindowProps) {
 
       {tab === "skills" && (
         <>
-          <p className={styles.hint}>스킬 카드를 하단 스킬바의 원하는 키 슬롯에 드래그해서 배치하세요. 슬롯 우클릭 = 해제.</p>
+          <p className={styles.hint}>
+            스킬 카드를 하단 스킬바의 원하는 키 슬롯에 드래그해서 배치하세요. 슬롯 우클릭 = 해제.
+          </p>
           <div className={styles.list}>
             {allSkills.map((skill) => (
               <SkillCard key={skill.id} skill={skill} equippedSlot={equippedMap.get(skill.id)} />
@@ -191,7 +193,9 @@ function LockedSkillCard({ skill }: { skill: SkillState }) {
       </div>
       <div className={styles.cardBody}>
         <div className={styles.cardNameRow}>
-          <span className={styles.cardName} style={{ opacity: 0.4 }}>{skill.label}</span>
+          <span className={styles.cardName} style={{ opacity: 0.4 }}>
+            {skill.label}
+          </span>
           <span className={styles.lockBadge}>🔒 Lv.{skill.requiredLevel} 해금</span>
         </div>
         <span className={styles.cardDesc} style={{ opacity: 0.4 }}>

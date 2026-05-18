@@ -52,7 +52,9 @@
   font-size: 14px;
   color: rgba(140, 170, 200, 0.5);
   transition: color 0.12s;
-  &:hover { color: var(--accent); }
+  &:hover {
+    color: var(--accent);
+  }
 }
 
 .grid {
@@ -90,9 +92,13 @@
   }
 }
 
-.itemIcon { font-size: 24px; }
+.itemIcon {
+  font-size: 24px;
+}
 
-.itemContent { flex: 1; }
+.itemContent {
+  flex: 1;
+}
 
 .itemName {
   font-family: var(--font-ui);

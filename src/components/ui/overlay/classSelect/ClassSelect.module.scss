@@ -107,7 +107,9 @@
   color: #fff;
   cursor: pointer;
   box-shadow: 0 4px 14px color-mix(in srgb, var(--cls-color, var(--accent)) 45%, transparent);
-  transition: filter 0.12s, transform 0.1s;
+  transition:
+    filter 0.12s,
+    transform 0.1s;
 
   &:hover {
     filter: brightness(1.1);

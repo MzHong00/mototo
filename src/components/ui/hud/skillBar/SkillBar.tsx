@@ -9,7 +9,7 @@ import s from "./SkillBar.module.scss";
 export function SkillBar() {
   const skills = useGameStore((st) => st.skills);
   const { hp, maxHp } = useGameStore(
-    useShallow((st) => ({ hp: st.character.hp, maxHp: st.character.maxHp }))
+    useShallow((st) => ({ hp: st.character.hp, maxHp: st.character.maxHp })),
   );
 
   const renderSlot = (hotkey: (typeof ALL_HOTKEYS)[number]) => {
@@ -29,7 +29,10 @@ export function SkillBar() {
       {/* HP 바 — .bar 전체 너비 */}
       <div className={s.hpBar}>
         <div className={s.hpFill} style={{ width: `${Math.min((hp / maxHp) * 100, 100)}%` }} />
-        <span className={s.hpText}><span className={s.hpLabel}>HP</span> {hp}<span className={s.hpMax}>/{maxHp}</span></span>
+        <span className={s.hpText}>
+          <span className={s.hpLabel}>HP</span> {hp}
+          <span className={s.hpMax}>/{maxHp}</span>
+        </span>
       </div>
 
       {/* 스킬 슬롯 */}

@@ -8,6 +8,7 @@ interface TwilightWastelandProps {
 }
 
 export function TwilightWasteland({ onPortalEnter: _onPortalEnter }: TwilightWastelandProps) {
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   return (
     <>
       <ambientLight intensity={0.4} />

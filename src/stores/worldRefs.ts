@@ -19,8 +19,8 @@ export const playerDamageEvents: { id: number; amount: number }[] = [];
 
 // 캐릭터 애니메이션 신호 — CharacterModel의 useFrame이 읽음
 export const playerAnimSignals = {
-  hitCount: 0,    // 증가할 때마다 Hit_A 트리거
-  dashUntil: 0,   // 대시 종료 timestamp
+  hitCount: 0, // 증가할 때마다 Hit_A 트리거
+  dashUntil: 0, // 대시 종료 timestamp
   attackCount: 0, // 증가할 때마다 공격 애니메이션 트리거
   attackUntil: 0, // 공격 애니메이션 종료 timestamp — 이동 잠금용
 };

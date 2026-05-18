@@ -25,11 +25,11 @@ export const ITEM_RARITY_LABEL: Record<ItemRarity, string> = {
 };
 
 export const ITEM_TRADE = {
-  TRADEABLE:   "tradeable",
+  TRADEABLE: "tradeable",
   UNTRADEABLE: "untradeable",
 } as const satisfies Record<string, ItemTrade>;
 
 export const ITEM_TRADE_LABEL: Record<ItemTrade, string> = {
-  [ITEM_TRADE.TRADEABLE]:   "교환 가능",
+  [ITEM_TRADE.TRADEABLE]: "교환 가능",
   [ITEM_TRADE.UNTRADEABLE]: "교환 불가",
 };

@@ -11,7 +11,7 @@ export function CharInfo() {
       level: st.character.level,
       name: st.character.name,
       jobClass: st.character.jobClass,
-    }))
+    })),
   );
   const isShielded = useGameStore((st) => st.isShielded);
   const skillPoints = useGameStore((st) => st.skillPoints);

@@ -6,15 +6,15 @@ export const EXP_PER_LEVEL = (lv: number) => lv * 100;
 
 export const CHARACTER_MODELS: Record<JobClass, string> = {
   warrior: "/models/characters/warrior/model.glb",
-  archer:  "/models/characters/archer/model.glb",
-  mage:    "/models/characters/mage/model.glb",
-  rogue:   "/models/characters/rogue/model.glb",
+  archer: "/models/characters/archer/model.glb",
+  mage: "/models/characters/mage/model.glb",
+  rogue: "/models/characters/rogue/model.glb",
 };
 
 export const CHARACTER_ANIMATIONS = {
   // 공유 리그 애니메이션
-  general:       "/models/characters/shared/animations/general.glb",
-  movement:      "/models/characters/shared/animations/movement.glb",
+  general: "/models/characters/shared/animations/general.glb",
+  movement: "/models/characters/shared/animations/movement.glb",
   // 직업별 공격 애니메이션
   warriorAttack: "/models/characters/warrior/animations/slash.glb",
 } as const;
@@ -27,7 +27,7 @@ export interface WeaponConfig {
 export const WEAPON_MODELS: Record<JobClass, WeaponConfig> = {
   warrior: {
     mainHand: "/models/weapons/warrior/sword_1handed.glb",
-    offHand:  "/models/weapons/warrior/shield_round.glb",
+    offHand: "/models/weapons/warrior/shield_round.glb",
   },
   archer: {
     mainHand: "/models/weapons/archer/bow_withString.glb",

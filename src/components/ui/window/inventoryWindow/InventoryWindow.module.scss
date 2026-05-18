@@ -48,7 +48,9 @@
   color: rgba(140, 170, 200, 0.5);
   line-height: 1;
   transition: color 0.12s;
-  &:hover { color: var(--accent); }
+  &:hover {
+    color: var(--accent);
+  }
 }
 
 .grid {
@@ -88,7 +90,9 @@
   opacity: 0.5;
 }
 
-.icon { font-size: 20px; }
+.icon {
+  font-size: 20px;
+}
 
 .name {
   font-family: var(--font-ui);

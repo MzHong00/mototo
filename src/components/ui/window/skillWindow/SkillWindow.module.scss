@@ -56,7 +56,9 @@
   padding: 2px 6px;
   border-radius: var(--r-sm);
   transition: color 0.12s;
-  &:hover { color: var(--accent); }
+  &:hover {
+    color: var(--accent);
+  }
 }
 
 /* ─── 탭 ─── */
@@ -76,7 +78,9 @@
   font-size: 12px;
   color: rgba(140, 170, 200, 0.55);
   cursor: pointer;
-  transition: color 0.1s, background 0.1s;
+  transition:
+    color 0.1s,
+    background 0.1s;
   &:hover {
     background: rgba(116, 185, 232, 0.05);
     color: rgba(180, 210, 240, 0.85);
@@ -130,7 +134,10 @@
     transform: translateX(2px);
   }
 
-  &:active { cursor: grabbing; transform: scale(0.98); }
+  &:active {
+    cursor: grabbing;
+    transform: scale(0.98);
+  }
 }
 
 .equipped {
@@ -176,7 +183,10 @@
   color: #d0e8ff;
 }
 
-.cardStars { display: flex; gap: 1px; }
+.cardStars {
+  display: flex;
+  gap: 1px;
+}
 
 .cardDesc {
   font-size: 11px;
@@ -232,20 +242,24 @@
   padding: var(--sp-sm) var(--sp-md) var(--sp-md);
 }
 
-.skillList, .passiveList {
+.skillList,
+.passiveList {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.skillRow, .passiveRow {
+.skillRow,
+.passiveRow {
   display: flex;
   align-items: center;
   gap: var(--sp-sm);
   padding: var(--sp-sm);
   border-radius: var(--r-md);
   border: 1px solid transparent;
-  transition: background 0.1s, border-color 0.1s;
+  transition:
+    background 0.1s,
+    border-color 0.1s;
   &:hover {
     background: rgba(116, 185, 232, 0.06);
     border-color: rgba(116, 185, 232, 0.15);
@@ -263,7 +277,8 @@
   justify-content: center;
 }
 
-.skillInfo, .passiveInfo {
+.skillInfo,
+.passiveInfo {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -271,35 +286,51 @@
   min-width: 0;
 }
 
-.skillName, .passiveName {
+.skillName,
+.passiveName {
   font-family: var(--font-ui);
   font-weight: 900;
   font-size: 13px;
   color: #d0e8ff;
 }
 
-.skillDesc, .passiveDesc {
+.skillDesc,
+.passiveDesc {
   font-size: 11px;
   color: rgba(140, 170, 200, 0.6);
 }
 
-.skillNext, .passiveNext {
+.skillNext,
+.passiveNext {
   font-size: 11px;
   color: var(--accent);
 }
 
-.skillRight, .passiveRight {
+.skillRight,
+.passiveRight {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 4px;
 }
 
-.levelStars { display: flex; gap: 1px; }
-.starOn  { color: var(--accent); font-size: 11px; }
-.starOff { color: rgba(140, 170, 200, 0.25); font-size: 11px; }
+.levelStars {
+  display: flex;
+  gap: 1px;
+}
+.starOn {
+  color: var(--accent);
+  font-size: 11px;
+}
+.starOff {
+  color: rgba(140, 170, 200, 0.25);
+  font-size: 11px;
+}
 
-.passiveIcon { font-size: 22px; flex-shrink: 0; }
+.passiveIcon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
 
 .passiveLevel {
   font-family: var(--font-ui);
@@ -320,13 +351,17 @@
   background: rgba(116, 185, 232, 0.1);
   color: var(--accent);
   cursor: pointer;
-  transition: background 0.12s, transform 0.1s;
+  transition:
+    background 0.12s,
+    transform 0.1s;
   white-space: nowrap;
   &:hover:not(:disabled) {
     background: rgba(116, 185, 232, 0.22);
     transform: translateY(-1px);
   }
-  &:active:not(:disabled) { transform: translateY(0); }
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
 }
 
 .disabled {

@@ -174,7 +174,11 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
 
   return (
     <group ref={groupRef} position={position}>
-      <mesh scale={hit ? stats.scale * HIT_SCALE_MULT : stats.scale} onClick={handleClick} castShadow>
+      <mesh
+        scale={hit ? stats.scale * HIT_SCALE_MULT : stats.scale}
+        onClick={handleClick}
+        castShadow
+      >
         <sphereGeometry args={[0.5, 10, 8]} />
         <meshStandardMaterial
           color={hit ? "#FFFFFF" : stats.color}

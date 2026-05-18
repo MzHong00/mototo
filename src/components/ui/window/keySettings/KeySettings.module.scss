@@ -40,7 +40,9 @@
   padding: 2px 6px;
   border-radius: var(--r-sm);
   transition: color 0.12s;
-  &:hover { color: var(--accent); }
+  &:hover {
+    color: var(--accent);
+  }
 }
 
 .body {
@@ -71,7 +73,9 @@
   padding: 6px var(--sp-sm);
   border-radius: var(--r-sm);
   transition: background 0.1s;
-  &:hover { background: rgba(116, 185, 232, 0.05); }
+  &:hover {
+    background: rgba(116, 185, 232, 0.05);
+  }
 }
 
 .label {
@@ -102,7 +106,9 @@
     box-shadow: 0 0 6px rgba(116, 185, 232, 0.25);
   }
 
-  &:active { cursor: grabbing; }
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 .resetBtn {
@@ -115,7 +121,9 @@
   background: rgba(116, 185, 232, 0.06);
   color: rgba(180, 210, 240, 0.7);
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
   &:hover {
     background: rgba(116, 185, 232, 0.12);
     border-color: rgba(116, 185, 232, 0.4);

@@ -6,7 +6,7 @@ import s from "./ExpBar.module.scss";
 
 export function ExpBar() {
   const { exp, expToNext } = useGameStore(
-    useShallow((st) => ({ exp: st.character.exp, expToNext: st.character.expToNext }))
+    useShallow((st) => ({ exp: st.character.exp, expToNext: st.character.expToNext })),
   );
   const pct = Math.min((exp / expToNext) * 100, 100);
 
