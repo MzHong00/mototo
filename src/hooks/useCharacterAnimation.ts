@@ -78,9 +78,11 @@ export function useCharacterAnimation({ actions, isDead, jobClass }: UseCharacte
 
     if (playerAnimSignals.hitCount > prevHitCount.current) {
       prevHitCount.current = playerAnimSignals.hitCount;
-      hitUntil.current = Date.now() + HIT_ANIM_MS;
-      playOnce("Hit_A");
-      return;
+      if (Date.now() >= attackUntil.current) {
+        hitUntil.current = Date.now() + HIT_ANIM_MS;
+        playOnce("Hit_A");
+        return;
+      }
     }
     if (Date.now() < hitUntil.current) return;
 

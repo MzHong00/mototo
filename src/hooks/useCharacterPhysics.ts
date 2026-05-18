@@ -150,7 +150,7 @@ export function useCharacterPhysics({ bodyRef, modelGroupRef }: UseCharacterPhys
           ...incoming,
         ];
         hasDamages.current = next.length > 0;
-        return incoming.length === 0 && next.length === 0 ? prev : next;
+        return prev.length === 0 && incoming.length === 0 ? prev : next;
       });
     }
   });
