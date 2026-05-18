@@ -1,5 +1,3 @@
-@use "tailwindcss";
-
 :root {
   /* 배경 */
   --bg: #d6e8ff;
@@ -40,6 +38,11 @@
   --status-poison: #7fb800;
   --status-burn: #e74c3c;
   --status-freeze: #3498db;
+
+  /* 펫 등급 */
+  --grade-normal: #b8d4a8;
+  --grade-rare: #88aaff;
+  --grade-epic: #9966ff;
 
   /* 폰트 — Google Fonts via index.html */
   --font-ui: "M PLUS Rounded 1c", sans-serif;
