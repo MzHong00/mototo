@@ -48,7 +48,7 @@ export interface GameState {
   totalAtk: () => number;
   totalDef: () => number;
 
-  selectClass: (cls: JobClass) => void;
+  selectClass: (cls: JobClass, name?: string) => void;
   assignSkill: (slotIdx: number, skill: SkillState) => void;
   swapSkillSlots: (a: number, b: number) => void;
   removeSkillFromSlot: (slotIdx: number) => void;
@@ -123,12 +123,12 @@ const gameStore = create<GameState>((set, get) => ({
 
   totalAtk: () => {
     const { character, equipped, passiveUpgrades } = get();
-    return (
+    const base =
       character.baseAtk +
       character.level * 2 +
       (equipped.weapon?.atk ?? 0) +
-      passiveUpgrades.atk * PASSIVE_CONFIG.atk.bonusPerLevel
-    );
+      passiveUpgrades.atk * PASSIVE_CONFIG.atk.bonusPerLevel;
+    return Math.floor(base);
   },
   totalDef: () => {
     const { character, equipped, passiveUpgrades } = get();
@@ -140,7 +140,7 @@ const gameStore = create<GameState>((set, get) => ({
     );
   },
 
-  selectClass: (cls) => {
+  selectClass: (cls, name) => {
     const cfg = CLASS_CONFIG[cls];
     const lv = get().character.level;
     const learned = cfg.skills.filter((sk) => (sk.requiredLevel ?? 1) <= lv);
@@ -148,6 +148,7 @@ const gameStore = create<GameState>((set, get) => ({
       character: {
         ...s.character,
         jobClass: cls,
+        name: name ?? s.character.name,
         hp: cfg.hp,
         maxHp: cfg.hp,
         baseAtk: cfg.atk,
@@ -200,9 +201,7 @@ const gameStore = create<GameState>((set, get) => ({
         // 새 레벨에서 해금되는 스킬 자동 추가
         const newlyLearned = character.jobClass
           ? CLASS_CONFIG[character.jobClass].skills.filter(
-              (sk) =>
-                (sk.requiredLevel ?? 1) === lv &&
-                !s.allSkills.some((as) => as.id === sk.id),
+              (sk) => (sk.requiredLevel ?? 1) === lv && !s.allSkills.some((as) => as.id === sk.id),
             )
           : [];
 
@@ -370,8 +369,7 @@ const gameStore = create<GameState>((set, get) => ({
   exitBoss: () => set((s) => ({ currentMapId: s.previousFieldMapId })),
 }));
 
-export const useGameStore = <T>(selector: (s: GameState) => T) =>
-  gameStore(useShallow(selector));
+export const useGameStore = <T>(selector: (s: GameState) => T) => gameStore(useShallow(selector));
 
 export const getGameState = () => gameStore.getState();
 export const setGameState = gameStore.setState.bind(gameStore);
