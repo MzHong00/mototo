@@ -1,6 +1,6 @@
 # TODOs
 
-완료된 항목은 `TODOS_SUCCESS.md` 참조.
+완료된 항목은 `TodosSuccess.md` 참조.
 
 ---
 
@@ -64,66 +64,12 @@
 
 ---
 
-## Phase 12 — 펫 시스템 📋 설계 완료 (CEO·Design·Eng 리뷰 반영)
+## Phase 12 — 펫 시스템 🔄 재설계 필요
 
-> 설계 문서: `~/.gstack/projects/ai_tech/jeongminhong-main-design-20260506-174417.md`
-> 알 수집 → 부화기 → 확률 부화 → 코스친 팔로우 + 자동공격 + 패시브 버프 + 등급별 특수스킬
+> 기존 구현(petStore, usePetBehavior, PetModel, PetEgg, PetHUD, PetWindow 등)을 전면 제거함 (2026-05-18).
+> 새로운 시스템 설계 후 재구현 예정.
 
-### [사용자 액션] 에셋 확보 + 2h 감사 (Week 1 전 선행 필수)
-
-- [ ] **quaternius.itch.io** 에서 Stylized Animals 팩 다운로드
-  - Week 1 목표: 고양이(Cat.glb)·여우(Fox.glb) 2종만
-  - `public/models/pets/` 폴더 생성 후 배치
-  - 바로 `console.log(actions)` 로 GLB 클립명 확인 — `Idle` / `Walk` / `Attack` 실제 이름 기록
-
-### [Week 1] 상수 + 스토어 + PetModel GLB 팔로우 (시각적 "와" 먼저)
-
-- [ ] **`src/constants/pet.ts`** 생성
-  - `PET_GRADES`, `PET_SPECIES`, `EGG_HATCH_DURATION_MS`, `PET_SKILL_COOLDOWN_MS`
-- [ ] **`src/stores/petStore.ts`** 생성 (zustand/persist, `name: "mototo-pets"`)
-  - `eggs[]`, `activePet`, `hatchStartedAt`, `pickedEggs: Record<eggId, pickedAt>`, `petSkillLastUsedAt`
-- [ ] **`src/hooks/usePetBehavior.ts`** 생성 (Week 1: lerp 팔로우 로직만)
-  - `useFrame` lerp — `FOLLOW_DISTANCE` 초과 시 캐릭터 위치로 이동
-  - `portalTravelTrigger.pending` 감지 → petRef position 즉시 텔레포트 (Character.tsx는 건드리지 않음, pending 리셋 금지)
-- [ ] **`src/components/game/pet/PetModel.tsx`** 생성
-  - Character.tsx GLB 패턴 참조 (`useGLTF` + `useAnimations` + `playLoop`/`playOnce`)
-  - `usePetBehavior` 호출
-  - `Suspense` + fallback 구조
-- [ ] devtest: `activePet` 하드코딩으로 펫이 캐릭터를 따라다니는 것 확인
-
-### [Week 2] 알 오브젝트 (맵 배치 + Space 획득)
-
-- [ ] **`src/components/game/world/EggObject.tsx`** 생성
-  - Portal.tsx `prevInteract` 패턴 복사 — Space 엣지 감지
-  - **Egg 근처이면 Portal보다 Space 우선** (거리 비교로 처리)
-  - `pickedEggs` 확인 → 리스폰 전이면 invisible 처리
-  - 획득 시 `petStore.addEgg()` + `useToast()` 알림
-- [ ] 에버그린 초원 맵에 Normal 알 2~3개 고정 위치 배치 후 플로우 확인
-
-### [Week 3] 부화기 UI (HatcheryWindow)
-
-- [ ] **`src/components/ui/window/hatcheryWindow/HatcheryWindow.tsx`** + `.module.scss` 생성
-  - `WindowManager`에 추가 (기존 InventoryWindow 패턴)
-  - 알 클릭 → 부화기 슬롯 배치 (최대 2개 동시)
-  - `Date.now() - hatchStartedAt` 진행도 표시
-  - 테스트용 `EGG_HATCH_DURATION_MS = 10_000` (10초)로 먼저 검증
-  - localStorage 소실 경고 — `useToast()`로 최초 1회 안내
-- [ ] 부화 완료 시 확률 처리 (Normal/Rare/Epic 등급표)
-- [ ] 부화 파티클: `<Sparkles count={40} size={0.3} speed={1.5}>` (drei, 0.8초 후 unmount)
-- [ ] globals.css — `--grade-normal`, `--grade-rare`, `--grade-epic: #9966FF` 추가
-
-### [Week 4] HUD + 패시브 버프 + 자동공격 + 특수스킬
-
-- [ ] **`src/components/ui/hud/petHUD/PetHUD.tsx`** + `.module.scss` 생성
-  - 등급 뱃지 + 특수스킬 쿨타임 잔여 (기존 `StatBar` 재활용)
-  - `HUD.tsx`에 `<PetHUD />` 추가
-- [ ] `gameStore.ts` `totalAtk()`·`totalDef()` — `getPetState()` 직접 호출로 등급 multiplier 반영
-- [ ] `usePetBehavior.ts` 자동공격 추가
-  - `prevAttackCount = useRef(...)` → useFrame 엣지 감지 → 반경 3 내 최근접 몬스터 `monsterDamageFns` 호출
-- [ ] `usePetBehavior.ts` 특수스킬 자동 발동 (쿨타임 충족 + 전투 중)
-  - Normal: `healHp()` (HP +30)
-  - Rare: 이동속도 +30%, 3초
-  - Epic: 보호막 50% 감소, 3초 (`activateShield()` 패턴)
+- [ ] 펫 시스템 재설계 (스펙 확정 후 이 섹션에 세부 태스크 추가)
 
 ---
 
@@ -235,40 +181,14 @@
 
 ---
 
-## Phase 15 — 캐릭터 생성 페이지
+## Phase 15 — 캐릭터 생성 페이지 ✅ 완료 (서버 저장 제외)
 
-> 로그인 후 DB에 캐릭터 없을 때 진입. 직업 선택 → 닉네임 입력 → 서버 저장 → 게임 시작.
-> 기존 `ClassSelect` 오버레이를 대체하는 전용 페이지 흐름.
+> 완료 항목은 `TodosSuccess.md` 참조.
+> 서버 저장(Phase 14 의존)과 닉네임 중복 체크는 Phase 14 완료 후 연동 예정.
 
-### Week 1 — 직업 선택 스텝
+### [Phase 14 연동 후] 잔여 작업
 
-- [ ] `src/components/ui/overlay/characterCreate/CharacterCreate.tsx` + `.module.scss`
-  - 다크 글래스 풀스크린 오버레이 패턴
-  - Step 1 / Step 2 스텝 인디케이터
-- [ ] `CharacterCreate` Step 1 — 직업 선택
-  - 기존 `ClassSelect`의 직업 카드 UI 재활용 (warrior/archer/mage/rogue)
-  - 직업 카드: 직업명(Shippori Mincho) + 기본 스탯(HP/ATK/DEF) + 대표 스킬 목록
-  - 직업 hover 시 3D 모델 프리뷰 (R3F 미니 캔버스 or 이미지)
-  - "다음" 버튼 → Step 2로 전환
-
-### Week 2 — 닉네임 입력 + 서버 저장
-
-- [ ] `CharacterCreate` Step 2 — 닉네임 입력
-  - 텍스트 입력 (2~12자, 한글/영문/숫자, 특수문자 금지)
-  - 실시간 유효성 검사 + 중복 체크 (`characters` 테이블 name 조회)
-  - "이전" 버튼 → Step 1 복귀
-  - "캐릭터 생성" 버튼 → 서버 저장 후 게임 시작
-- [ ] `src/server/character/character.queries.ts` — `checkNameDuplicate(name)` 추가
-- [ ] 캐릭터 생성 완료 시
-  - `createCharacter()` 호출 → DB 저장
-  - `gameStore.selectClass()` + 닉네임 반영 → 게임 인트로 시작
-  - 기존 `ClassSelect` 오버레이 제거 (CharacterCreate로 대체)
-
-### Week 3 — 기존 ClassSelect 제거 + 연동 마무리
-
-- [ ] `ClassSelect.tsx` 삭제, `App.tsx`에서 `CharacterCreate` 조건부 렌더로 교체
-  - 로그인 O + 캐릭터 없음 → `CharacterCreate`
-  - 로그인 O + 캐릭터 있음 → 바로 게임
-  - 로그인 X → `LoginScreen`
-- [ ] `gameStore.selectClass()` — 닉네임 파라미터 추가 (`selectClass(cls, name)`)
-- [ ] 전체 Toast 피드백 (캐릭터 생성 완료, 닉네임 중복, 유효성 오류)
+- [ ] `src/server/character/character.queries.ts` — `checkNameDuplicate(name)` + `createCharacter(data)`
+- [ ] `CharacterCreate` Step 2 — 닉네임 중복 체크 실시간 연동
+- [ ] 캐릭터 생성 시 서버 저장 + Toast 피드백 (캐릭터 생성 완료, 닉네임 중복)
+- [ ] `App.tsx` — 로그인 O + 캐릭터 있음 → 바로 게임 분기 추가

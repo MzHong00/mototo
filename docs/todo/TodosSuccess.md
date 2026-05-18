@@ -1,6 +1,6 @@
 # TODOS SUCCESS
 
-완료된 Phase 아카이브. 진행 중·예정 항목은 `TODOS.md` 참조.
+완료된 Phase 아카이브. 진행 중·예정 항목은 `Todos.md` 참조.
 
 ---
 
@@ -88,7 +88,7 @@
 - `worldRefs.ts` — `bossDamageFnRef` ref 객체 패턴 통일, `consumePlayerDamageEvents()` 캡슐화
 - `MapConfig` — `spawnPos` 필드 추가, 전체 맵 스폰 좌표 정의
 - `useCharacterPhysics.ts` — 낙하 복구를 현재 맵 `spawnPos` 기반으로 변경, `FALL_THRESHOLD` 상수화
-- `AGENTS.md` — `useGameStore` 내장 `useShallow` 명시, `agents/TODOS.md` 현행화 의무 추가
+- `AGENTS.md` — `useGameStore` 내장 `useShallow` 명시, `docs/todo/Todos.md` 현행화 의무 추가
 
 ## Phase UI — HUD·UX 전면 개편 ✅ 완료
 
@@ -99,3 +99,33 @@
 - 레벨 기반 스킬 해금 시스템 (`requiredLevel`, 🔒 잠금 배지)
 - 드래그 앤 드롭 스킬 키 배치 (SkillWindow → 스킬바)
 - 미니맵 구현 (Canvas 120×120, `MAP_MARKERS` 상수, 5종 마커)
+
+## Phase 12 — 펫 시스템 ✅ 완료 (GLB 에셋 제외) → ⚠️ 2026-05-18 전면 제거, 재설계 예정
+
+> 알 수집 → 부화기 → 확률 부화 → 팔로우 + 자동공격 + 패시브 버프 + 특수스킬
+> **시스템 변경으로 인해 아래 구현물 전체 삭제. 기록 목적으로만 유지.**
+
+- `src/constants/pet.ts` — `PET_GRADES/SPECIES/EGG_GRADES`, `HATCH_RATES`, `PET_GRADE_ATK_MULT`, 아이콘/레이블/색상 상수
+- `src/stores/petStore.ts` — zustand/persist (`mototo-pets`), `eggs[]`, `hatchSlots[]`, `activePet`, `pickedEggs`, `petSkillLastUsedAt`
+- `src/hooks/usePetBehavior.ts` — lerp 팔로우, 포탈 텔레포트, 자동공격(플레이어 ATK 30%), 특수스킬(Normal: 힐)
+- `src/components/game/pet/PetModel.tsx` — 구체 플레이스홀더 (GLB 교체 준비 구조), `Suspense` + fallback
+- `src/components/game/world/EggObject.tsx` — Space 엣지 감지 획득, 5분 리스폰, Billboard 안내
+- `src/constants/world.ts` — `MEADOW_EGGS` 3개 (일반×2, 희귀×1)
+- `EvergreenMeadow.tsx` — `MEADOW_EGGS` 렌더
+- `src/components/ui/window/hatcheryWindow/HatcheryWindow.tsx` — 부화 슬롯 2개, 진행도바, 확률 부화, 알 인벤토리
+- `src/stores/gameStore.ts` — `totalAtk()` 펫 등급 배율 반영, `selectClass()` name 파라미터 추가
+- `src/stores/controlsStore.ts` + `src/constants/controls.ts` — `hatchery: "KeyH"` 바인딩 추가
+- `src/components/ui/hud/petHUD/PetHUD.tsx` — 펫 아이콘·이름·등급·스킬 쿨타임 HUD
+- `src/main.scss` — `--grade-normal/rare/epic` 색상 변수 추가
+- `WindowManager.tsx` — HatcheryWindow 등록 (H키 토글)
+- `GameMenu.tsx` — 🥚 부화기 메뉴 항목 추가
+- 미완: GLB 에셋 확보(Cat.glb·Fox.glb) 후 PetModel GLB 교체 필요
+
+## Phase 15 — 캐릭터 생성 페이지 ✅ 완료
+
+- `src/components/ui/overlay/characterCreate/CharacterCreate.tsx` — 2단계 플로우 (직업 선택 → 닉네임 입력)
+  - 닉네임 실시간 유효성 검사 (2~12자, 한글·영문·숫자, Enter 확인)
+  - 직업별 카드 hover 애니메이션 (`--cls-color` CSS 변수)
+  - 스텝 인디케이터 (1·2 단계 표시)
+- `src/stores/gameStore.ts` — `selectClass(cls, name?)` — 닉네임 저장
+- `src/App.tsx` — `ClassSelect` → `CharacterCreate` 교체, 외부 `useShallow` 중복 제거

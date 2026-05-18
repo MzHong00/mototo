@@ -51,7 +51,8 @@ src/
 │       │   └── statBar/            # 재사용 상태 바 컴포넌트
 │       ├── overlay/                # 풀스크린 오버레이
 │       │   ├── bossEntry/          # 보스 입장 연출
-│       │   ├── classSelect/        # 직업 선택
+│       │   ├── characterCreate/    # 캐릭터 생성 (직업 선택 → 닉네임 2단계)
+│       │   ├── classSelect/        # 직업 선택 (레거시, characterCreate로 대체됨)
 │       │   └── deathScreen/        # 사망·리스폰
 │       ├── window/                 # 드래그 가능한 윈도우
 │       │   ├── WindowManager.tsx   # 윈도우 조합 루트
@@ -84,21 +85,6 @@ src/
 │                                   # item · items · maps(MAP_MARKERS 포함) · monster · shop · skill(SKILL_ICON 포함) · world
 └── utils/keyState.ts               # KEYS Set — useFrame용 non-reactive 키 상태
                                     # (Zustand 대신 Set: 매 프레임 읽어도 리렌더 없음)
-```
-
-### Phase 12 예정 파일 (아직 존재하지 않음 — 펫 시스템)
-
-> 아래 파일은 **현재 없음**. Phase 12 구현 시 생성한다.
-
-```
-public/models/pets/              # 펫 GLB (Quaternius Stylized Animals CC0)
-src/components/game/world/EggObject.tsx        # 맵 배치 알 — Space 획득
-src/components/game/pet/PetModel.tsx           # 펫 GLB 렌더 + usePetBehavior
-src/components/ui/hud/petHUD/                  # 펫 등급 뱃지 + 특수스킬 쿨타임 바
-src/components/ui/window/hatcheryWindow/       # 부화기 타이머 UI
-src/stores/petStore.ts                         # 펫·알·부화타이머 (zustand/persist)
-src/hooks/usePetBehavior.ts                    # lerp 팔로우·자동공격·특수스킬
-src/types/pet.ts  /  src/constants/pet.ts
 ```
 
 `@/*` → `src/` 기준 (tsconfig paths: `"@/*": ["./src/*"]`)
