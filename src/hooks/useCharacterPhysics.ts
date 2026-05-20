@@ -13,7 +13,7 @@ import {
   dashTrigger,
   playerAnimSignals,
 } from "@/stores/worldRefs";
-import { KEYS } from "@/utils/keyState";
+import { KEYS, KEY_ORDER } from "@/utils/keyState";
 import { getControlsState } from "@/stores/controlsStore";
 import { useGameStore } from "@/stores/gameStore";
 import { MAPS } from "@/constants/maps";
@@ -119,10 +119,27 @@ export function useCharacterPhysics({ bodyRef, modelGroupRef }: UseCharacterPhys
       const b = getControlsState().bindings;
       let vx = 0,
         vz = 0;
-      if (KEYS.has(b.moveUp)) vz -= SPEED;
-      if (KEYS.has(b.moveDown)) vz += SPEED;
-      if (KEYS.has(b.moveLeft)) vx -= SPEED;
-      if (KEYS.has(b.moveRight)) vx += SPEED;
+
+      const bothH = KEYS.has(b.moveLeft) && KEYS.has(b.moveRight);
+      const bothV = KEYS.has(b.moveUp) && KEYS.has(b.moveDown);
+
+      if (bothH) {
+        const first = KEY_ORDER.find((k) => k === b.moveLeft || k === b.moveRight);
+        if (first === b.moveLeft) vx = -SPEED;
+        else if (first === b.moveRight) vx = SPEED;
+      } else {
+        if (KEYS.has(b.moveLeft)) vx = -SPEED;
+        if (KEYS.has(b.moveRight)) vx = SPEED;
+      }
+
+      if (bothV) {
+        const first = KEY_ORDER.find((k) => k === b.moveUp || k === b.moveDown);
+        if (first === b.moveUp) vz = -SPEED;
+        else if (first === b.moveDown) vz = SPEED;
+      } else {
+        if (KEYS.has(b.moveUp)) vz = -SPEED;
+        if (KEYS.has(b.moveDown)) vz = SPEED;
+      }
 
       body.setLinvel({ x: vx, y: vel.y, z: vz }, true);
 
