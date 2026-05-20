@@ -168,9 +168,9 @@ const gameStore = create<GameState>((set, get) => ({
   activateSlot: (slot) => {
     const char = get().characterSlots[slot];
     if (!char?.jobClass) return;
-    const allSkills = char.allSkills ?? CLASS_CONFIG[char.jobClass].skills.filter(
-      (sk) => (sk.requiredLevel ?? 1) <= char.level,
-    );
+    const allSkills =
+      char.allSkills ??
+      CLASS_CONFIG[char.jobClass].skills.filter((sk) => (sk.requiredLevel ?? 1) <= char.level);
     set({
       character: char,
       activeSlot: slot,

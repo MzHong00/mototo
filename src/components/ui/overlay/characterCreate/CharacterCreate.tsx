@@ -94,7 +94,9 @@ export function CharacterCreate() {
 
   return (
     <div className={s.overlay}>
-      <button className={s.btnClose} onClick={() => navigate("/")} aria-label="닫기">✕</button>
+      <button className={s.btnClose} onClick={() => navigate("/")} aria-label="닫기">
+        ✕
+      </button>
 
       <div className={s.subtitle}>Browser RPG — Mototo</div>
       <h1 className={s.title}>캐릭터 만들기</h1>
@@ -119,9 +121,7 @@ export function CharacterCreate() {
         >
           <CharacterPreview jobClass={previewClass} rotatable showWeapon />
           <div className={s.previewGlow} />
-          <div className={s.previewLabel}>
-            {CLASSES.find((c) => c.id === previewClass)?.name}
-          </div>
+          <div className={s.previewLabel}>{CLASSES.find((c) => c.id === previewClass)?.name}</div>
         </div>
 
         {/* ── 우측 콘텐츠 ── */}
@@ -174,7 +174,9 @@ export function CharacterCreate() {
               {nameError && <div className={s.errorMsg}>{nameError}</div>}
 
               <div className={s.nameActions}>
-                <button className={s.btnBack} onClick={() => setStep(1)}>← 이전</button>
+                <button className={s.btnBack} onClick={() => setStep(1)}>
+                  ← 이전
+                </button>
                 <button
                   className={s.btnConfirm}
                   disabled={!NAME_REGEX.test(name)}

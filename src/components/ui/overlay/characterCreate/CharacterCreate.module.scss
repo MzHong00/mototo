@@ -122,7 +122,9 @@
   background: rgba(10, 16, 30, 0.6);
   border: 1px solid color-mix(in srgb, var(--cls-color, var(--accent)) 30%, transparent);
   box-shadow: 0 0 32px color-mix(in srgb, var(--cls-color, var(--accent)) 12%, transparent);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
 .previewGlow {
@@ -131,7 +133,11 @@
   left: 0;
   right: 0;
   height: 80px;
-  background: linear-gradient(to top, color-mix(in srgb, var(--cls-color, var(--accent)) 18%, transparent), transparent);
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--cls-color, var(--accent)) 18%, transparent),
+    transparent
+  );
   pointer-events: none;
 }
 
