@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useGameStore } from "@/stores/gameStore";
 import { getControlsState } from "@/stores/controlsStore";
@@ -11,6 +12,7 @@ import { KeySettings } from "@/components/ui/window/keySettings/KeySettings";
 import { ShopWindow } from "@/components/ui/window/shopWindow/ShopWindow";
 
 export function WindowManager() {
+  const navigate = useNavigate();
   const shopOpen = useGameStore((s) => s.shopOpen);
   const setShopOpen = useGameStore((s) => s.setShopOpen);
 
@@ -48,6 +50,7 @@ export function WindowManager() {
           onEquipment={() => setEquipmentOpen((v) => !v)}
           onSkillWindow={() => setSkillWindowOpen((v) => !v)}
           onSettings={() => setSettingsOpen((v) => !v)}
+          onLobby={() => navigate("/")}
           onClose={() => setMenuOpen(false)}
         />
       )}
