@@ -1,0 +1,255 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font-ui);
+  color: #d8ecff;
+}
+
+// ── 배경 ──────────────────────────────────────────────────────────
+.bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/game/lobby_bg.png");
+  background-size: cover;
+  background-position: center center;
+  filter: brightness(1) saturate(1.1);
+  animation: bgBreath 16s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(4, 8, 18, 0.08) 0%,
+      transparent 15%,
+      rgba(4, 8, 18, 0.5) 100%
+    );
+  }
+}
+
+@keyframes bgBreath {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// ── 헤더 ──────────────────────────────────────────────────────────
+.header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  padding-top: 24px;
+  pointer-events: none;
+}
+
+.gameTitle {
+  font-family: "Fredoka One", var(--font-ui), sans-serif;
+  font-size: 44px;
+  font-weight: 400;
+  letter-spacing: 8px;
+  color: #e8f4ff;
+  text-shadow:
+    0 0 40px rgba(116, 185, 232, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+// ── 캐릭터 로우 ───────────────────────────────────────────────────
+.characterRow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+// ── 캐릭터 슬롯 ───────────────────────────────────────────────────
+.characterSlot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: clamp(120px, 14vw, 175px);
+  cursor: pointer;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.2s ease;
+  transform-origin: bottom center;
+  filter: brightness(0.85) saturate(0.7);
+
+  &:hover {
+    filter: brightness(1) saturate(0.9);
+  }
+}
+
+.mainSlot {
+}
+
+.selectedSlot {
+  filter: brightness(1.05) saturate(1.15) !important;
+
+  .slotStage {
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--cls-color, var(--accent)) 80%, transparent),
+      0 0 28px color-mix(in srgb, var(--cls-color, var(--accent)) 40%, transparent),
+      0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+}
+
+// ── 슬롯 스테이지 (3D 캔버스 영역) ───────────────────────────────
+.slotStage {
+  position: relative;
+  width: 100%;
+  height: clamp(190px, 22vw, 260px);
+  overflow: hidden;
+  border-radius: var(--r-xl);
+}
+
+.selectedGlow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 60px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.slotEmpty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed rgba(116, 185, 232, 0.2);
+  border-radius: var(--r-xl);
+  background: rgba(8, 14, 28, 0.25);
+  backdrop-filter: blur(4px);
+  transition: all 0.18s ease;
+
+  .characterSlot:hover & {
+    border-color: rgba(116, 185, 232, 0.4);
+    background: rgba(14, 22, 42, 0.4);
+  }
+}
+
+.slotPlus {
+  font-size: 28px;
+  color: rgba(116, 185, 232, 0.3);
+  line-height: 1;
+}
+
+// ── 슬롯 정보 ─────────────────────────────────────────────────────
+.slotInfo {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(4, 8, 18, 0.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(116, 185, 232, 0.12);
+  border-radius: var(--r-lg);
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: border-color 0.2s;
+}
+
+.slotInfoActive {
+  border-color: color-mix(in srgb, var(--cls-color, var(--accent)) 60%, transparent);
+  background: rgba(8, 14, 28, 0.85);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cls-color, var(--accent)) 20%, transparent);
+
+  .slotMeta {
+    color: var(--cls-color, var(--accent));
+  }
+
+  .slotName {
+    color: #e8f4ff;
+  }
+}
+
+.slotMeta {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(160, 210, 240, 0.7);
+}
+
+.slotDivider {
+  width: 1px;
+  height: 12px;
+  background: rgba(116, 185, 232, 0.2);
+  flex-shrink: 0;
+}
+
+.slotName {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(160, 210, 240, 0.7);
+}
+
+.slotNewLabel {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: rgba(116, 185, 232, 0.4);
+}
+
+// ── 하단 푸터 ──────────────────────────────────────────────────────
+.footer {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.btnStart {
+  padding: 10px 28px;
+  background: linear-gradient(135deg, #74b9e8 0%, #5a9fd4 100%);
+  border: none;
+  border-radius: var(--r-full);
+  font-family: var(--font-ui);
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow:
+    0 4px 24px rgba(116, 185, 232, 0.4),
+    0 0 40px rgba(116, 185, 232, 0.15);
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 30px rgba(116, 185, 232, 0.5),
+      0 0 50px rgba(116, 185, 232, 0.25);
+  }
+}
+
+.btnStartDisabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+  filter: grayscale(1);
+  box-shadow: none;
+}

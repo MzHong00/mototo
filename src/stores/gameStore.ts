@@ -2,31 +2,26 @@ import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 
 import { respawnTrigger, pushPlayerDamage } from "@/stores/worldRefs";
-import { EXP_PER_LEVEL, CLASS_CONFIG } from "@/constants/character";
+import { EXP_PER_LEVEL, MAX_LEVEL, CLASS_CONFIG } from "@/constants/character";
 import { MAPS } from "@/constants/maps";
-import {
-  SKILL_LEVEL_MAX,
-  PASSIVE_LEVEL_MAX,
-  SKILL_UPGRADE_CATEGORY,
-  COOLDOWN_MULT,
-  PASSIVE_CONFIG,
-  PASSIVE_STATS,
-} from "@/constants/growth";
+import { SKILL_LEVEL_MAX, SKILL_UPGRADE_CATEGORY, COOLDOWN_MULT } from "@/constants/growth";
 
 import type { JobClass, CharacterStats, EquipSlots, SkillState } from "@/types/character";
 import type { Item } from "@/types/item";
 import type { SkillFX, SkillFXType } from "@/types/combat";
 import type { MapId } from "@/types/map";
-import type { PassiveStat } from "@/constants/growth";
-
 export type { JobClass, Item, SkillFX, SkillState, EquipSlots };
 
 let fxCounter = 0;
 
 const TOTAL_SLOTS = 17;
 
+export const CHARACTER_SLOT_COUNT = 5;
+
 export interface GameState {
   character: CharacterStats;
+  characterSlots: (CharacterStats | null)[];
+  activeSlot: number;
   allSkills: SkillState[];
   skills: (SkillState | null)[];
   inventory: Item[];
@@ -40,7 +35,6 @@ export interface GameState {
   bossEntryId: string | null;
   fxList: SkillFX[];
   skillPoints: number;
-  passiveUpgrades: Record<PassiveStat, number>;
   clearedBosses: string[];
   currentMapId: MapId;
   previousFieldMapId: MapId;
@@ -48,7 +42,8 @@ export interface GameState {
   totalAtk: () => number;
   totalDef: () => number;
 
-  selectClass: (cls: JobClass, name?: string) => void;
+  selectClass: (cls: JobClass, name: string, slot: number) => void;
+  activateSlot: (slot: number) => void;
   assignSkill: (slotIdx: number, skill: SkillState) => void;
   swapSkillSlots: (a: number, b: number) => void;
   removeSkillFromSlot: (slotIdx: number) => void;
@@ -80,7 +75,8 @@ export interface GameState {
   travelTo: (mapId: MapId) => void;
   exitBoss: () => void;
   upgradeSkill: (skillId: string) => void;
-  upgradePassive: (stat: PassiveStat) => void;
+  downgradeSkill: (skillId: string) => void;
+  selectSkillNode: (skillId: string, tier: number, nodeId: string) => void;
 }
 
 const INVENTORY_MAX = 16;
@@ -88,18 +84,33 @@ const LEVEL_HP_BONUS = 20;
 const LEVEL_ATK_BONUS = 3;
 const SHIELD_DURATION_MS = 4000;
 
+function syncSlotSkills(
+  slots: (CharacterStats | null)[],
+  activeSlot: number,
+  allSkills: SkillState[],
+): (CharacterStats | null)[] {
+  if (activeSlot < 0 || !slots[activeSlot]) return slots;
+  const updated = [...slots];
+  updated[activeSlot] = { ...slots[activeSlot]!, allSkills };
+  return updated;
+}
+
+const EMPTY_CHARACTER: CharacterStats = {
+  name: "",
+  jobClass: null,
+  level: 1,
+  hp: 100,
+  maxHp: 100,
+  exp: 0,
+  expToNext: EXP_PER_LEVEL(1),
+  baseAtk: 15,
+  baseDef: 0,
+};
+
 const gameStore = create<GameState>((set, get) => ({
-  character: {
-    name: "플레이어",
-    jobClass: null,
-    level: 1,
-    hp: 100,
-    maxHp: 100,
-    exp: 0,
-    expToNext: EXP_PER_LEVEL(1),
-    baseAtk: 15,
-    baseDef: 0,
-  },
+  character: EMPTY_CHARACTER,
+  characterSlots: Array<null>(CHARACTER_SLOT_COUNT).fill(null),
+  activeSlot: -1,
   allSkills: [],
   skills: Array<null>(TOTAL_SLOTS).fill(null),
   inventory: [],
@@ -113,50 +124,59 @@ const gameStore = create<GameState>((set, get) => ({
   bossEntryId: null,
   fxList: [],
   skillPoints: 0,
-  passiveUpgrades: Object.fromEntries(PASSIVE_STATS.map((k) => [k, 0])) as Record<
-    PassiveStat,
-    number
-  >,
   clearedBosses: [],
   currentMapId: "evergreenVillage" as MapId,
   previousFieldMapId: "evergreenMeadow" as MapId,
 
   totalAtk: () => {
-    const { character, equipped, passiveUpgrades } = get();
-    const base =
-      character.baseAtk +
-      character.level * 2 +
-      (equipped.weapon?.atk ?? 0) +
-      passiveUpgrades.atk * PASSIVE_CONFIG.atk.bonusPerLevel;
-    return Math.floor(base);
+    const { character, equipped } = get();
+    return Math.floor(character.baseAtk + character.level * 2 + (equipped.weapon?.atk ?? 0));
   },
   totalDef: () => {
-    const { character, equipped, passiveUpgrades } = get();
-    return (
-      character.baseDef +
-      (equipped.armor?.def ?? 0) +
-      (equipped.ring?.def ?? 0) +
-      passiveUpgrades.def * PASSIVE_CONFIG.def.bonusPerLevel
-    );
+    const { character, equipped } = get();
+    return character.baseDef + (equipped.armor?.def ?? 0) + (equipped.ring?.def ?? 0);
   },
 
-  selectClass: (cls, name) => {
+  selectClass: (cls, name, slot) => {
+    if (slot < 0 || slot >= CHARACTER_SLOT_COUNT) return;
     const cfg = CLASS_CONFIG[cls];
-    const lv = get().character.level;
-    const learned = cfg.skills.filter((sk) => (sk.requiredLevel ?? 1) <= lv);
-    set((s) => ({
-      character: {
-        ...s.character,
-        jobClass: cls,
-        name: name ?? s.character.name,
-        hp: cfg.hp,
-        maxHp: cfg.hp,
-        baseAtk: cfg.atk,
-        baseDef: cfg.def,
-      },
-      allSkills: learned,
+    const newChar: CharacterStats = {
+      name,
+      jobClass: cls,
+      level: 1,
+      hp: cfg.hp,
+      maxHp: cfg.hp,
+      exp: 0,
+      expToNext: EXP_PER_LEVEL(1),
+      baseAtk: cfg.atk,
+      baseDef: cfg.def,
+    };
+    const learned = cfg.skills.filter((sk) => (sk.requiredLevel ?? 1) <= 1);
+    set((s) => {
+      const slots = [...s.characterSlots];
+      slots[slot] = { ...newChar, allSkills: learned };
+      return {
+        character: newChar,
+        characterSlots: slots,
+        activeSlot: slot,
+        allSkills: learned,
+        skills: Array<null>(TOTAL_SLOTS).fill(null),
+      };
+    });
+  },
+
+  activateSlot: (slot) => {
+    const char = get().characterSlots[slot];
+    if (!char?.jobClass) return;
+    const allSkills = char.allSkills ?? CLASS_CONFIG[char.jobClass].skills.filter(
+      (sk) => (sk.requiredLevel ?? 1) <= char.level,
+    );
+    set({
+      character: char,
+      activeSlot: slot,
+      allSkills,
       skills: Array<null>(TOTAL_SLOTS).fill(null),
-    }));
+    });
   },
 
   assignSkill: (slotIdx, skill) =>
@@ -192,6 +212,7 @@ const gameStore = create<GameState>((set, get) => ({
   gainExp: (amount) =>
     set((s) => {
       const { character } = s;
+      if (character.level >= MAX_LEVEL) return { character: { ...character, exp: 0 } };
       const newExp = character.exp + amount;
       const needed = EXP_PER_LEVEL(character.level);
       if (newExp >= needed) {
@@ -205,18 +226,25 @@ const gameStore = create<GameState>((set, get) => ({
             )
           : [];
 
+        const newChar = {
+          ...character,
+          level: lv,
+          exp: newExp - needed,
+          expToNext: EXP_PER_LEVEL(lv),
+          maxHp: mhp,
+          hp: mhp,
+          baseAtk: character.baseAtk + LEVEL_ATK_BONUS,
+        };
+        const newAllSkills = [...s.allSkills, ...newlyLearned];
+        const newSlots = syncSlotSkills(s.characterSlots, s.activeSlot, newAllSkills);
+        if (s.activeSlot >= 0 && newSlots[s.activeSlot]) {
+          newSlots[s.activeSlot] = { ...newSlots[s.activeSlot]!, ...newChar };
+        }
         return {
           skillPoints: s.skillPoints + 1,
-          character: {
-            ...character,
-            level: lv,
-            exp: newExp - needed,
-            expToNext: EXP_PER_LEVEL(lv),
-            maxHp: mhp,
-            hp: mhp,
-            baseAtk: character.baseAtk + LEVEL_ATK_BONUS,
-          },
-          allSkills: [...s.allSkills, ...newlyLearned],
+          character: newChar,
+          allSkills: newAllSkills,
+          characterSlots: newSlots,
         };
       }
       return { character: { ...character, exp: newExp } };
@@ -337,26 +365,45 @@ const gameStore = create<GameState>((set, get) => ({
         if (!sk || sk.id !== skillId) return sk;
         return { ...sk, level: nextLevel, cooldown: newCooldown };
       };
+      const newAllSkills = s.allSkills.map((sk) =>
+        sk.id === skillId ? { ...sk, level: nextLevel, cooldown: newCooldown } : sk,
+      );
       return {
         skillPoints: s.skillPoints - 1,
-        allSkills: s.allSkills.map((sk) =>
-          sk.id === skillId ? { ...sk, level: nextLevel, cooldown: newCooldown } : sk,
-        ),
+        allSkills: newAllSkills,
         skills: s.skills.map(apply),
+        characterSlots: syncSlotSkills(s.characterSlots, s.activeSlot, newAllSkills),
       };
     }),
 
-  upgradePassive: (stat) =>
+  downgradeSkill: (skillId) =>
     set((s) => {
-      if (s.skillPoints < 1) return {};
-      if (s.passiveUpgrades[stat] >= PASSIVE_LEVEL_MAX) return {};
-      const bonus = PASSIVE_CONFIG[stat].bonusPerLevel;
-      const passiveUpgrades = { ...s.passiveUpgrades, [stat]: s.passiveUpgrades[stat] + 1 };
-      let { character } = s;
-      if (stat === "hp") {
-        character = { ...character, maxHp: character.maxHp + bonus, hp: character.hp + bonus };
-      }
-      return { skillPoints: s.skillPoints - 1, passiveUpgrades, character };
+      const current = s.allSkills.find((sk) => sk.id === skillId);
+      if (!current || current.level <= 1) return {};
+
+      const nextLevel = current.level - 1;
+      const baseCooldown = s.character.jobClass
+        ? (CLASS_CONFIG[s.character.jobClass].skills.find((sk) => sk.id === skillId)?.cooldown ??
+          current.cooldown)
+        : current.cooldown;
+      const newCooldown =
+        SKILL_UPGRADE_CATEGORY[skillId] === "cooldown"
+          ? parseFloat((baseCooldown * COOLDOWN_MULT(nextLevel)).toFixed(2))
+          : current.cooldown;
+
+      const apply = (sk: SkillState | null): SkillState | null => {
+        if (!sk || sk.id !== skillId) return sk;
+        return { ...sk, level: nextLevel, cooldown: newCooldown };
+      };
+      const newAllSkills = s.allSkills.map((sk) =>
+        sk.id === skillId ? { ...sk, level: nextLevel, cooldown: newCooldown } : sk,
+      );
+      return {
+        skillPoints: s.skillPoints + 1,
+        allSkills: newAllSkills,
+        skills: s.skills.map(apply),
+        characterSlots: syncSlotSkills(s.characterSlots, s.activeSlot, newAllSkills),
+      };
     }),
 
   travelTo: (mapId) =>
@@ -367,6 +414,26 @@ const gameStore = create<GameState>((set, get) => ({
     ),
 
   exitBoss: () => set((s) => ({ currentMapId: s.previousFieldMapId })),
+
+  selectSkillNode: (skillId, tier, nodeId) =>
+    set((s) => {
+      const idx = s.allSkills.findIndex((sk) => sk.id === skillId);
+      if (idx === -1) return {};
+      const skill = s.allSkills[idx];
+      const nodes = { ...(skill.selectedNodes ?? {}) };
+      if (nodes[tier] === nodeId) {
+        delete nodes[tier];
+      } else {
+        nodes[tier] = nodeId;
+      }
+      const updated = { ...skill, selectedNodes: nodes };
+      const newAllSkills = s.allSkills.map((sk, i) => (i === idx ? updated : sk));
+      return {
+        allSkills: newAllSkills,
+        skills: s.skills.map((sk) => (sk?.id === skillId ? { ...sk, selectedNodes: nodes } : sk)),
+        characterSlots: syncSlotSkills(s.characterSlots, s.activeSlot, newAllSkills),
+      };
+    }),
 }));
 
 export const useGameStore = <T>(selector: (s: GameState) => T) => gameStore(useShallow(selector));

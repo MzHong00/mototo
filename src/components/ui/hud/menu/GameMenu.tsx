@@ -5,6 +5,7 @@ interface GameMenuProps {
   onEquipment: () => void;
   onSkillWindow: () => void;
   onSettings: () => void;
+  onLobby: () => void;
   onClose: () => void;
 }
 
@@ -13,6 +14,7 @@ const MENU_ITEMS = [
   { icon: "🗡️", label: "장비창", action: "equipment" },
   { icon: "✨", label: "스킬", action: "skill" },
   { icon: "⚙️", label: "설정", action: "settings" },
+  { icon: "👤", label: "캐릭터 변경", action: "lobby" },
 ] as const;
 
 export function GameMenu({
@@ -20,6 +22,7 @@ export function GameMenu({
   onEquipment,
   onSkillWindow,
   onSettings,
+  onLobby,
   onClose,
 }: GameMenuProps) {
   const handlers: Record<string, () => void> = {
@@ -27,6 +30,7 @@ export function GameMenu({
     equipment: onEquipment,
     skill: onSkillWindow,
     settings: onSettings,
+    lobby: onLobby,
   };
 
   return (

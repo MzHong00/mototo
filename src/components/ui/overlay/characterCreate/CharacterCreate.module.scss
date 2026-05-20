@@ -9,6 +9,30 @@
   z-index: 100;
 }
 
+.btnClose {
+  position: absolute;
+  top: var(--sp-lg);
+  right: var(--sp-lg);
+  width: 36px;
+  height: 36px;
+  background: rgba(10, 16, 30, 0.7);
+  border: 1.5px solid rgba(116, 185, 232, 0.25);
+  border-radius: var(--r-full);
+  color: rgba(180, 210, 240, 0.6);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: rgba(116, 185, 232, 0.5);
+    color: #d8ecff;
+    background: rgba(14, 22, 42, 0.85);
+  }
+}
+
 .subtitle {
   font-family: var(--font-ui);
   font-weight: 900;
@@ -81,14 +105,65 @@
   background: rgba(116, 185, 232, 0.2);
 }
 
+// ── 본문 2단 레이아웃 ──────────────────────────────────────────
+.createBody {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.previewPane {
+  width: 260px;
+  height: 380px;
+  position: relative;
+  flex-shrink: 0;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: rgba(10, 16, 30, 0.6);
+  border: 1px solid color-mix(in srgb, var(--cls-color, var(--accent)) 30%, transparent);
+  box-shadow: 0 0 32px color-mix(in srgb, var(--cls-color, var(--accent)) 12%, transparent);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.previewGlow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, color-mix(in srgb, var(--cls-color, var(--accent)) 18%, transparent), transparent);
+  pointer-events: none;
+}
+
+.previewLabel {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--cls-color, var(--accent));
+  pointer-events: none;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.rightContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 // ── Step 1 — 직업 카드 ─────────────────────────────────────────
 .cards {
-  display: flex;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
 .card {
-  width: 200px;
+  width: 172px;
   padding: 28px 20px 24px;
   background: rgba(10, 16, 30, 0.85);
   border: 1px solid rgba(116, 185, 232, 0.2);

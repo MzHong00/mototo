@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
+import { useGameStore } from "@/stores/gameStore";
+import { CharacterPreview } from "@/components/game/character/CharacterPreview";
 
 import type { JobClass } from "@/types/job";
 
@@ -51,11 +55,12 @@ const CLASSES: ClassConfig[] = [
 const NAME_REGEX = /^[a-zA-Z0-9가-힣]{2,12}$/;
 const NAME_ERROR_MSG = "2~12자, 한글·영문·숫자만 사용 가능합니다.";
 
-interface CharacterCreateProps {
-  onConfirm: (cls: JobClass, name: string) => void;
-}
+export function CharacterCreate() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const targetSlot = (location.state as { slot?: number } | null)?.slot;
+  const selectClass = useGameStore((s) => s.selectClass);
 
-export function CharacterCreate({ onConfirm }: CharacterCreateProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedClass, setSelectedClass] = useState<JobClass | null>(null);
   const [hovered, setHovered] = useState<JobClass | null>(null);
@@ -78,17 +83,22 @@ export function CharacterCreate({ onConfirm }: CharacterCreateProps) {
       setNameError(NAME_ERROR_MSG);
       return;
     }
-    onConfirm(selectedClass, name);
+    selectClass(selectedClass, name, targetSlot ?? 0);
+    navigate("/", { state: { slot: targetSlot } });
   };
 
   const selectedClassConfig = CLASSES.find((c) => c.id === selectedClass) ?? null;
+  // 프리뷰에 표시할 직업: hover > 선택됨 > 첫 번째 직업
+  const previewClass: JobClass = hovered ?? selectedClass ?? "warrior";
+  const previewColor = CLASSES.find((c) => c.id === previewClass)?.color ?? "var(--accent)";
 
   return (
     <div className={s.overlay}>
+      <button className={s.btnClose} onClick={() => navigate("/")} aria-label="닫기">✕</button>
+
       <div className={s.subtitle}>Browser RPG — Mototo</div>
       <h1 className={s.title}>캐릭터 만들기</h1>
 
-      {/* 스텝 인디케이터 */}
       <div className={s.steps}>
         <div className={`${s.step} ${step >= 1 ? s.active : ""}`}>
           <span className={s.stepNum}>1</span>
@@ -101,69 +111,82 @@ export function CharacterCreate({ onConfirm }: CharacterCreateProps) {
         </div>
       </div>
 
-      {/* Step 1 — 직업 선택 */}
-      {step === 1 && (
-        <div className={s.cards}>
-          {CLASSES.map((cls) => {
-            const active = hovered === cls.id;
-            return (
+      <div className={s.createBody}>
+        {/* ── 좌측 3D 프리뷰 ── */}
+        <div
+          className={s.previewPane}
+          style={{ "--cls-color": previewColor } as React.CSSProperties}
+        >
+          <CharacterPreview jobClass={previewClass} rotatable showWeapon />
+          <div className={s.previewGlow} />
+          <div className={s.previewLabel}>
+            {CLASSES.find((c) => c.id === previewClass)?.name}
+          </div>
+        </div>
+
+        {/* ── 우측 콘텐츠 ── */}
+        <div className={s.rightContent}>
+          {step === 1 && (
+            <div className={s.cards}>
+              {CLASSES.map((cls) => {
+                const active = hovered === cls.id || selectedClass === cls.id;
+                return (
+                  <div
+                    key={cls.id}
+                    onMouseEnter={() => setHovered(cls.id)}
+                    onMouseLeave={() => setHovered(null)}
+                    onClick={() => handleClassSelect(cls.id)}
+                    className={`${s.card} ${active ? s.cardActive : ""}`}
+                    style={{ "--cls-color": cls.color } as React.CSSProperties}
+                  >
+                    <div className={s.cardIcon}>{cls.icon}</div>
+                    <div className={s.cardName}>{cls.name}</div>
+                    <div className={s.cardDesc}>{cls.desc}</div>
+                    <div className={s.cardStats}>{cls.stats}</div>
+                    {active && <div className={s.selectBtn}>선택</div>}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {step === 2 && selectedClassConfig && (
+            <div className={s.nameStep}>
               <div
-                key={cls.id}
-                onMouseEnter={() => setHovered(cls.id)}
-                onMouseLeave={() => setHovered(null)}
-                onClick={() => handleClassSelect(cls.id)}
-                className={`${s.card} ${active ? s.cardActive : ""}`}
-                style={{ "--cls-color": cls.color } as React.CSSProperties}
+                className={s.selectedClass}
+                style={{ "--cls-color": selectedClassConfig.color } as React.CSSProperties}
               >
-                <div className={s.cardIcon}>{cls.icon}</div>
-                <div className={s.cardName}>{cls.name}</div>
-                <div className={s.cardDesc}>{cls.desc}</div>
-                <div className={s.cardStats}>{cls.stats}</div>
-                {active && <div className={s.selectBtn}>선택</div>}
+                <span className={s.selectedIcon}>{selectedClassConfig.icon}</span>
+                <span className={s.selectedName}>{selectedClassConfig.name}</span>
               </div>
-            );
-          })}
+
+              <label className={s.nameLabel}>닉네임을 입력하세요</label>
+              <input
+                className={`${s.nameInput} ${nameError ? s.inputError : ""}`}
+                type="text"
+                maxLength={12}
+                placeholder="2~12자 (한글·영문·숫자)"
+                value={name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleConfirm()}
+                autoFocus
+              />
+              {nameError && <div className={s.errorMsg}>{nameError}</div>}
+
+              <div className={s.nameActions}>
+                <button className={s.btnBack} onClick={() => setStep(1)}>← 이전</button>
+                <button
+                  className={s.btnConfirm}
+                  disabled={!NAME_REGEX.test(name)}
+                  onClick={handleConfirm}
+                >
+                  캐릭터 생성
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-
-      {/* Step 2 — 닉네임 */}
-      {step === 2 && selectedClassConfig && (
-        <div className={s.nameStep}>
-          <div
-            className={s.selectedClass}
-            style={{ "--cls-color": selectedClassConfig.color } as React.CSSProperties}
-          >
-            <span className={s.selectedIcon}>{selectedClassConfig.icon}</span>
-            <span className={s.selectedName}>{selectedClassConfig.name}</span>
-          </div>
-
-          <label className={s.nameLabel}>닉네임을 입력하세요</label>
-          <input
-            className={`${s.nameInput} ${nameError ? s.inputError : ""}`}
-            type="text"
-            maxLength={12}
-            placeholder="2~12자 (한글·영문·숫자)"
-            value={name}
-            onChange={(e) => handleNameChange(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleConfirm()}
-            autoFocus
-          />
-          {nameError && <div className={s.errorMsg}>{nameError}</div>}
-
-          <div className={s.nameActions}>
-            <button className={s.btnBack} onClick={() => setStep(1)}>
-              ← 이전
-            </button>
-            <button
-              className={s.btnConfirm}
-              disabled={!NAME_REGEX.test(name)}
-              onClick={handleConfirm}
-            >
-              캐릭터 생성
-            </button>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

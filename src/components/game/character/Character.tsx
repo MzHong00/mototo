@@ -8,23 +8,20 @@ import { CHARACTER_MODELS, WEAPON_MODELS, CHARACTER_ANIMATIONS } from "@/constan
 import { useGameStore } from "@/stores/gameStore";
 import { useCharacterAnimation } from "@/hooks/useCharacterAnimation";
 import { useCharacterPhysics } from "@/hooks/useCharacterPhysics";
+import { Weapon } from "./Weapon";
 
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { JobClass } from "@/types/job";
 import type { DmgEntry } from "@/hooks/useCharacterPhysics";
 
-// ── 상수 ────────────────────────────────────────────────────────
 const MODEL_SCALE = 0.6;
 const MODEL_Y_OFFSET = -0.6;
-// 색상 — Three.js는 CSS 변수 미지원이므로 파일 내 상수로 추출
+// Three.js는 CSS 변수 미지원이므로 파일 내 상수로 추출
 const COLOR_FALLBACK_CHAR = "#5BA3FF";
 const COLOR_SHIELD = "#4488FF";
 const COLOR_DMG_TEXT = "#FF3333";
 const COLOR_DMG_OUTLINE = "#000000";
-// WeaponSlot offset — 배열 리터럴을 JSX에 직접 쓰면 렌더마다 새 참조 생성 → useEffect 매번 재실행
-const SHIELD_OFFSET: [number, number, number] = [0, 0, 0.1];
 
-// ── 앱 진입 시 GLB 선로드 ───────────────────────────────────────
 Object.values(CHARACTER_MODELS).forEach((p) => useGLTF.preload(p));
 Object.values(CHARACTER_ANIMATIONS).forEach((p) => useGLTF.preload(p));
 Object.values(WEAPON_MODELS).forEach(({ mainHand, offHand }) => {
@@ -32,37 +29,10 @@ Object.values(WEAPON_MODELS).forEach(({ mainHand, offHand }) => {
   if (offHand) useGLTF.preload(offHand);
 });
 
-// ── Props 인터페이스 ─────────────────────────────────────────────
-interface WeaponSlotProps {
-  charScene: THREE.Group;
-  weaponPath: string;
-  boneName: string;
-  offset?: [number, number, number];
-}
-
 interface CharacterModelProps {
   jobClass: JobClass | null;
   groupRef: React.RefObject<THREE.Group | null>;
   isDead: boolean;
-}
-
-// ── WeaponSlot ───────────────────────────────────────────────────
-// GLB 무기를 캐릭터 스켈레톤 본에 명령형으로 부착. R3F 안에서 null 반환.
-function WeaponSlot({ charScene, weaponPath, boneName, offset }: WeaponSlotProps) {
-  const { scene: weaponScene } = useGLTF(weaponPath);
-
-  useEffect(() => {
-    const bone = charScene.getObjectByName(boneName);
-    if (!bone) return;
-    const clone = weaponScene.clone(true);
-    if (offset) clone.position.set(...offset);
-    bone.add(clone);
-    return () => {
-      bone.remove(clone);
-    };
-  }, [charScene, weaponScene, boneName, offset]);
-
-  return null;
 }
 
 // ── CharacterModel ───────────────────────────────────────────────
@@ -94,15 +64,10 @@ function CharacterModel({ jobClass, groupRef, isDead }: CharacterModelProps) {
     <>
       <primitive object={scene} scale={MODEL_SCALE} position={[0, MODEL_Y_OFFSET, 0]} />
       {weaponCfg && (
-        <WeaponSlot charScene={scene} weaponPath={weaponCfg.mainHand} boneName="handslotr" />
+        <Weapon charScene={scene} weaponPath={weaponCfg.mainHand} boneName="handslotr" />
       )}
       {weaponCfg?.offHand && (
-        <WeaponSlot
-          charScene={scene}
-          weaponPath={weaponCfg.offHand}
-          boneName="handslotl"
-          offset={SHIELD_OFFSET}
-        />
+        <Weapon charScene={scene} weaponPath={weaponCfg.offHand} boneName="handslotl" />
       )}
     </>
   );
