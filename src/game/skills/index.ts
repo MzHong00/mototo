@@ -11,18 +11,18 @@ import type { SkillConfig, SkillContext, SkillHandler } from "@/types/skill";
 // slash / blast 패턴은 config(fx, hitDelay)만으로 실행 가능
 // 새 공통 스킬 패턴이 생기면 여기에 케이스 추가
 function buildDefaultExecute(id: string, cfg: SkillConfig): (ctx: SkillContext) => void {
-  if (id === "slash") {
+  if (cfg.pattern === "slash") {
     return ({ ppos, facing, pos, dir, atk, skillLevel, addFX }) => {
       if (cfg.fx) addFX(cfg.fx, pos, dir);
       const dmg = Math.floor(atk * SLASH_DMG_MULT(skillLevel) + Math.random() * 6);
       fireSlash(ppos, facing, cfg.fx, dmg, cfg.hitDelay ?? 0);
     };
   }
-  if (id === "blast") {
+  if (cfg.pattern === "blast") {
     return ({ ppos, facing, pos, dir, atk, skillLevel, addFX }) => {
       if (cfg.fx) addFX(cfg.fx, pos, dir);
       const dmg = Math.floor(atk * BLAST_DMG_MULT(skillLevel) + Math.random() * 12);
-      fireBlast(ppos, facing, cfg.fx!, dmg);
+      if (cfg.fx) fireBlast(ppos, facing, cfg.fx, dmg);
     };
   }
   return () => {};
