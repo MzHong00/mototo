@@ -7,8 +7,8 @@ interface TwilightWastelandProps {
   onPortalEnter: (dest: MapId, spawnPos?: [number, number, number]) => void;
 }
 
-export function TwilightWasteland({ onPortalEnter: _onPortalEnter }: TwilightWastelandProps) {
-  // eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function TwilightWasteland({ onPortalEnter: _ }: TwilightWastelandProps) {
   return (
     <>
       <ambientLight intensity={0.4} />
