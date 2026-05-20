@@ -4,6 +4,13 @@
 
 ---
 
+## 버그픽스 · 고도화 (2026-05-18)
+
+- [x] **피격 데미지 수치 텍스트 미소멸 버그 수정** — `useCharacterPhysics.ts` setDamages 반환 조건 오류 (`next.length === 0`일 때 `prev` 반환 → `prev.length === 0` 조건으로 수정)
+- [x] **만렙 50 설정** — `MAX_LEVEL = 50` 상수 추가, `gainExp` 만렙 체크, `ExpBar` 만렙 시 100% 고정
+
+---
+
 ## Phase 11 — GLB 몬스터·보스 비주얼 업그레이드 🚧 진행 중
 
 > 설계 문서: `~/.gstack/projects/ai_tech/jeongminhong-main-design-20260506-094535.md`
@@ -61,6 +68,57 @@
   - `new THREE.Box3().setFromObject(scene)` 측정 후 각 모델 크기 파악
   - 게임 월드 스케일 기준으로 개별 modelScale 값 조정
   - 보스는 일반 몬스터 대비 1.5-2× 크게 설정
+
+---
+
+## Phase 16 — 스킬 트라이포드 시스템
+
+> 설계 문서: `~/.gstack/projects/ai_tech/jeongminhong-main-design-20260518-155652.md`
+> 스킬 콘텐츠 문서: `docs/content/Class.md`
+> 각 스킬에 Tier 1·2 특성을 찍으면 스킬 동작 자체가 바뀌는 시스템. 전사부터 프로토타입 후 나머지 3클래스 적용.
+
+### Step 1 — 타입·상수
+
+- [ ] `src/types/skillTree.ts` 신규 — `SkillNodeModifier`, `SkillBehaviorTag`, `SkillNodeChoice`, `SkillTierDef`, `SkillTreeDef`, `ResolvedSkillParams`
+- [ ] `src/constants/skillTree.ts` 신규 — `WARRIOR_SKILL_TREES` (slash·charge·taunt·cataclysm 각 Tier 1·2)
+- [ ] `src/types/character.ts` — `SkillState`에 `selectedNodes: Record<number, string>` 필드 추가
+- [ ] `src/stores/gameStore.ts` — `selectSkillNode(skillId, tier, choiceId)` 액션 추가 (토글 취소 지원)
+
+### Step 2 — 전사 스킬 교체 (charge·taunt·cataclysm)
+
+- [ ] `src/constants/character.ts` — `CLASS_CONFIG.warrior.skills` 업데이트
+  - `shield` → `charge` (돌진, CD 8s)
+  - `heal` → `taunt` (도발, CD 15s)
+  - `blast` → `cataclysm` (파멸의 일격, CD 25s)
+- [ ] 전투 로직에서 `charge` · `taunt` · `cataclysm` 핸들러 추가
+
+### Step 3 — 전투 로직 연동
+
+- [ ] `src/game/skill/applySkillModifiers.ts` 신규
+  - `selectedNodes`를 읽어 `ResolvedSkillParams` 반환
+  - `damageMultiplier`, `cooldown`, `fxType`, `targetType`, `behaviorTags[]`, `statusEffects[]` 합산
+- [ ] `behaviorTag` 분기 처리
+  - `aoe_360` — 360° 원형 타격 범위
+  - `reflect_damage` — 방패 해제 시 blast FX + AOE 데미지
+  - `speed_boost` — 버프 중 이동속도 배율 적용
+  - `execute_bonus` — HP 40% 이하 데미지 2배
+  - `dash_then_attack` — 순간이동 후 공격
+
+### Step 4 — SkillWindow UI
+
+- [ ] `src/components/ui/window/skillWindow/SkillWindow.tsx` — 트리 뷰 교체
+  - 스킬 탭 (베기·돌진·도발·파멸의 일격)
+  - Tier 행: 잠금(회색) / 선택 가능 / 선택됨(accent 테두리) 3상태
+  - 클릭 → `selectSkillNode` 호출, 재클릭 → 취소
+  - `disabled: true` 노드 → "준비 중" 표시
+
+### Step 5 — 나머지 3클래스 (전사 검증 후)
+
+- [ ] `src/constants/character.ts` — archer·mage·rogue 스킬 교체
+  - 궁수: `rapid_shot` 유지, `piercing_arrow`·`backstep`·`explosive_arrow`
+  - 마법사: `fireball` 유지, `ice_spike`·`blink`·`black_hole`
+  - 도적: `shuriken` 유지, `shadow_slash`·`smoke_bomb`·`death_dance`
+- [ ] `ARCHER_SKILL_TREES`, `MAGE_SKILL_TREES`, `ROGUE_SKILL_TREES` 상수 정의
 
 ---
 
