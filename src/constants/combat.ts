@@ -24,14 +24,12 @@ export const SKILL_TYPE = {
   ATTACK: "attack",
   BUFF: "buff",
   HEAL: "heal",
-  PASSIVE: "passive",
 } as const satisfies Record<string, SkillType>;
 
 export const SKILL_TYPE_LABEL: Record<SkillType, string> = {
   [SKILL_TYPE.ATTACK]: "공격",
   [SKILL_TYPE.BUFF]: "버프",
   [SKILL_TYPE.HEAL]: "회복",
-  [SKILL_TYPE.PASSIVE]: "패시브",
 };
 
 export const SKILL_FX_TYPE = {

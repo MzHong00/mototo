@@ -20,6 +20,7 @@ export interface SkillConfig {
   triggersAttack?: boolean;
   fx?: SkillFXType;
   hitDelay?: number;
+  pattern?: "slash" | "blast";
 }
 
 export interface SkillHandler {

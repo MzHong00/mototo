@@ -13,30 +13,80 @@ export const FX_DURATION: Record<SkillFXType, number> = {
 };
 
 export const SKILL_COLOR: Record<string, string> = {
+  // Warrior
   slash: "var(--accent)",
-  shield: "var(--accent2)",
-  heal: "var(--exp)",
-  blast: "var(--danger)",
+  charge: "#ff6348",
+  taunt: "#a29bfe",
+  cataclysm: "var(--danger)",
+  // Archer
+  arrow_shot: "var(--exp)",
+  piercing_arrow: "#2ed573",
+  backstep: "#74b9d4",
+  explosive_arrow: "#ffa502",
+  // Mage
+  fireball: "#ff6348",
+  ice_spike: "#74d7e8",
+  blink: "#a29bfe",
+  black_hole: "#7f8fa6",
+  // Rogue
+  dagger_slash: "var(--accent)",
+  shadow_slash: "#636e72",
+  smoke_bomb: "#7fb800",
+  death_dance: "var(--danger)",
+  // Common
   dash: "#9B59B6",
 };
 
 export const SKILL_ICON: Record<string, string> = {
+  // Warrior
   slash: "⚔️",
-  shield: "🛡️",
-  heal: "✨",
-  blast: "💥",
+  charge: "⚡",
+  taunt: "📣",
+  cataclysm: "💀",
+  // Archer
+  arrow_shot: "🏹",
+  piercing_arrow: "🎯",
+  backstep: "↩️",
+  explosive_arrow: "💥",
+  // Mage
+  fireball: "🔥",
+  ice_spike: "❄️",
+  blink: "✨",
+  black_hole: "🌀",
+  // Rogue
+  dagger_slash: "🗡️",
+  shadow_slash: "👤",
+  smoke_bomb: "💨",
+  death_dance: "💃",
+  // Common
   dash: "⚡",
 };
 
 export const SKILL_DESCRIPTIONS: Record<string, string> = {
-  slash: "전방 적에게 물리 데미지",
-  shield: "일정 시간 피해 무효화",
-  heal: "HP 30% 즉시 회복",
-  blast: "광역 강력한 공격",
-  dash: "진행 방향으로 빠르게 돌진",
+  // Warrior
+  slash: "전방 근접 범위 적에게 물리 데미지",
+  charge: "전방으로 돌진, 첫 번째 적에게 강타 + 0.5초 경직",
+  taunt: "주변 적을 4초간 집중시킴. 피해 감소 20%",
+  cataclysm: "긴 선딜 후 ATK × 3.0 강타",
+  // Archer
+  arrow_shot: "전방으로 화살 1발 발사. 기본 평타",
+  piercing_arrow: "충전 후 발사. 경로 위 모든 적 관통 타격",
+  backstep: "뒤로 대시하며 화살 3발 동시 발사",
+  explosive_arrow: "폭발 화살 발사. 착탄 시 광역 폭발",
+  // Mage
+  fireball: "전방으로 화염볼 발사. 기본 평타",
+  ice_spike: "빙결 창 발사. 적중 시 이동속도 -60% 2초",
+  blink: "바라보는 방향으로 단거리 순간이동",
+  black_hole: "전방에 블랙홀 생성. 3초 흡입 후 폭발",
+  // Rogue
+  dagger_slash: "단검으로 전방 적을 빠르게 베는 기본 평타",
+  shadow_slash: "대상에게 순간이동하며 ATK × 1.8 베기",
+  smoke_bomb: "발 아래 연막 생성 3초. 연막 내 은신·적 슬로우",
+  death_dance: "6초간 적에게 순간이동하며 12타",
+  // Common
+  dash: "진행 방향으로 빠르게 대시",
 };
 
-// 1~9, Q W E R, A S D F 순서
 export const SKILL_KEY_GROUPS = [
   ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
   ["Q", "W", "E", "R"],

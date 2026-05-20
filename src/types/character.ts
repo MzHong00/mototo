@@ -14,6 +14,7 @@ export interface CharacterStats {
   expToNext: number;
   baseAtk: number;
   baseDef: number;
+  allSkills?: SkillState[];
 }
 
 export interface EquipSlots {
@@ -33,4 +34,5 @@ export interface SkillState {
   requiredLevel?: number;
   damageType?: DamageType;
   targetType?: TargetType;
+  selectedNodes?: Record<number, string>; // { tier: nodeId }
 }

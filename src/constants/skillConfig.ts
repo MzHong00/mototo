@@ -4,19 +4,27 @@ import type { SkillConfig } from "@/types/skill";
 
 export const CLASS_SKILL_CONFIG: Record<JobClass, Record<string, SkillConfig>> = {
   warrior: {
-    slash: { lockMs: 500, triggersAttack: true, hitDelay: 250 }, // fx 없음 — GLB 슬래시 모션으로 대체
-    blast: { lockMs: 1500, triggersAttack: true, fx: "blast" },
+    slash: { lockMs: 500, triggersAttack: true, hitDelay: 250, pattern: "slash" },
+    charge: { lockMs: 800, triggersAttack: true, hitDelay: 300, pattern: "slash" },
+    taunt: { lockMs: 1000, triggersAttack: false },
+    cataclysm: { lockMs: 1800, triggersAttack: true, fx: "blast", pattern: "blast" },
   },
   archer: {
-    slash: { lockMs: 500, triggersAttack: true, fx: "arrow", hitDelay: 0 },
-    blast: { lockMs: 500, triggersAttack: true, fx: "arrow_blast" },
+    arrow_shot: { lockMs: 350, triggersAttack: true, fx: "arrow", pattern: "slash" },
+    piercing_arrow: { lockMs: 800, triggersAttack: true, fx: "arrow", pattern: "slash" },
+    backstep: { lockMs: 500, triggersAttack: false },
+    explosive_arrow: { lockMs: 500, triggersAttack: true, fx: "arrow_blast", pattern: "blast" },
   },
   mage: {
-    slash: { lockMs: 500, triggersAttack: true, fx: "fireball", hitDelay: 0 },
-    blast: { lockMs: 500, triggersAttack: true, fx: "meteor" },
+    fireball: { lockMs: 500, triggersAttack: true, fx: "fireball", pattern: "slash" },
+    ice_spike: { lockMs: 700, triggersAttack: true, fx: "arrow", pattern: "slash" },
+    blink: { lockMs: 300, triggersAttack: false },
+    black_hole: { lockMs: 500, triggersAttack: true, fx: "blast", pattern: "blast" },
   },
   rogue: {
-    slash: { lockMs: 500, triggersAttack: true, fx: "shuriken", hitDelay: 0 },
-    blast: { lockMs: 500, triggersAttack: true, fx: "shuriken_blast" },
+    dagger_slash: { lockMs: 300, triggersAttack: true, hitDelay: 150, pattern: "slash" },
+    shadow_slash: { lockMs: 400, triggersAttack: true, hitDelay: 100, pattern: "slash" },
+    smoke_bomb: { lockMs: 500, triggersAttack: false },
+    death_dance: { lockMs: 500, triggersAttack: true, fx: "shuriken_blast", pattern: "blast" },
   },
 };
