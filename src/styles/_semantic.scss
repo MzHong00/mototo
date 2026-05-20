@@ -1,0 +1,102 @@
+// ============================================================
+// _semantic.scss
+// Layer 2: Semantic tokens — "어디에 쓰이는가"를 이름에 담음
+// Primitive를 alias로 참조합니다.
+// 다크모드 등 컬러 모드 전환은 이 파일의 [data-theme] 블록에서 처리합니다.
+// 컴포넌트는 오직 이 계층의 토큰만 바라봅니다.
+// ============================================================
+
+:root {
+  // ── 배경 ──
+  --color-bg: var(--blue-200);
+  --color-surface: var(--blue-100);
+
+  // ── 패널 ──
+  --color-panel-bg: var(--neutral-0);
+  --color-panel-sub: var(--neutral-50);
+  --color-panel-warm: var(--warm-50);
+
+  // ── 보더 ──
+  --color-border: var(--neutral-200);
+  --color-border-active: var(--blue-400);
+
+  // ── 텍스트 ──
+  --color-text-primary: var(--neutral-900);
+  --color-text-muted: var(--neutral-800);
+
+  // ── 액션 ──
+  --color-accent: var(--blue-400);
+  --color-success: var(--green-500);
+  --color-danger: var(--red-500);
+
+  // ── 상태 바 ──
+  --color-status-hp: var(--red-400);
+  --color-status-mp: var(--blue-500);
+  --color-status-exp: var(--green-400);
+
+  // ── 데미지·힐 타입 ──
+  --color-dmg-physical: var(--orange-500);
+  --color-dmg-magic: var(--purple-500);
+  --color-dmg-heal: var(--green-600);
+
+  // ── 상태 효과 ──
+  --color-effect-poison: var(--yellow-green-500);
+  --color-effect-burn: var(--red-600);
+  --color-effect-freeze: var(--blue-500);
+
+  // ── 펫 등급 ──
+  --color-grade-normal: var(--grade-color-normal);
+  --color-grade-rare: var(--grade-color-rare);
+  --color-grade-epic: var(--grade-color-epic);
+
+  // ── 그림자 ──
+  --shadow-card: var(--shadow-1);
+
+  // ── 스페이싱 (semantic alias) ──
+  --sp-xs: var(--space-1);
+  --sp-sm: var(--space-2);
+  --sp-md: var(--space-4);
+  --sp-lg: var(--space-6);
+  --sp-xl: var(--space-8);
+
+  // ── 보더 반경 (semantic alias) ──
+  --r-sm: var(--radius-1);
+  --r-md: var(--radius-2);
+  --r-lg: var(--radius-3);
+  --r-xl: var(--radius-4);
+  --r-full: var(--radius-full);
+
+  // ── 타이포그래피 (semantic alias) ──
+  --font-ui: var(--font-family-ui);
+  --font-title: var(--font-family-title);
+
+  // ── 컬러 하위 호환 alias (구 토큰명 → 신 토큰) ──────────────────
+  // 기존 컴포넌트가 var(--accent) 등을 참조하므로 마이그레이션 전까지 유지
+  --bg: var(--color-bg);
+  --surface: var(--color-surface);
+  --panel-bg: var(--color-panel-bg);
+  --panel-sub: var(--color-panel-sub);
+  --panel-warm: var(--color-panel-warm);
+  --border: var(--color-border);
+  --border-active: var(--color-border-active);
+  --text: var(--color-text-primary);
+  --text-muted: var(--color-text-muted);
+  --accent: var(--color-accent);
+  --success: var(--color-success);
+  --danger: var(--color-danger);
+  --hp: var(--color-status-hp);
+  --mp: var(--color-status-mp);
+  --exp: var(--color-status-exp);
+}
+
+// ── 다크 모드 — 이 계층에서만 컬러 모드를 전환합니다 ──────────────
+// [data-theme="dark"] {
+//   --color-bg:           var(--neutral-900);
+//   --color-surface:      var(--neutral-800);
+//   --color-panel-bg:     #1e1e2e;
+//   --color-panel-sub:    #252535;
+//   --color-text-primary: var(--neutral-0);
+//   --color-text-muted:   var(--neutral-200);
+//   --color-border:       rgba(255, 255, 255, 0.12);
+//   --color-border-active:var(--blue-400);
+// }

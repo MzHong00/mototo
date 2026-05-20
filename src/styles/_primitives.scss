@@ -1,0 +1,73 @@
+// ============================================================
+// _primitives.scss
+// Layer 1: Primitive tokens — 팔레트 원시값만 정의
+// 컴포넌트가 직접 참조해서는 안 됩니다. Semantic 레이어를 통해서만 사용.
+// ============================================================
+
+:root {
+  // ── Blue scale ──
+  --blue-100: #eaf2ff;
+  --blue-200: #d6e8ff;
+  --blue-300: #b3d4f5;
+  --blue-400: #74b9e8;
+  --blue-500: #3b82f6;
+  --blue-600: #2563c4;
+
+  // ── Neutral scale ──
+  --neutral-0: #ffffff;
+  --neutral-50: #f4f7fa;
+  --neutral-100: #e8edf2;
+  --neutral-200: #c8d8e8;
+  --neutral-800: #7a8aa0;
+  --neutral-900: #1a1a2e;
+
+  // ── Warm scale ──
+  --warm-50: #fffaf0;
+
+  // ── Red scale ──
+  --red-400: #ff4d4d;
+  --red-500: #ff3344;
+  --red-600: #e74c3c;
+
+  // ── Green scale ──
+  --green-400: #55cc22;
+  --green-500: #33bb55;
+  --green-600: #27ae60;
+
+  // ── Purple scale ──
+  --purple-500: #9b59b6;
+  --purple-600: #9966ff;
+
+  // ── Orange scale ──
+  --orange-500: #ff6b35;
+  --orange-600: #e67e22;
+
+  // ── Status ──
+  --yellow-green-500: #7fb800;
+
+  // ── Grade ──
+  --grade-color-normal: #b8d4a8;
+  --grade-color-rare: #88aaff;
+  --grade-color-epic: #9966ff;
+
+  // ── Spacing scale (px 기반 — rem으로 교체 시 이 파일만 수정) ──
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  // ── Border radius scale ──
+  --radius-1: 4px;
+  --radius-2: 8px;
+  --radius-3: 14px;
+  --radius-4: 20px;
+  --radius-full: 9999px;
+
+  // ── Shadow scale ──
+  --shadow-1: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 0 rgba(0, 0, 0, 0.06);
+
+  // ── Typography ──
+  --font-family-ui: "M PLUS Rounded 1c", sans-serif;
+  --font-family-title: "Shippori Mincho", serif;
+}

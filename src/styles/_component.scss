@@ -1,0 +1,38 @@
+// ============================================================
+// _component.scss
+// Layer 3: Component-scope tokens — Semantic을 다시 참조합니다.
+// 특정 UI 요소에 국한된 토큰 오버라이드 및 전역 컴포넌트 기본값.
+// ============================================================
+
+// ── 스크롤바 ─────────────────────────────────────────────────
+:root {
+  --scrollbar-width: 5px;
+  --scrollbar-thumb-color: rgba(116, 185, 232, 0.3); // ≈ --color-accent @ 30%
+  --scrollbar-thumb-hover: rgba(116, 185, 232, 0.55); // ≈ --color-accent @ 55%
+  --scrollbar-track-color: rgba(255, 255, 255, 0.04);
+}
+
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+}
+
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color);
+  border-radius: var(--r-full);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-color);
+  border-radius: var(--r-full);
+
+  &:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+}
