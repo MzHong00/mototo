@@ -8,7 +8,7 @@ import { CharacterCreate } from "@/components/ui/overlay/characterCreate/Charact
 import { useGameStore } from "@/stores/gameStore";
 
 function GameRoute() {
-  const hasCharacter = useGameStore((s) => s.character.jobClass !== null);
+  const hasCharacter = useGameStore((s) => s.character.cls !== null);
   return hasCharacter ? <App /> : <Navigate to="/" replace />;
 }
 

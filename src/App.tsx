@@ -9,7 +9,7 @@ import { Modal } from "@/components/ui/modal/Modal";
 import { Toast } from "@/components/ui/toast/Toast";
 import { useGameStore } from "@/stores/gameStore";
 import { bossEnterTrigger, portalTravelTrigger } from "@/stores/worldRefs";
-import { MAPS } from "@/constants/maps";
+import { MAPS } from "@/constants/map/maps";
 
 import type { MapId } from "@/types/map";
 import type { BossType } from "@/types/boss";
