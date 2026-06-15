@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 
 import "./main.scss";
-import GameScreen from "@/screens/GameScreen";
+import GameScreen from "@/screens/game/GameScreen";
 import { LobbyScreen } from "@/screens/lobby/LobbyScreen";
 import { CharacterCreateScreen } from "@/screens/characterCreate/CharacterCreateScreen";
 import { useGameStore } from "@/stores/gameStore";
