@@ -1,72 +1,77 @@
-import type { JobClass } from "@/types/job";
-import type { SkillState } from "@/types/character";
-import { SKILL_TYPE, DAMAGE_TYPE, TARGET_TYPE } from "@/constants/combat";
+import type { Class, ClassCardConfig, ClassConfig } from "@/types/class";
+import type { SkillState } from "@/types/skill";
+import { SKILL_TYPE, DAMAGE_TYPE, TARGET_TYPE } from "@/constants/skill/combat";
 
-export const MAX_LEVEL = 50;
-export const EXP_PER_LEVEL = (lv: number) => lv * 100;
-
-export const CHARACTER_MODELS: Record<JobClass, string> = {
-  warrior: "/models/characters/warrior/model.glb",
-  archer: "/models/characters/archer/model.glb",
-  mage: "/models/characters/mage/model.glb",
-  rogue: "/models/characters/rogue/model.glb",
-};
-
-export const CHARACTER_ANIMATIONS = {
-  general: "/models/characters/shared/animations/general.glb",
-  movement: "/models/characters/shared/animations/movement.glb",
-  warriorAttack: "/models/characters/warrior/animations/slash.glb",
-} as const;
-
-export interface WeaponConfig {
-  mainHand: string;
-  offHand?: string;
-}
-
-export const WEAPON_MODELS: Record<JobClass, WeaponConfig> = {
-  warrior: {
-    mainHand: "/models/weapons/warrior/sword_1handed.glb",
-    offHand: "/models/weapons/warrior/shield_round.glb",
-  },
-  archer: { mainHand: "/models/weapons/archer/bow_withString.glb" },
-  mage: { mainHand: "/models/weapons/mage/staff.glb" },
-  rogue: { mainHand: "/models/weapons/rogue/dagger.glb" },
-};
-
-export const JOB_CLASS = {
+export const CLASS = {
   WARRIOR: "warrior",
   ARCHER: "archer",
   MAGE: "mage",
   ROGUE: "rogue",
-} as const satisfies Record<string, JobClass>;
+} as const satisfies Record<string, Class>;
 
-export const JOB_CLASS_LABEL: Record<JobClass, string> = {
-  [JOB_CLASS.WARRIOR]: "전사",
-  [JOB_CLASS.ARCHER]: "궁수",
-  [JOB_CLASS.MAGE]: "마법사",
-  [JOB_CLASS.ROGUE]: "도적",
+export const CLASS_LABEL: Record<Class, string> = {
+  [CLASS.WARRIOR]: "전사",
+  [CLASS.ARCHER]: "궁수",
+  [CLASS.MAGE]: "마법사",
+  [CLASS.ROGUE]: "도적",
 };
 
-const DASH_SKILL: SkillState = {
-  id: "dash",
-  key: "5",
-  label: "대쉬",
-  skillType: SKILL_TYPE.BUFF,
-  cooldown: 0.5,
-  lastUsed: 0,
-  level: 1,
-  requiredLevel: 1,
+export const CLASS_COLOR: Record<Class, string> = {
+  [CLASS.WARRIOR]: "var(--cls-warrior)",
+  [CLASS.ARCHER]: "var(--cls-archer)",
+  [CLASS.MAGE]: "var(--cls-mage)",
+  [CLASS.ROGUE]: "var(--cls-rogue)",
 };
 
-interface ClassConfig {
-  hp: number;
-  atk: number;
-  def: number;
-  skills: SkillState[];
-}
+export const CLASS_CARDS: ClassCardConfig[] = [
+  {
+    id: CLASS.WARRIOR,
+    icon: "/images/classes/warrior.png",
+    desc: "두꺼운 갑옷과 강인한 체력으로 최전선을 지킨다.",
+    stats: { hp: 90, atk: 65, def: 85, spd: 40 },
+  },
+  {
+    id: CLASS.ARCHER,
+    icon: "/images/classes/archer.png",
+    desc: "빠른 발놀림과 정확한 조준으로 적을 압도한다.",
+    stats: { hp: 55, atk: 85, def: 30, spd: 95 },
+  },
+  {
+    id: CLASS.MAGE,
+    icon: "/images/classes/mage.png",
+    desc: "광대한 마나로 강력한 마법을 구사한다.",
+    stats: { hp: 30, atk: 100, def: 15, spd: 70 },
+  },
+  {
+    id: CLASS.ROGUE,
+    icon: "/images/classes/rogue.png",
+    desc: "날랜 몸놀림과 표창으로 적의 빈틈을 노린다.",
+    stats: { hp: 60, atk: 80, def: 40, spd: 90 },
+  },
+];
 
-export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
-  [JOB_CLASS.WARRIOR]: {
+export const STAT_BAR_CONFIG = [
+  { key: "hp" as const, label: "HP", color: "var(--hp)" },
+  { key: "atk" as const, label: "ATK", color: "var(--color-dmg-physical)" },
+  { key: "def" as const, label: "DEF", color: "var(--accent)" },
+  { key: "spd" as const, label: "SPD", color: "var(--success)" },
+];
+
+export const COMMON_SKILLS: SkillState[] = [
+  {
+    id: "dash",
+    key: "5",
+    label: "대쉬",
+    skillType: SKILL_TYPE.BUFF,
+    cooldown: 0.5,
+    lastUsed: 0,
+    level: 1,
+    requiredLevel: 1,
+  },
+];
+
+export const CLASS_CONFIG: Record<Class, ClassConfig> = {
+  [CLASS.WARRIOR]: {
     hp: 150,
     atk: 20,
     def: 5,
@@ -117,10 +122,10 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         level: 1,
         requiredLevel: 30,
       },
-      DASH_SKILL,
+      ...COMMON_SKILLS,
     ],
   },
-  [JOB_CLASS.ARCHER]: {
+  [CLASS.ARCHER]: {
     hp: 100,
     atk: 22,
     def: 2,
@@ -171,10 +176,10 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         level: 1,
         requiredLevel: 30,
       },
-      DASH_SKILL,
+      ...COMMON_SKILLS,
     ],
   },
-  [JOB_CLASS.MAGE]: {
+  [CLASS.MAGE]: {
     hp: 80,
     atk: 30,
     def: 0,
@@ -225,10 +230,10 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         level: 1,
         requiredLevel: 30,
       },
-      DASH_SKILL,
+      ...COMMON_SKILLS,
     ],
   },
-  [JOB_CLASS.ROGUE]: {
+  [CLASS.ROGUE]: {
     hp: 90,
     atk: 26,
     def: 1,
@@ -279,7 +284,7 @@ export const CLASS_CONFIG: Record<JobClass, ClassConfig> = {
         level: 1,
         requiredLevel: 30,
       },
-      DASH_SKILL,
+      ...COMMON_SKILLS,
     ],
   },
 };

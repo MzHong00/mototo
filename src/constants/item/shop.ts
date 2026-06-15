@@ -1,17 +1,6 @@
-import type { Item } from "@/types/item";
-import { ITEMS } from "@/constants/items";
-import { ITEM_TYPE } from "@/constants/item";
-
-export interface ShopItemDef {
-  id: string;
-  name: string;
-  icon: string;
-  price: number;
-  desc: string;
-  healHp?: number;
-  enhanceAtk?: number;
-  grantItem?: Omit<Item, "uid">;
-}
+import type { ShopItemDef } from "@/types/shop";
+import { ITEMS } from "@/constants/item/items";
+import { ITEM_TYPE } from "@/constants/item/item";
 
 export const SHOP_CATALOG: ShopItemDef[] = [
   {

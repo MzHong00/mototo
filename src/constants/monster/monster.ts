@@ -1,4 +1,4 @@
-import type { MonsterType, MonsterRank } from "@/types/monster";
+import type { MonsterType, MonsterRank, MonsterStats } from "@/types/monster";
 
 export const MONSTER_TYPE = {
   CHICKEN: "chicken",
@@ -33,17 +33,6 @@ export const MONSTER_RANK_LABEL: Record<MonsterRank, string> = {
   [MONSTER_RANK.ELITE]: "정예",
   [MONSTER_RANK.BOSS]: "보스",
 };
-
-interface MonsterStats {
-  level: number;
-  maxHp: number;
-  exp: number;
-  damage: number;
-  speed: number;
-  color: string;
-  scale: number;
-  rank: MonsterRank;
-}
 
 export const MONSTERS = {
   mototo: {

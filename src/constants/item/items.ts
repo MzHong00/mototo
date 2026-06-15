@@ -1,6 +1,6 @@
 import type { Item, ItemType } from "@/types/item";
-import { ITEM_TYPE, ITEM_RARITY, ITEM_TRADE } from "@/constants/item";
-import { JOB_CLASS } from "@/constants/character";
+import { ITEM_TYPE, ITEM_RARITY, ITEM_TRADE } from "@/constants/item/item";
+import { CLASS } from "@/constants/character/class";
 
 export const ITEMS = {
   [ITEM_TYPE.WEAPON]: {
@@ -15,7 +15,7 @@ export const ITEMS = {
       def: 0,
       hpBonus: 0,
       requiredLevel: 3,
-      requiredClass: [JOB_CLASS.ARCHER, JOB_CLASS.ROGUE],
+      requiredClass: [CLASS.ARCHER, CLASS.ROGUE],
     },
     steel_sword: {
       id: "steel_sword",
@@ -28,7 +28,7 @@ export const ITEMS = {
       def: 0,
       hpBonus: 0,
       requiredLevel: 6,
-      requiredClass: [JOB_CLASS.WARRIOR, JOB_CLASS.ROGUE],
+      requiredClass: [CLASS.WARRIOR, CLASS.ROGUE],
     },
     iron_sword: {
       id: "iron_sword",
@@ -41,7 +41,7 @@ export const ITEMS = {
       def: 0,
       hpBonus: 0,
       requiredLevel: 2,
-      requiredClass: [JOB_CLASS.WARRIOR, JOB_CLASS.ROGUE],
+      requiredClass: [CLASS.WARRIOR, CLASS.ROGUE],
     },
     deer_horn_sword: {
       id: "deer_horn_sword",
@@ -54,7 +54,7 @@ export const ITEMS = {
       def: 5,
       hpBonus: 0,
       requiredLevel: 22,
-      requiredClass: [JOB_CLASS.WARRIOR],
+      requiredClass: [CLASS.WARRIOR],
     },
     bear_claw_sword: {
       id: "bear_claw_sword",
@@ -67,7 +67,7 @@ export const ITEMS = {
       def: 5,
       hpBonus: 0,
       requiredLevel: 8,
-      requiredClass: [JOB_CLASS.WARRIOR],
+      requiredClass: [CLASS.WARRIOR],
     },
   },
   [ITEM_TYPE.ARMOR]: {
@@ -95,7 +95,7 @@ export const ITEMS = {
       def: 5,
       hpBonus: 0,
       requiredLevel: 4,
-      requiredClass: [JOB_CLASS.WARRIOR, JOB_CLASS.ARCHER, JOB_CLASS.ROGUE],
+      requiredClass: [CLASS.WARRIOR, CLASS.ARCHER, CLASS.ROGUE],
     },
     plate: {
       id: "plate",
@@ -108,7 +108,7 @@ export const ITEMS = {
       def: 9,
       hpBonus: 0,
       requiredLevel: 7,
-      requiredClass: [JOB_CLASS.WARRIOR],
+      requiredClass: [CLASS.WARRIOR],
     },
     iron_armor: {
       id: "iron_armor",
@@ -121,7 +121,7 @@ export const ITEMS = {
       def: 7,
       hpBonus: 0,
       requiredLevel: 3,
-      requiredClass: [JOB_CLASS.WARRIOR, JOB_CLASS.ARCHER, JOB_CLASS.ROGUE],
+      requiredClass: [CLASS.WARRIOR, CLASS.ARCHER, CLASS.ROGUE],
     },
     turtle_shield: {
       id: "turtle_shield",
@@ -134,7 +134,7 @@ export const ITEMS = {
       def: 18,
       hpBonus: 0,
       requiredLevel: 15,
-      requiredClass: [JOB_CLASS.WARRIOR, JOB_CLASS.ARCHER, JOB_CLASS.ROGUE],
+      requiredClass: [CLASS.WARRIOR, CLASS.ARCHER, CLASS.ROGUE],
     },
   },
   [ITEM_TYPE.RING]: {

@@ -1,8 +1,8 @@
 import type { MonsterConfig, MonsterType } from "@/types/monster";
-import type { Item } from "@/types/item";
-import { MONSTER_TYPE } from "@/constants/monster";
-import { ITEMS } from "@/constants/items";
-import { ITEM_TYPE } from "@/constants/item";
+import type { DropEntry } from "@/types/item";
+import { MONSTER_TYPE } from "@/constants/monster/monster";
+import { ITEMS } from "@/constants/item/items";
+import { ITEM_TYPE } from "@/constants/item/item";
 
 // ── 몬스터 스폰 ───────────────────────────────────────────────
 export const MEADOW_SPAWNS: MonsterConfig[] = [
@@ -46,11 +46,6 @@ export const RUINS_SPAWNS: MonsterConfig[] = [
 ];
 
 // ── 드롭 테이블 ───────────────────────────────────────────────
-export interface DropEntry {
-  chance: number;
-  item: Omit<Item, "uid">;
-}
-
 export const DROP_TABLE: Record<MonsterType, DropEntry[]> = {
   [MONSTER_TYPE.CHICKEN]: [{ chance: 0.25, item: ITEMS[ITEM_TYPE.RING].old_ring }],
   [MONSTER_TYPE.ROOSTER]: [

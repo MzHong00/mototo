@@ -54,6 +54,6 @@ export const PROJECTILE_PARAMS = {
 } as const;
 
 export const BLAST_PROJECTILE_PARAMS = {
-  arrow_blast: { blastDist: 7, travelMs: 700 * 0.55, blastRadius: 2.5 },
-  shuriken_blast: { blastDist: 8, travelMs: 750 * 0.5, blastRadius: 2.5 },
+  arrow_blast: { blastDist: 7, travelMs: 385, blastRadius: 2.5 },
+  shuriken_blast: { blastDist: 8, travelMs: 375, blastRadius: 2.5 },
 } as const;

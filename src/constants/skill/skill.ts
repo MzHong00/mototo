@@ -1,5 +1,5 @@
 import type { SkillFXType } from "@/types/combat";
-import { SKILL_FX_TYPE } from "@/constants/combat";
+import { SKILL_FX_TYPE } from "@/constants/skill/combat";
 
 export const FX_DURATION: Record<SkillFXType, number> = {
   [SKILL_FX_TYPE.SLASH]: 480,
@@ -15,26 +15,26 @@ export const FX_DURATION: Record<SkillFXType, number> = {
 export const SKILL_COLOR: Record<string, string> = {
   // Warrior
   slash: "var(--accent)",
-  charge: "#ff6348",
-  taunt: "#a29bfe",
+  charge: "var(--red-orange-400)",
+  taunt: "var(--lavender-400)",
   cataclysm: "var(--danger)",
   // Archer
   arrow_shot: "var(--exp)",
-  piercing_arrow: "#2ed573",
-  backstep: "#74b9d4",
-  explosive_arrow: "#ffa502",
+  piercing_arrow: "var(--emerald-400)",
+  backstep: "var(--blue-400)",
+  explosive_arrow: "var(--amber-400)",
   // Mage
-  fireball: "#ff6348",
-  ice_spike: "#74d7e8",
-  blink: "#a29bfe",
-  black_hole: "#7f8fa6",
+  fireball: "var(--red-orange-400)",
+  ice_spike: "var(--cyan-300)",
+  blink: "var(--lavender-400)",
+  black_hole: "var(--neutral-800)",
   // Rogue
   dagger_slash: "var(--accent)",
-  shadow_slash: "#636e72",
-  smoke_bomb: "#7fb800",
+  shadow_slash: "var(--slate-400)",
+  smoke_bomb: "var(--yellow-green-500)",
   death_dance: "var(--danger)",
   // Common
-  dash: "#9B59B6",
+  dash: "var(--purple-500)",
 };
 
 export const SKILL_ICON: Record<string, string> = {
@@ -86,31 +86,3 @@ export const SKILL_DESCRIPTIONS: Record<string, string> = {
   // Common
   dash: "진행 방향으로 빠르게 대시",
 };
-
-export const SKILL_KEY_GROUPS = [
-  ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
-  ["Q", "W", "E", "R"],
-  ["A", "S", "D", "F"],
-] as const;
-
-export const ALL_HOTKEYS = SKILL_KEY_GROUPS.flat();
-
-export const SKILL_CODES = [
-  "Digit1",
-  "Digit2",
-  "Digit3",
-  "Digit4",
-  "Digit5",
-  "Digit6",
-  "Digit7",
-  "Digit8",
-  "Digit9",
-  "KeyQ",
-  "KeyW",
-  "KeyE",
-  "KeyR",
-  "KeyA",
-  "KeyS",
-  "KeyD",
-  "KeyF",
-] as const;

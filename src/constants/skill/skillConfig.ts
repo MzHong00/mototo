@@ -1,8 +1,7 @@
-import type { JobClass } from "@/types/job";
-
+import type { Class } from "@/types/class";
 import type { SkillConfig } from "@/types/skill";
 
-export const CLASS_SKILL_CONFIG: Record<JobClass, Record<string, SkillConfig>> = {
+export const CLASS_SKILL_CONFIG: Record<Class, Record<string, SkillConfig>> = {
   warrior: {
     slash: { lockMs: 500, triggersAttack: true, hitDelay: 250, pattern: "slash" },
     charge: { lockMs: 800, triggersAttack: true, hitDelay: 300, pattern: "slash" },

@@ -1,7 +1,6 @@
-import type { Item } from "@/types/item";
 import type { BossType, BossStats } from "@/types/boss";
-import { ITEMS } from "@/constants/items";
-import { ITEM_TYPE } from "@/constants/item";
+import { ITEMS } from "@/constants/item/items";
+import { ITEM_TYPE } from "@/constants/item/item";
 
 export const BOSS_TYPE = {
   KING_BEAR: "king_bear",
@@ -103,14 +102,3 @@ export const BOSSES = {
     },
   },
 } as const;
-
-export const BOSS_STATS: Record<BossType, BossStats> = {
-  [BOSS_TYPE.KING_BEAR]: BOSSES.mototo.evergreen[BOSS_TYPE.KING_BEAR],
-  [BOSS_TYPE.GIANT_TURTLE]: BOSSES.mototo.blueCove[BOSS_TYPE.GIANT_TURTLE],
-  [BOSS_TYPE.KING_DEER]: BOSSES.mototo.danpunggol[BOSS_TYPE.KING_DEER],
-};
-
-export const BOSS_REWARD_ITEM: Item = {
-  ...BOSS_STATS[BOSS_TYPE.KING_BEAR].rewardItem,
-  uid: "bear_claw_sword_reward",
-};
