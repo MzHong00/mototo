@@ -1,9 +1,9 @@
 import { RigidBody } from "@react-three/rapier";
 
 import { KingBearBoss } from "@/components/game/monster/boss/KingBearBoss";
-import { BOSS_TYPE, BOSS_STATS } from "@/constants/boss";
+import { BOSS_TYPE, BOSSES } from "@/constants/monster/boss";
 
-const { arenaRadius: BOSS_ARENA_RADIUS } = BOSS_STATS[BOSS_TYPE.KING_BEAR];
+const { arenaRadius: BOSS_ARENA_RADIUS } = BOSSES.mototo.evergreen[BOSS_TYPE.KING_BEAR];
 
 interface KingBearChamberProps {
   onBossExit: () => void;

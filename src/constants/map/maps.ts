@@ -1,4 +1,25 @@
-import type { MapId, MapType, MapConfig, MapMarker } from "@/types/map";
+import type { MapId, MapType, MapConfig, MapMarker, TreeVariant } from "@/types/map";
+
+export interface MapTheme {
+  ground: string;
+  wire: string;
+}
+
+export const MAP_THEMES: Record<MapId, MapTheme> = {
+  evergreenVillage: { ground: "#99DD66", wire: "#88CC55" },
+  evergreenMeadow: { ground: "#88CC55", wire: "#77BB44" },
+  evergreenForest: { ground: "#66AA44", wire: "#558833" },
+  evergreenSwamp: { ground: "#667744", wire: "#556633" },
+  evergreenRuins: { ground: "#9B9B8A", wire: "#7A7A6A" },
+  twilightWasteland: { ground: "#AA8855", wire: "#997744" },
+  kingBearChamber: { ground: "#AA8855", wire: "#997744" },
+};
+
+export const TREE_COLORS: Record<TreeVariant, { trunk: string; mid: string; top: string }> = {
+  pine: { trunk: "#8B5E3C", mid: "#225522", top: "#336633" },
+  oak: { trunk: "#7A4E2D", mid: "#33661A", top: "#448822" },
+  dead: { trunk: "#554433", mid: "#443322", top: "#332211" },
+};
 
 export const MAP_ID = {
   EVERGREEN_VILLAGE: "evergreenVillage",

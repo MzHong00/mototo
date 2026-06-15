@@ -3,8 +3,8 @@ import { Sky } from "@react-three/drei";
 import { Map } from "@/components/game/map/Map";
 import { Monsters } from "@/components/game/monster/Monsters";
 import { Portal } from "@/components/game/map/Portal";
-import { PORTAL_BACK_POS, RUINS_SPAWNS } from "@/constants/world";
-import { BOSS_TYPE, BOSS_STATS } from "@/constants/boss";
+import { PORTAL_BACK_POS, RUINS_SPAWNS } from "@/constants/map/world";
+import { BOSS_TYPE, BOSSES } from "@/constants/monster/boss";
 import { useGameStore } from "@/stores/gameStore";
 
 import type { MapId } from "@/types/map";
@@ -33,8 +33,10 @@ export function EvergreenRuins({ onPortalEnter }: EvergreenRuinsProps) {
       <Monsters spawns={RUINS_SPAWNS} />
 
       <Portal
-        position={BOSS_STATS[BOSS_TYPE.KING_BEAR].entryPosition as [number, number, number]}
-        label={`⚔ ${BOSS_STATS[BOSS_TYPE.KING_BEAR].name}의 방`}
+        position={
+          BOSSES.mototo.evergreen[BOSS_TYPE.KING_BEAR].entryPosition as [number, number, number]
+        }
+        label={`⚔ ${BOSSES.mototo.evergreen[BOSS_TYPE.KING_BEAR].name}의 방`}
         portalType="boss"
         spawnPos={BOSS_ENTRY_SPAWN}
         onEnter={() => setBossEntryId(BOSS_TYPE.KING_BEAR)}

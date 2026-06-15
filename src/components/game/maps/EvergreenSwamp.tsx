@@ -3,7 +3,8 @@ import { Sky } from "@react-three/drei";
 import { Map } from "@/components/game/map/Map";
 import { Monsters } from "@/components/game/monster/Monsters";
 import { Portal } from "@/components/game/map/Portal";
-import { PORTAL_FORWARD_POS, PORTAL_BACK_POS, SWAMP_SPAWNS } from "@/constants/world";
+import { PORTAL_FORWARD_POS, PORTAL_BACK_POS, SWAMP_SPAWNS } from "@/constants/map/world";
+
 import type { MapId } from "@/types/map";
 
 const FORWARD_SPAWN: [number, number, number] = [-10, 1, -3];

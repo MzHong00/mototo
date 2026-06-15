@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { playerPositionRef } from "@/stores/worldRefs";
 import { KEYS } from "@/utils/keyState";
 import { getControlsState } from "@/stores/controlsStore";
-import { PORTAL_ENTER_RANGE } from "@/constants/world";
+import { PORTAL_ENTER_RANGE } from "@/constants/map/world";
 
 const PORTAL_COOLDOWN_MS = 3000;
 
