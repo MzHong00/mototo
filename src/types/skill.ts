@@ -1,6 +1,22 @@
 import type * as THREE from "three";
 
-import type { SkillFXType } from "./combat";
+import type { SkillFXType, SkillType, DamageType, TargetType } from "@/types/combat";
+
+export type SkillUpgradeCategory = "damage_slash" | "damage_blast" | "cooldown" | "heal";
+
+export interface SkillState {
+  id: string;
+  key?: string;
+  label: string;
+  skillType: SkillType;
+  cooldown: number;
+  lastUsed: number;
+  level: number;
+  requiredLevel?: number;
+  damageType?: DamageType;
+  targetType?: TargetType;
+  selectedNodes?: Record<number, string>;
+}
 
 export interface SkillContext {
   ppos: THREE.Vector3;
@@ -20,7 +36,7 @@ export interface SkillConfig {
   triggersAttack?: boolean;
   fx?: SkillFXType;
   hitDelay?: number;
-  pattern?: "slash" | "blast";
+  pattern?: Extract<SkillFXType, "slash" | "blast">;
 }
 
 export interface SkillHandler {

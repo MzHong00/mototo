@@ -1,12 +1,10 @@
 import type { Item } from "@/types/item";
-import type { SkillType, DamageType, TargetType } from "@/types/combat";
-
-export type { JobClass } from "@/types/job";
-import type { JobClass } from "@/types/job";
+import type { Class } from "@/types/class";
+import type { SkillState } from "@/types/skill";
 
 export interface CharacterStats {
   name: string;
-  jobClass: JobClass | null;
+  cls: Class | null;
   level: number;
   hp: number;
   maxHp: number;
@@ -21,18 +19,4 @@ export interface EquipSlots {
   weapon: Item | null;
   armor: Item | null;
   ring: Item | null;
-}
-
-export interface SkillState {
-  id: string;
-  key?: string;
-  label: string;
-  skillType: SkillType;
-  cooldown: number;
-  lastUsed: number;
-  level: number;
-  requiredLevel?: number;
-  damageType?: DamageType;
-  targetType?: TargetType;
-  selectedNodes?: Record<number, string>; // { tier: nodeId }
 }

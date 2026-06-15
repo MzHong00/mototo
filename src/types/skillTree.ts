@@ -18,11 +18,21 @@ export interface SkillNodeModifier {
   behaviorTag?: SkillBehaviorTag;
 }
 
+export type Archetype =
+  | "🔴 광전사"
+  | "🔵 지배자"
+  | "🟢 기동형"
+  | "🟣 포격형"
+  | "🔥 파괴형"
+  | "❄️ 통제형"
+  | "🗡️ 표창형"
+  | "⚔️ 단검형";
+
 export interface SkillNodeChoice {
   id: string;
   label: string;
   description: string;
-  archetype: string;
+  archetype: Archetype;
   modifier: SkillNodeModifier;
   disabled?: true;
 }

@@ -1,4 +1,4 @@
-import type { JobClass } from "@/types/job";
+import type { Class } from "@/types/class";
 
 export type ItemType = "weapon" | "armor" | "ring";
 export type ItemRarity = "common" | "rare" | "epic";
@@ -16,5 +16,10 @@ export interface Item {
   def: number;
   hpBonus: number;
   requiredLevel: number;
-  requiredClass: JobClass[];
+  requiredClass: Class[];
+}
+
+export interface DropEntry {
+  chance: number;
+  item: Omit<Item, "uid">;
 }
