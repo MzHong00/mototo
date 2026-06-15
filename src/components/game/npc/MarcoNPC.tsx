@@ -4,7 +4,7 @@ import { Text, Billboard } from "@react-three/drei";
 import * as THREE from "three";
 
 import { playerPositionRef, npcProximity } from "@/stores/worldRefs";
-import { NPC_POS, NPC_INTERACT_RANGE } from "@/constants/world";
+import { NPC_POS, NPC_INTERACT_RANGE } from "@/constants/map/world";
 
 const NPC_VEC = new THREE.Vector3(...NPC_POS);
 

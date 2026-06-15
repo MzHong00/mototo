@@ -2,22 +2,27 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text, Billboard } from "@react-three/drei";
 import * as THREE from "three";
+
 import { playerPositionRef, npcProximity } from "@/stores/worldRefs";
 
-const LUCAS_POS: [number, number, number] = [0, 0, -8];
+const DEFAULT_POS: [number, number, number] = [0, 0, -8];
 const INTERACT_RANGE = 2.5;
-const LUCAS_VEC = new THREE.Vector3(...LUCAS_POS);
 
-export function LucasNPC() {
+interface LucasNPCProps {
+  pos?: [number, number, number];
+}
+
+export function LucasNPC({ pos = DEFAULT_POS }: LucasNPCProps) {
   const groupRef = useRef<THREE.Group>(null);
+  const posVec = useRef(new THREE.Vector3(...pos));
 
   useFrame(({ clock }) => {
-    npcProximity.isNear = playerPositionRef.current.distanceTo(LUCAS_VEC) < INTERACT_RANGE;
+    npcProximity.isNear = playerPositionRef.current.distanceTo(posVec.current) < INTERACT_RANGE;
     if (groupRef.current) groupRef.current.rotation.y = Math.sin(clock.elapsedTime * 0.4) * 0.25;
   });
 
   return (
-    <group ref={groupRef} position={LUCAS_POS}>
+    <group ref={groupRef} position={pos}>
       {/* 몸 */}
       <mesh position={[0, 0.7, 0]} castShadow>
         <boxGeometry args={[0.55, 1.1, 0.45]} />

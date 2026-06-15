@@ -1,0 +1,14 @@
+.wrapper {
+  position: absolute;
+  inset: 0;
+}
+
+.wrapper--rotatable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.wrapper--static {
+  cursor: default;
+  touch-action: auto;
+}

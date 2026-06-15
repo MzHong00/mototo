@@ -8,6 +8,8 @@ export const BOSS_TYPE = {
   KING_DEER: "king_deer",
 } as const satisfies Record<string, BossType>;
 
+export const BOSS_HP_BAR_COLOR = "#33BB55";
+
 export const BOSS_TYPE_LABEL: Record<BossType, string> = {
   [BOSS_TYPE.KING_BEAR]: "왕 곰",
   [BOSS_TYPE.GIANT_TURTLE]: "대왕 거북",

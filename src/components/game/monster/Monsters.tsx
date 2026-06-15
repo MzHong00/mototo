@@ -9,8 +9,8 @@ import { DeerMonster } from "@/components/game/monster/normal/DeerMonster";
 import { ElkMonster } from "@/components/game/monster/normal/ElkMonster";
 import { PigMonster } from "@/components/game/monster/normal/PigMonster";
 import { WildBoarMonster } from "@/components/game/monster/normal/WildBoarMonster";
-import { DROP_TABLE, GOLD_TABLE } from "@/constants/world";
-import { RESPAWN_MS } from "@/constants/monster";
+import { DROP_TABLE, GOLD_TABLE } from "@/constants/map/world";
+import { RESPAWN_MS } from "@/constants/monster/monster";
 
 import type { ComponentType } from "react";
 import type { MonsterType, MonsterConfig } from "@/types/monster";

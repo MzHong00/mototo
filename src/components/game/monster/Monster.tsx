@@ -11,7 +11,7 @@ import {
   DEAGGRO_RANGE,
   ATTACK_RANGE,
   ATTACK_CD,
-} from "@/constants/monster";
+} from "@/constants/monster/monster";
 
 import type { ThreeEvent } from "@react-three/fiber";
 import type { MonsterConfig } from "@/types/monster";
@@ -25,6 +25,8 @@ const COLOR_EYE_DEFAULT = "#111111";
 const HIT_SCALE_MULT = 1.18;
 const FLOAT_FREQUENCY = 0.002;
 const FLOAT_AMPLITUDE = 0.08;
+const HIT_FLASH_MS = 120;
+const DEATH_DELAY_MS = 1000;
 
 function getHpBarColor(pct: number): string {
   if (pct > 0.5) return "#33BB55";
@@ -48,11 +50,6 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
   const takeDamage = useGameStore((s) => s.takeDamage);
   const totalAtk = useGameStore((s) => s.totalAtk);
 
-  const [hp, setHp] = useState(stats.maxHp);
-  const [dead, setDead] = useState(false);
-  const [hit, setHit] = useState(false);
-  const [damages, setDamages] = useState<DamageNumber[]>([]);
-
   const groupRef = useRef<THREE.Group>(null);
   const posRef = useRef(new THREE.Vector3(...position));
   const aggroRef = useRef(false);
@@ -60,8 +57,14 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
   const dmgId = useRef(0);
   const _dir = useRef(new THREE.Vector3());
   const deadRef = useRef(false);
+  const hasDamagesRef = useRef(false);
   const eyeMat0Ref = useRef<THREE.MeshStandardMaterial>(null);
   const eyeMat1Ref = useRef<THREE.MeshStandardMaterial>(null);
+
+  const [hp, setHp] = useState(stats.maxHp);
+  const [dead, setDead] = useState(false);
+  const [hit, setHit] = useState(false);
+  const [damages, setDamages] = useState<DamageNumber[]>([]);
 
   useEffect(() => {
     monsterPositions.set(id, posRef.current);
@@ -69,7 +72,8 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
     const applyDamage = (dmg: number) => {
       if (deadRef.current) return;
       setHit(true);
-      setTimeout(() => setHit(false), 120);
+      setTimeout(() => setHit(false), HIT_FLASH_MS);
+      hasDamagesRef.current = true;
       setDamages((prev) => [
         ...prev,
         { id: dmgId.current++, value: dmg, y: stats.scale * 1.8, opacity: 1 },
@@ -79,7 +83,7 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
         if (next <= 0 && !deadRef.current) {
           deadRef.current = true;
           setDead(true);
-          setTimeout(() => onDeath(id, stats.exp), 1000);
+          setTimeout(() => onDeath(id, stats.exp), DEATH_DELAY_MS);
         }
         return next;
       });
@@ -93,14 +97,20 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
   }, [id, onDeath, stats.exp, stats.scale]);
 
   useFrame((_, delta) => {
-    // 데미지 숫자 페이드는 dead 여부와 무관하게 항상 업데이트
-    setDamages((prev) =>
-      prev.length === 0
-        ? prev
-        : prev
-            .map((d) => ({ ...d, y: d.y + 0.02, opacity: d.opacity - 0.022 }))
-            .filter((d) => d.opacity > 0),
-    );
+    // 데미지 숫자 페이드 — 활성 데미지가 있을 때만 setState 호출
+    if (hasDamagesRef.current) {
+      setDamages((prev) => {
+        if (prev.length === 0) {
+          hasDamagesRef.current = false;
+          return prev;
+        }
+        const next = prev
+          .map((d) => ({ ...d, y: d.y + 0.02, opacity: d.opacity - 0.022 }))
+          .filter((d) => d.opacity > 0);
+        if (next.length === 0) hasDamagesRef.current = false;
+        return next;
+      });
+    }
 
     if (dead || !groupRef.current) return;
 

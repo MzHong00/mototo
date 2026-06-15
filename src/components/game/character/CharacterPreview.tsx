@@ -4,10 +4,12 @@ import { useGLTF, useAnimations, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 
-import { CHARACTER_MODELS, CHARACTER_ANIMATIONS, WEAPON_MODELS } from "@/constants/character";
+import { CHARACTER_MODELS, CHARACTER_ANIMATIONS, WEAPON_MODELS } from "@/constants/assets/assets";
 import { Weapon } from "./Weapon";
 
-import type { JobClass } from "@/types/job";
+import type { Class } from "@/types/class";
+
+import styles from "./CharacterPreview.module.scss";
 
 const PREVIEW_MODEL_SCALE = 0.55;
 const PREVIEW_MODEL_Y_OFFSET = -0.8;
@@ -18,14 +20,14 @@ const COLOR_LIGHT_FILL = "#a0c8ff";
 const COLOR_LIGHT_RIM = "#74b9e8";
 
 interface PreviewModelProps {
-  jobClass: JobClass;
+  cls: Class;
   rotationRef: React.RefObject<number>;
   showWeapon: boolean;
 }
 
-function PreviewModel({ jobClass, rotationRef, showWeapon }: PreviewModelProps) {
+function PreviewModel({ cls, rotationRef, showWeapon }: PreviewModelProps) {
   const groupRef = useRef<THREE.Group>(null);
-  const { scene: rawScene } = useGLTF(CHARACTER_MODELS[jobClass]);
+  const { scene: rawScene } = useGLTF(CHARACTER_MODELS[cls]);
   // SkeletonUtils.clone — 게임 씬과 GLB 공유 없이 독립 인스턴스 보장
   const charScene = useMemo(() => SkeletonUtils.clone(rawScene) as THREE.Group, [rawScene]);
 
@@ -48,7 +50,7 @@ function PreviewModel({ jobClass, rotationRef, showWeapon }: PreviewModelProps) 
     if (groupRef.current) groupRef.current.rotation.y = rotationRef.current;
   });
 
-  const weaponCfg = showWeapon ? WEAPON_MODELS[jobClass] : null;
+  const weaponCfg = showWeapon ? WEAPON_MODELS[cls] : null;
 
   return (
     <group ref={groupRef}>
@@ -68,14 +70,14 @@ function PreviewModel({ jobClass, rotationRef, showWeapon }: PreviewModelProps) 
 }
 
 export interface CharacterPreviewProps {
-  jobClass: JobClass;
+  cls: Class;
   rotatable?: boolean;
   showWeapon?: boolean;
   onDragStart?: () => void;
 }
 
 export function CharacterPreview({
-  jobClass,
+  cls,
   rotatable = true,
   showWeapon = true,
   onDragStart,
@@ -109,7 +111,7 @@ export function CharacterPreview({
 
   return (
     <div
-      style={{ width: "100%", height: "100%", cursor: rotatable ? "grab" : "default" }}
+      className={`${styles.wrapper} ${rotatable ? styles["wrapper--rotatable"] : styles["wrapper--static"]}`}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -118,21 +120,15 @@ export function CharacterPreview({
       <Canvas
         camera={{ position: CAMERA_POSITION, fov: CAMERA_FOV }}
         gl={{ alpha: true, antialias: true }}
-        style={{ width: "100%", height: "100%" }}
       >
         <ambientLight intensity={0.6} />
-        <directionalLight position={[3, 5, 3]} intensity={1.4} castShadow />
+        <directionalLight position={[3, 5, 3]} intensity={1.4} />
         <directionalLight position={[-2, 2, -2]} intensity={0.4} color={COLOR_LIGHT_FILL} />
         <pointLight position={[0, 3, 1]} intensity={0.8} color={COLOR_LIGHT_RIM} />
         <Suspense fallback={null}>
-          {/* key={jobClass}: jobClass가 바뀌면 PreviewModel을 완전히 재마운트해서
+          {/* key={cls}: cls가 바뀌면 PreviewModel을 완전히 재마운트해서
               AnimationMixer가 새 skeleton의 bone을 올바르게 참조하도록 강제 */}
-          <PreviewModel
-            key={jobClass}
-            jobClass={jobClass}
-            rotationRef={rotationRef}
-            showWeapon={showWeapon}
-          />
+          <PreviewModel key={cls} cls={cls} rotationRef={rotationRef} showWeapon={showWeapon} />
           <Environment preset="city" />
         </Suspense>
       </Canvas>

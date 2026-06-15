@@ -4,14 +4,14 @@ import { RigidBody, CuboidCollider } from "@react-three/rapier";
 import { useGLTF, useAnimations, Billboard, Text } from "@react-three/drei";
 import * as THREE from "three";
 
-import { CHARACTER_MODELS, WEAPON_MODELS, CHARACTER_ANIMATIONS } from "@/constants/character";
+import { CHARACTER_MODELS, WEAPON_MODELS, CHARACTER_ANIMATIONS } from "@/constants/assets/assets";
 import { useGameStore } from "@/stores/gameStore";
 import { useCharacterAnimation } from "@/hooks/useCharacterAnimation";
 import { useCharacterPhysics } from "@/hooks/useCharacterPhysics";
 import { Weapon } from "./Weapon";
 
 import type { RapierRigidBody } from "@react-three/rapier";
-import type { JobClass } from "@/types/job";
+import type { Class } from "@/types/class";
 import type { DmgEntry } from "@/hooks/useCharacterPhysics";
 
 const MODEL_SCALE = 0.6;
@@ -30,15 +30,15 @@ Object.values(WEAPON_MODELS).forEach(({ mainHand, offHand }) => {
 });
 
 interface CharacterModelProps {
-  jobClass: JobClass | null;
+  cls: Class | null;
   groupRef: React.RefObject<THREE.Group | null>;
   isDead: boolean;
 }
 
 // ── CharacterModel ───────────────────────────────────────────────
 // GLB 모델 렌더링 + 애니메이션 상태 머신. 물리는 부모 Character가 담당.
-function CharacterModel({ jobClass, groupRef, isDead }: CharacterModelProps) {
-  const path = jobClass ? CHARACTER_MODELS[jobClass] : CHARACTER_MODELS.warrior;
+function CharacterModel({ cls, groupRef, isDead }: CharacterModelProps) {
+  const path = cls ? CHARACTER_MODELS[cls] : CHARACTER_MODELS.warrior;
   const { scene } = useGLTF(path);
   const { animations: generalAnims } = useGLTF(CHARACTER_ANIMATIONS.general);
   const { animations: movementAnims } = useGLTF(CHARACTER_ANIMATIONS.movement);
@@ -57,9 +57,9 @@ function CharacterModel({ jobClass, groupRef, isDead }: CharacterModelProps) {
   const { actions } = useAnimations(clips, groupRef);
 
   // 애니메이션 상태 머신 — useFrame 구독 포함
-  useCharacterAnimation({ actions, isDead, jobClass });
+  useCharacterAnimation({ actions, isDead, cls });
 
-  const weaponCfg = jobClass ? WEAPON_MODELS[jobClass] : null;
+  const weaponCfg = cls ? WEAPON_MODELS[cls] : null;
   return (
     <>
       <primitive object={scene} scale={MODEL_SCALE} position={[0, MODEL_Y_OFFSET, 0]} />
@@ -82,9 +82,9 @@ export function Character() {
   const shieldRef = useRef<THREE.Mesh>(null);
   const shieldMat = useRef<THREE.MeshBasicMaterial>(null);
 
-  const { isDead, jobClass, isShielded, tickShield } = useGameStore((s) => ({
+  const { isDead, cls, isShielded, tickShield } = useGameStore((s) => ({
     isDead: s.isDead,
-    jobClass: s.character.jobClass,
+    cls: s.character.cls,
     isShielded: s.isShielded,
     tickShield: s.tickShield,
   }));
@@ -129,7 +129,7 @@ export function Character() {
             </mesh>
           }
         >
-          <CharacterModel jobClass={jobClass} groupRef={modelGroupRef} isDead={isDead} />
+          <CharacterModel cls={cls} groupRef={modelGroupRef} isDead={isDead} />
         </Suspense>
       </group>
 
