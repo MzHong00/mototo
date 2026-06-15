@@ -1,0 +1,391 @@
+@use "@/styles/breakpoints" as bp;
+
+// ── 등장 애니메이션 ────────────────────────────────────────────────
+@keyframes enterTop {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes enterBottom {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 18px rgba(80, 160, 255, 0.3),
+      0 0 40px rgba(80, 160, 255, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 28px rgba(80, 160, 255, 0.65),
+      0 0 60px rgba(80, 160, 255, 0.25);
+  }
+}
+
+@keyframes charRise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font-ui);
+  color: #d8ecff;
+}
+
+// ── 배경 ──────────────────────────────────────────────────────────
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  filter: brightness(1) saturate(1.1);
+  z-index: 0;
+  pointer-events: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(4, 8, 18, 0.08) 0%,
+      transparent 15%,
+      rgba(4, 8, 18, 0.5) 100%
+    );
+  }
+}
+
+// ── 헤더 ──────────────────────────────────────────────────────────
+.header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-top: 24px;
+  animation: enterTop 0.5s ease-out both;
+}
+
+// ── 캐릭터 스테이지 영역 ─────────────────────────────────────────
+.stageWrapper {
+  position: absolute;
+  bottom: 96px;
+  left: 0;
+  right: 0;
+  // 높이를 따로 잡지 않고 캐릭터 슬롯 높이를 그대로 따라감
+  height: fit-content;
+  overflow-x: auto;
+  overflow-y: hidden;
+  z-index: 5;
+
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.stageTrack {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 96px;
+  width: max-content;
+  min-width: 100%;
+  justify-content: center;
+}
+
+// ── 직업별 테마 색상 ──────────────────────────────────────────────
+.charSlot {
+  &[data-cls="warrior"] { --cls-color: var(--red-500); }
+  &[data-cls="archer"] { --cls-color: var(--emerald-500); }
+  &[data-cls="mage"] { --cls-color: var(--blue-500); }
+  &[data-cls="rogue"] { --cls-color: var(--amber-500); }
+}
+
+// ── 개별 캐릭터 ──────────────────────────────────────────────────
+.charSlot {
+  position: relative;
+  // 가로·세로 중 작은 쪽 기준으로 스케일 — 낮은 화면에서 세로 잘림 방지
+  width: clamp(110px, min(18vw, 26vh), 260px);
+  flex-shrink: 0;
+  cursor: pointer;
+  opacity: 0.55;
+  transition:
+    transform 0.22s ease,
+    opacity 0.22s ease;
+  animation: charRise 0.4s ease-out both;
+  transform-origin: center bottom;
+
+  &:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+  &:nth-child(2) {
+    animation-delay: 0.13s;
+  }
+  &:nth-child(3) {
+    animation-delay: 0.21s;
+  }
+  &:nth-child(4) {
+    animation-delay: 0.29s;
+  }
+}
+
+// 선택된 캐릭터
+.charSlotActive {
+  opacity: 1;
+  transform: scale(1.1) translateY(-4px);
+
+  .charLabel {
+    background: color-mix(in srgb, var(--cls-color, #74b9e8) 14%, transparent);
+    border-color: color-mix(in srgb, var(--cls-color, #74b9e8) 55%, transparent);
+  }
+
+  .charName {
+    color: #fff;
+  }
+
+  .charMeta {
+    opacity: 1;
+  }
+
+  .charSep {
+    color: rgba(180, 210, 240, 0.5);
+  }
+}
+
+// ── 3D 프리뷰 컨테이너 ──────────────────────────────────────────
+.charPreview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 13 / 20;
+}
+
+// ── 이름·레벨 라벨 ─────────────────────────────────────────────
+.charLabel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--r-sm);
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.charMeta {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--cls-color, #74b9e8);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.charSep {
+  font-size: 9px;
+  font-weight: 300;
+  color: rgba(180, 210, 240, 0.3);
+}
+
+.charName {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(232, 244, 255, 0.85);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+  transition: color 0.2s ease;
+}
+
+// ── 하단 액션 바 ─────────────────────────────────────────────────
+.bottomBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 16px 28px;
+  background: linear-gradient(to top, rgba(4, 8, 18, 0.75) 0%, transparent 100%);
+  animation: enterBottom 0.5s ease-out both;
+}
+
+.bottomLeft {
+  // 중앙 정렬을 위한 빈 왼쪽 셀
+}
+
+.bottomActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-sm, 8px);
+}
+
+.iconBtn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 4px;
+  background: none;
+  border: none;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: rgba(180, 215, 255, 0.65);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    opacity 0.15s ease;
+
+  svg {
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+  }
+
+  &:hover:not(:disabled) {
+    color: #d8f0ff;
+
+    svg {
+      opacity: 1;
+    }
+  }
+}
+
+.iconBtnDanger {
+  color: rgba(255, 160, 160, 0.6);
+
+  &:hover:not(:disabled) {
+    color: rgba(255, 180, 180, 0.95);
+  }
+}
+
+.iconBtnDisabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+.btnStart {
+  padding: 13px 52px;
+  background: rgba(40, 110, 190, 0.55);
+  border: 1px solid rgba(100, 185, 255, 0.75);
+  border-radius: var(--r-md);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #e8f6ff;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  animation: glowPulse 2.8s ease-in-out infinite;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(60, 140, 230, 0.7);
+    border-color: rgba(160, 220, 255, 0.95);
+    color: #fff;
+    animation-play-state: paused;
+    box-shadow:
+      0 0 32px rgba(80, 160, 255, 0.6),
+      0 0 64px rgba(80, 160, 255, 0.25);
+  }
+}
+
+.btnStartDisabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+// ── 반응형: 모바일 ─────────────────────────────────────────────────
+@media (max-width: bp.$mobile-width) {
+  .header {
+    padding-top: var(--sp-md);
+  }
+
+  .bottomBar {
+    padding: 12px var(--sp-md);
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .bottomActions {
+    gap: var(--sp-xs, 4px);
+  }
+
+  .iconBtn {
+    font-size: 11px;
+  }
+
+  .stageWrapper {
+    bottom: 84px;
+    scroll-snap-type: x proximity;
+  }
+
+  .stageTrack {
+    gap: 40px;
+  }
+
+  .charSlot {
+    scroll-snap-align: center;
+  }
+
+  .btnStart {
+    padding: 12px 28px;
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+}
+
+// ── 반응형: 낮은 화면 (가로로 눕힌 폰) ─────────────────────────────
+@media (max-height: bp.$mobile-height) {
+  .header {
+    padding-top: var(--sp-xs);
+  }
+
+  .stageWrapper {
+    bottom: 72px;
+  }
+}

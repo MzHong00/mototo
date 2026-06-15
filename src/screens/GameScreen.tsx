@@ -14,11 +14,11 @@ import { MAPS } from "@/constants/map/maps";
 import type { MapId } from "@/types/map";
 import type { BossType } from "@/types/boss";
 
-import styles from "./App.module.scss";
+import styles from "./GameScreen.module.scss";
 
 const ZONE_FLASH_DURATION_MS = 400;
 
-export default function App() {
+export default function GameScreen() {
   const [flash, setFlash] = useState(false);
 
   const { isDead, respawn, currentMapId, travelTo, exitBoss, bossEntryId } = useGameStore((s) => ({
