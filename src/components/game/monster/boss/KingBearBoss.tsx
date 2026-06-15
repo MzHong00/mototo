@@ -80,7 +80,7 @@ export function KingBearBoss({ onBossDeath }: KingBearBossProps) {
           <planeGeometry args={[1.4, 0.12]} />
           <meshBasicMaterial color="#C8DCFF" />
         </mesh>
-        <mesh position={[(hpPct - 1) * 0.7, 0, 0.001]} scale={[hpPct, 1, 1]}>
+        <mesh position={[(hp / BOSS_MAX_HP - 1) * 0.7, 0, 0.001]} scale={[hp / BOSS_MAX_HP, 1, 1]}>
           <planeGeometry args={[1.4, 0.12]} />
           <meshBasicMaterial color={BOSS_HP_BAR_COLOR} />
         </mesh>
