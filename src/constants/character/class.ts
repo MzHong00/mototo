@@ -1,5 +1,4 @@
 import type { Class, ClassCardConfig, ClassConfig } from "@/types/class";
-import type { SkillState } from "@/types/skill";
 import { SKILL_TYPE, DAMAGE_TYPE, TARGET_TYPE } from "@/constants/skill/combat";
 
 export const CLASS = {
@@ -57,19 +56,6 @@ export const STAT_BAR_CONFIG = [
   { key: "spd" as const, label: "SPD", color: "var(--success)" },
 ];
 
-export const COMMON_SKILLS: SkillState[] = [
-  {
-    id: "dash",
-    key: "5",
-    label: "대쉬",
-    skillType: SKILL_TYPE.BUFF,
-    cooldown: 0.5,
-    lastUsed: 0,
-    level: 1,
-    requiredLevel: 1,
-  },
-];
-
 export const CLASS_CONFIG: Record<Class, ClassConfig> = {
   [CLASS.WARRIOR]: {
     hp: 150,
@@ -122,7 +108,6 @@ export const CLASS_CONFIG: Record<Class, ClassConfig> = {
         level: 1,
         requiredLevel: 30,
       },
-      ...COMMON_SKILLS,
     ],
   },
   [CLASS.ARCHER]: {
@@ -176,7 +161,6 @@ export const CLASS_CONFIG: Record<Class, ClassConfig> = {
         level: 1,
         requiredLevel: 30,
       },
-      ...COMMON_SKILLS,
     ],
   },
   [CLASS.MAGE]: {
@@ -230,7 +214,6 @@ export const CLASS_CONFIG: Record<Class, ClassConfig> = {
         level: 1,
         requiredLevel: 30,
       },
-      ...COMMON_SKILLS,
     ],
   },
   [CLASS.ROGUE]: {
@@ -284,7 +267,6 @@ export const CLASS_CONFIG: Record<Class, ClassConfig> = {
         level: 1,
         requiredLevel: 30,
       },
-      ...COMMON_SKILLS,
     ],
   },
 };

@@ -3,14 +3,13 @@ import { CLASS } from "@/constants/character/class";
 import { SLASH_DMG_MULT, BLAST_DMG_MULT } from "@/constants/character/growth";
 
 import { fireSlash, fireBlast } from "./combat";
-import { commonSkills } from "./common";
 
 import type { Class } from "@/types/class";
 import type { SkillConfig, SkillContext, SkillHandler } from "@/types/skill";
 
 // ── 기본 실행 로직 — config에서 자동 빌드 ─────────────────────────
 // slash / blast 패턴은 config(fx, hitDelay)만으로 실행 가능
-// 새 공통 스킬 패턴이 생기면 여기에 케이스 추가
+// 새 패턴이 생기면 여기에 케이스 추가
 function buildDefaultExecute(_id: string, cfg: SkillConfig): (ctx: SkillContext) => void {
   if (cfg.pattern === "slash") {
     return ({ ppos, facing, pos, dir, atk, skillLevel, addFX }) => {
@@ -64,5 +63,3 @@ export const SKILL_REGISTRY: Record<Class, Record<string, SkillHandler>> = {
   [CLASS.MAGE]: buildClassRegistry(CLASS.MAGE),
   [CLASS.ROGUE]: buildClassRegistry(CLASS.ROGUE),
 };
-
-export { commonSkills };

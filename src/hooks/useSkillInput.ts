@@ -4,7 +4,7 @@ import { useGameStore } from "@/stores/gameStore";
 import { playerPositionRef, playerFacingRef, playerAnimSignals } from "@/stores/worldRefs";
 import { SKILL_CODES } from "@/constants/ui/controls";
 import { getControlsState } from "@/stores/controlsStore";
-import { SKILL_REGISTRY, commonSkills } from "@/game/skills";
+import { SKILL_REGISTRY } from "@/game/skills";
 import { CLASS } from "@/constants/character/class";
 
 import type { SkillContext } from "@/types/skill";
@@ -28,7 +28,7 @@ export function useSkillInput() {
       if (!triggerSkill(id)) return;
 
       const activeClass = cls ?? CLASS.WARRIOR;
-      const handler = SKILL_REGISTRY[activeClass][id] ?? commonSkills[id];
+      const handler = SKILL_REGISTRY[activeClass][id];
       if (!handler) return;
 
       const ppos = playerPositionRef.current.clone();
