@@ -12,7 +12,7 @@ import {
   PROJECTILE_HIT_RADIUS,
   PROJECTILE_PARAMS,
   BLAST_PROJECTILE_PARAMS,
-} from "@/constants/combat";
+} from "@/constants/skill/combat";
 
 import type { SkillFXType } from "@/types/combat";
 

@@ -1,7 +1,7 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { FX_DURATION } from "@/constants/skill";
+import { FX_DURATION } from "@/constants/skill/skill";
 import type { SkillFX } from "@/types/combat";
 
 // 초승달 호 각도 ~216°

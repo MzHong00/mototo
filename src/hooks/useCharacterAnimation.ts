@@ -7,13 +7,13 @@ import { KEYS } from "@/utils/keyState";
 import { getControlsState } from "@/stores/controlsStore";
 
 import type { AnimationAction } from "three";
-import type { JobClass } from "@/types/job";
+import type { Class } from "@/types/class";
 
 const HIT_ANIM_MS = 700;
 
 // 직업별 공격 애니메이션 이름·재생 시간·배속
 // timeScale = 원본 클립 길이(ms) / 원하는 재생 시간(ms)
-const ATTACK_ANIM: Record<JobClass, { name: string; ms: number; timeScale: number }> = {
+const ATTACK_ANIM: Record<Class, { name: string; ms: number; timeScale: number }> = {
   warrior: { name: "Slash", ms: 500, timeScale: 2 }, // 1500ms 클립 → 500ms에 완주
   archer: { name: "Throw", ms: 500, timeScale: 1 },
   mage: { name: "Throw", ms: 500, timeScale: 1 },
@@ -25,10 +25,10 @@ type AnimActions = Record<string, AnimationAction | null>;
 interface UseCharacterAnimationParams {
   actions: AnimActions;
   isDead: boolean;
-  jobClass: JobClass | null;
+  cls: Class | null;
 }
 
-export function useCharacterAnimation({ actions, isDead, jobClass }: UseCharacterAnimationParams) {
+export function useCharacterAnimation({ actions, isDead, cls }: UseCharacterAnimationParams) {
   const curAnim = useRef("");
   const prevHitCount = useRef(playerAnimSignals.hitCount);
   const prevAttackCount = useRef(playerAnimSignals.attackCount);
@@ -36,13 +36,13 @@ export function useCharacterAnimation({ actions, isDead, jobClass }: UseCharacte
   const attackUntil = useRef(0);
 
   useEffect(() => {
-    const attackName = jobClass ? ATTACK_ANIM[jobClass].name : "Throw";
+    const attackName = cls ? ATTACK_ANIM[cls].name : "Throw";
     const ONCE_ANIMS = ["Death_A", "Hit_A", attackName];
     ONCE_ANIMS.forEach((name) => {
       const a = actions[name];
       if (a) a.clampWhenFinished = true;
     });
-  }, [actions, jobClass]);
+  }, [actions, cls]);
 
   // useCallback으로 감싸 매 렌더마다 함수 재생성 방지
   const playLoop = useCallback(
@@ -88,7 +88,7 @@ export function useCharacterAnimation({ actions, isDead, jobClass }: UseCharacte
 
     if (playerAnimSignals.attackCount > prevAttackCount.current) {
       prevAttackCount.current = playerAnimSignals.attackCount;
-      const atk = jobClass ? ATTACK_ANIM[jobClass] : ATTACK_ANIM.archer;
+      const atk = cls ? ATTACK_ANIM[cls] : ATTACK_ANIM.archer;
       attackUntil.current = Date.now() + atk.ms;
       playOnce(atk.name, atk.timeScale);
       return;

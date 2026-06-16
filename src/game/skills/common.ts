@@ -1,5 +1,5 @@
 import { dashTrigger } from "@/stores/worldRefs";
-import { HEAL_PCT } from "@/constants/growth";
+import { HEAL_PCT } from "@/constants/character/growth";
 
 import type { SkillHandler } from "@/types/skill";
 

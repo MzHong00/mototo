@@ -16,7 +16,7 @@ import {
 import { KEYS, KEY_ORDER } from "@/utils/keyState";
 import { getControlsState } from "@/stores/controlsStore";
 import { useGameStore } from "@/stores/gameStore";
-import { MAPS } from "@/constants/maps";
+import { MAPS } from "@/constants/map/maps";
 
 import type { RefObject } from "react";
 import type { RapierRigidBody } from "@react-three/rapier";

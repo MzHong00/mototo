@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGameStore } from "@/stores/gameStore";
-import { FX_DURATION } from "@/constants/skill";
+import { FX_DURATION } from "@/constants/skill/skill";
 import type { SkillFX } from "@/types/combat";
 import { SlashFX } from "@/components/game/effects/fx/SlashFX";
 import { BlastFX } from "@/components/game/effects/fx/BlastFX";

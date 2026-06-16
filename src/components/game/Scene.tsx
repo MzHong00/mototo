@@ -12,7 +12,7 @@ import { EvergreenSwamp } from "@/components/game/maps/EvergreenSwamp";
 import { EvergreenRuins } from "@/components/game/maps/EvergreenRuins";
 import { TwilightWasteland } from "@/components/game/maps/TwilightWasteland";
 import { KingBearChamber } from "@/components/game/maps/KingBearChamber";
-import { MAP_ID } from "@/constants/maps";
+import { MAP_ID } from "@/constants/map/maps";
 
 import type { ReactElement } from "react";
 import type { RootState } from "@react-three/fiber";
