@@ -1,6 +1,6 @@
 # 디자인 규칙 — 모토토 (Mototo)
 
-> 실제 CSS 변수·컴포넌트 패턴 값은 `src/main.scss` 참조.
+> 토큰은 3계층(`src/styles/`): `_primitives.scss`(원시 팔레트) → `_semantic.scss`(역할 alias·다크모드 전환 지점) → `_component.scss`(컴포넌트 스코프·전역 기본값). `main.scss`가 순서대로 `@use`. 컴포넌트는 semantic 토큰만 참조.
 
 ---
 
@@ -18,3 +18,8 @@
 
 - 마을·낮 배경 UI → 라이트 패널(`--panel-bg`, `--panel-warm`)
 - 3D 뷰 위에 뜨는 UI (오버레이·모달·미니맵) → **반드시 다크 글래스 패턴**
+
+## 브레이크포인트
+
+`src/styles/_breakpoints.scss` — `$mobile-width: 768px` · `$mobile-height: 480px`(낮은 화면).
+하드코딩 금지 → `@use "@/styles/breakpoints" as bp;` 후 `bp.$mobile-width`로 참조.

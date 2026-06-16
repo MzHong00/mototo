@@ -24,6 +24,17 @@ public/
 src/
 ├── main.tsx / App.tsx / main.scss
 │
+├── screens/                        # 화면 단위 컴포넌트 ([name]/[Name]Screen.tsx)
+│   ├── lobby/                      # 로비 화면
+│   ├── characterCreate/            # 캐릭터 생성 화면
+│   └── game/                       # 인게임 화면
+│
+├── styles/                         # 토큰 레이어 (main.scss가 순서대로 @use)
+│   ├── _primitives.scss            # Layer 1: 팔레트 원시값 (컴포넌트 직접 참조 금지)
+│   ├── _semantic.scss              # Layer 2: 역할 기반 alias (다크모드 전환 지점)
+│   ├── _component.scss             # Layer 3: 컴포넌트 스코프 토큰 & 전역 기본값
+│   └── _breakpoints.scss           # 반응형 SCSS 변수 ($mobile-width 등)
+│
 ├── components/
 │   ├── game/                       # R3F Canvas 안 — Three.js 전용
 │   │   ├── Scene.tsx               # Canvas 루트 + 카메라
@@ -80,11 +91,21 @@ src/
 │   ├── useSkillInput.ts            # 키 입력 → 스킬 발동·히트 판정
 │   └── useToast.ts                 # 토스트 제어
 │
-├── types/                          # boss · character · combat · item · job · map(MapMarker 포함) · monster
-├── constants/                      # boss · character · combat · controls · growth
-│                                   # item · items · maps(MAP_MARKERS 포함) · monster · shop · skill(SKILL_ICON 포함) · world
-└── utils/keyState.ts               # KEYS Set — useFrame용 non-reactive 키 상태
-                                    # (Zustand 대신 Set: 매 프레임 읽어도 리렌더 없음)
+├── types/                          # boss · character · combat · item · map(MapMarker·MapObjects 포함) · monster
+├── constants/
+│   ├── assets/                     # assets.ts (캐릭터·무기·트리 모델 경로)
+│   ├── character/                  # class · growth · rules
+│   ├── item/                       # item · items · shop
+│   ├── map/                        # maps(MAP_MARKERS 포함) · world · 맵별 오브젝트(evergreenVillage 등)
+│   ├── monster/                    # monster · boss
+│   ├── skill/                      # skill · skillConfig · skillTree · combat
+│   └── ui/                         # ui · controls
+└── utils/                          # 순수 함수·non-reactive 헬퍼
+    ├── keyState.ts                 # KEYS Set — useFrame용 non-reactive 키 상태
+    │                               # (Zustand 대신 Set: 매 프레임 읽어도 리렌더 없음)
+    ├── controls.ts                 # 키 바인딩·입력 헬퍼
+    ├── skill.ts                    # 스킬 계산 유틸
+    └── skillTree.ts                # 스킬 트리 유틸
 ```
 
 `@/*` → `src/` 기준 (tsconfig paths: `"@/*": ["./src/*"]`)
