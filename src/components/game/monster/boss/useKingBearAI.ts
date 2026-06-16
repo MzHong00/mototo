@@ -6,7 +6,6 @@ import { playerPositionRef, registerBossDamageFn, bossPositionRef } from "@/stor
 import { useGameStore, getGameState } from "@/stores/gameStore";
 import { BOSS_TYPE, BOSSES } from "@/constants/monster/boss";
 
-import type { ThreeEvent } from "@react-three/fiber";
 import type { BossPhase } from "@/types/boss";
 
 interface DamageNumber {

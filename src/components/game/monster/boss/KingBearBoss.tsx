@@ -28,8 +28,6 @@ export function KingBearBoss({ onBossDeath }: KingBearBossProps) {
     );
   }
 
-  const hpPct = hp / BOSS_MAX_HP;
-
   return (
     <group ref={groupRef} position={SPAWN_POSITION}>
       {phase >= 2 && (
