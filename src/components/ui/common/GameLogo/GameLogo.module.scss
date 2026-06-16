@@ -1,0 +1,57 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+}
+
+.logoImg {
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-family: var(--font-logo);
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #e8f4ff;
+  text-shadow:
+    0 0 40px rgba(116, 185, 232, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.6);
+  line-height: 1;
+}
+
+// ── 사이즈 ─────────────────────────────────────────────────────────
+.sm {
+  gap: 2px;
+
+  .logoImg {
+    height: 28px;
+  }
+
+  .logoText {
+    font-size: 26px;
+    letter-spacing: 5px;
+  }
+}
+
+.md {
+  .logoImg {
+    height: 36px;
+  }
+
+  .logoText {
+    font-size: 36px;
+  }
+}
+
+.lg {
+  gap: 4px;
+
+  .logoImg {
+    height: 48px;
+  }
+
+  .logoText {
+    font-size: 44px;
+  }
+}

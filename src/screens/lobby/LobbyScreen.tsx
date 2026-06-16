@@ -6,7 +6,6 @@ import { IconPlus } from "@/components/ui/common/icons/IconPlus";
 import { IconTrash } from "@/components/ui/common/icons/IconTrash";
 import { CharacterPreview } from "@/components/game/character/CharacterPreview";
 import { useGameStore } from "@/stores/gameStore";
-import { usePingPongVideo } from "@/hooks/usePingPongVideo";
 import { CLASS_LABEL } from "@/constants/character/class";
 
 import type { CharacterStats } from "@/types/character";
@@ -18,7 +17,6 @@ type ActiveChar = CharacterStats & { cls: Class };
 
 export function LobbyScreen() {
   const navigate = useNavigate();
-  const videoRef = usePingPongVideo();
 
   const { characterSlots, activeSlot, activateSlot, deleteCharacter } = useGameStore((st) => ({
     characterSlots: st.characterSlots,
@@ -42,7 +40,7 @@ export function LobbyScreen() {
 
   return (
     <div className={s.root}>
-      <video ref={videoRef} className={s.bg} src="/video/lobby.mp4" autoPlay muted playsInline />
+      <video className={s.bg} src="/video/lobby.mp4" autoPlay muted loop playsInline />
 
       <header className={s.header}>
         <GameLogo size="lg" />

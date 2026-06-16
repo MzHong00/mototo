@@ -69,6 +69,13 @@
   // ── 타이포그래피 (semantic alias) ──
   --font-ui: var(--font-family-ui);
   --font-title: var(--font-family-title);
+  --font-logo: var(--font-family-logo);
+
+  // ── 직업 색상 ──
+  --cls-warrior: var(--warrior-500);
+  --cls-archer: var(--green-500);
+  --cls-mage: var(--mage-500);
+  --cls-rogue: var(--rogue-500);
 
   // ── 컬러 하위 호환 alias (구 토큰명 → 신 토큰) ──────────────────
   // 기존 컴포넌트가 var(--accent) 등을 참조하므로 마이그레이션 전까지 유지
