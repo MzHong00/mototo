@@ -23,7 +23,7 @@
 .hpFill {
   position: absolute;
   inset: 0;
-  width: 0;
+  width: var(--hp-pct, 0%);
   background: linear-gradient(90deg, #cc1111, #ff4444);
   border-radius: inherit;
   transition: width 0.15s ease;

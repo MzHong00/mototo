@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
 import { getGameState } from "@/stores/gameStore";
-import { SKILL_COLOR, SKILL_ICON } from "@/constants/skill";
+import { SKILL_COLOR, SKILL_ICON } from "@/constants/skill/skill";
 
-import type { SkillState } from "@/types/character";
+import type { SkillState } from "@/types/skill";
 
 import s from "./SkillSlot.module.scss";
 
@@ -53,7 +53,8 @@ export function SkillSlot({ skill, hotkey, slotIdx }: SkillSlotProps) {
       draggable
       onDragStart={(e) => {
         const ghost = document.createElement("div");
-        ghost.style.cssText = `width:40px;height:40px;background:${color};border-radius:8px;position:fixed;top:-100px;opacity:0.9;box-shadow:0 2px 8px rgba(0,0,0,0.3)`;
+        ghost.className = s.dragGhost;
+        ghost.style.background = color;
         document.body.appendChild(ghost);
         e.dataTransfer.setDragImage(ghost, 20, 20);
         setTimeout(() => document.body.removeChild(ghost), 0);

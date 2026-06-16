@@ -2,7 +2,8 @@ import { useRef } from "react";
 
 import { useControlsStore } from "@/stores/controlsStore";
 import { useDraggable } from "@/hooks/useDraggable";
-import { ACTION_LABELS, getKeyDisplay } from "@/constants/controls";
+import { ACTION_LABELS } from "@/constants/ui/controls";
+import { getKeyDisplay } from "@/utils/controls";
 
 import type { ActionKey } from "@/stores/controlsStore";
 

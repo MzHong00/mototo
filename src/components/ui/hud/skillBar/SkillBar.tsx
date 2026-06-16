@@ -1,16 +1,15 @@
-import { useShallow } from "zustand/react/shallow";
-
 import { useGameStore } from "@/stores/gameStore";
-import { SKILL_KEY_GROUPS, ALL_HOTKEYS } from "@/constants/skill";
+import { SKILL_KEY_GROUPS, ALL_HOTKEYS } from "@/constants/ui/controls";
 import { SkillSlot, EmptySlot } from "@/components/ui/hud/skillSlot/SkillSlot";
 
 import s from "./SkillBar.module.scss";
 
 export function SkillBar() {
-  const skills = useGameStore((st) => st.skills);
-  const { hp, maxHp } = useGameStore(
-    useShallow((st) => ({ hp: st.character.hp, maxHp: st.character.maxHp })),
-  );
+  const { skills, hp, maxHp } = useGameStore((st) => ({
+    skills: st.skills,
+    hp: st.character.hp,
+    maxHp: st.character.maxHp,
+  }));
 
   const renderSlot = (hotkey: (typeof ALL_HOTKEYS)[number]) => {
     const idx = ALL_HOTKEYS.indexOf(hotkey);
@@ -28,7 +27,10 @@ export function SkillBar() {
     <div className={s.bar}>
       {/* HP 바 — .bar 전체 너비 */}
       <div className={s.hpBar}>
-        <div className={s.hpFill} style={{ width: `${Math.min((hp / maxHp) * 100, 100)}%` }} />
+        <div
+          className={s.hpFill}
+          style={{ "--hp-pct": `${Math.min((hp / maxHp) * 100, 100)}%` } as React.CSSProperties}
+        />
         <span className={s.hpText}>
           <span className={s.hpLabel}>HP</span> {hp}
           <span className={s.hpMax}>/{maxHp}</span>

@@ -30,6 +30,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &[data-boss="king_bear"] {
+    background: radial-gradient(ellipse at center, #4a2800, #1a0a00);
+  }
+
+  &[data-boss="giant_turtle"] {
+    background: radial-gradient(ellipse at center, #003320, #001510);
+  }
+
+  &[data-boss="king_deer"] {
+    background: radial-gradient(ellipse at center, #2a1a00, #0f0800);
+  }
 }
 
 .bossEmoji {

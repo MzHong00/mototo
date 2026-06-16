@@ -1,5 +1,3 @@
-import { useShallow } from "zustand/react/shallow";
-
 import { useGameStore } from "@/stores/gameStore";
 import { StatBar } from "@/components/ui/hud/statBar/StatBar";
 
@@ -11,7 +9,7 @@ const STAT_BARS = [
 ];
 
 export function CharacterPanel() {
-  const character = useGameStore(useShallow((s) => s.character));
+  const character = useGameStore((st) => st.character);
   const isShielded = useGameStore((s) => s.isShielded);
   const skillPoints = useGameStore((s) => s.skillPoints);
   const expPct = Math.round((character.exp / character.expToNext) * 100);

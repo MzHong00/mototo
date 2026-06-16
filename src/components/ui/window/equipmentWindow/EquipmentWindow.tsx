@@ -1,8 +1,6 @@
-import { useShallow } from "zustand/react/shallow";
-
 import { useGameStore } from "@/stores/gameStore";
 import { useDraggable } from "@/hooks/useDraggable";
-import { ITEM_TYPE, ITEM_TYPE_LABEL } from "@/constants/item";
+import { ITEM_TYPE, ITEM_TYPE_LABEL } from "@/constants/item/item";
 
 import s from "./EquipmentWindow.module.scss";
 
@@ -11,12 +9,13 @@ interface EquipmentWindowProps {
 }
 
 export function EquipmentWindow({ onClose }: EquipmentWindowProps) {
-  const { equipped, character } = useGameStore(
-    useShallow((s) => ({ equipped: s.equipped, character: s.character })),
-  );
-  const unequipItem = useGameStore((st) => st.unequipItem);
-  const totalAtk = useGameStore((st) => st.totalAtk);
-  const totalDef = useGameStore((st) => st.totalDef);
+  const { equipped, character, unequipItem, totalAtk, totalDef } = useGameStore((s) => ({
+    equipped: s.equipped,
+    character: s.character,
+    unequipItem: s.unequipItem,
+    totalAtk: s.totalAtk,
+    totalDef: s.totalDef,
+  }));
   const { pos, onHeaderMouseDown } = useDraggable(480, 80);
 
   return (
@@ -30,7 +29,7 @@ export function EquipmentWindow({ onClose }: EquipmentWindowProps) {
 
       <div className={s.body}>
         <div className={s.charInfo}>
-          <span className={s.classBadge}>{character.jobClass ?? "—"}</span>
+          <span className={s.classBadge}>{character.cls ?? "—"}</span>
           <span className={s.levelBadge}>Lv.{character.level}</span>
         </div>
 
@@ -67,7 +66,7 @@ export function EquipmentWindow({ onClose }: EquipmentWindowProps) {
         <div className={s.stats}>
           {[
             { label: "ATK", value: totalAtk(), color: "var(--accent)" },
-            { label: "DEF", value: totalDef(), color: "var(--accent2)" },
+            { label: "DEF", value: totalDef(), color: "var(--accent)" },
             { label: "HP", value: character.maxHp, color: "var(--hp)" },
           ].map(({ label, value, color }) => (
             <div key={label} className={s.statRow} style={{ color }}>

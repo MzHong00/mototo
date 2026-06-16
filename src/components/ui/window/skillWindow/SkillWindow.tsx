@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 import { useGameStore } from "@/stores/gameStore";
 import { useDraggable } from "@/hooks/useDraggable";
-import { SKILL_COLOR, SKILL_DESCRIPTIONS, SKILL_ICON } from "@/constants/skill";
-import { CLASS_CONFIG } from "@/constants/character";
-import { SKILL_LEVEL_MAX, getSkillUpgradeDesc } from "@/constants/growth";
-import { getSkillTree, ARCHETYPE_COLORS } from "@/constants/skillTree";
+import { SKILL_COLOR, SKILL_DESCRIPTIONS, SKILL_ICON } from "@/constants/skill/skill";
+import { CLASS_CONFIG } from "@/constants/character/class";
+import { SKILL_LEVEL_MAX } from "@/constants/character/rules";
+import { ARCHETYPE_COLORS } from "@/constants/skill/skillTree";
+import { getSkillUpgradeDesc } from "@/utils/skill";
+import { getSkillTree } from "@/utils/skillTree";
 
 import type { SkillNodeChoice, SkillTreeDef } from "@/types/skillTree";
-import type { SkillState } from "@/types/character";
+import type { SkillState } from "@/types/skill";
 
 import styles from "./SkillWindow.module.scss";
 
@@ -17,27 +19,38 @@ interface SkillWindowProps {
 }
 
 export function SkillWindow({ onClose }: SkillWindowProps) {
+  const { allSkills, skills, skillPoints, upgradeSkill, downgradeSkill, selectSkillNode, cls } =
+    useGameStore((s) => ({
+      allSkills: s.allSkills,
+      skills: s.skills,
+      skillPoints: s.skillPoints,
+      upgradeSkill: s.upgradeSkill,
+      downgradeSkill: s.downgradeSkill,
+      selectSkillNode: s.selectSkillNode,
+      cls: s.character.cls,
+    }));
+
+  const [selectedSkillId, setSelectedSkillId] = useState<string>("");
   const { pos, onHeaderMouseDown } = useDraggable(Math.max(0, window.innerWidth - 820), 80);
 
-  const allSkills = useGameStore((s) => s.allSkills);
-  const skills = useGameStore((s) => s.skills);
-  const skillPoints = useGameStore((s) => s.skillPoints);
-  const upgradeSkill = useGameStore((s) => s.upgradeSkill);
-  const downgradeSkill = useGameStore((s) => s.downgradeSkill);
-  const selectSkillNode = useGameStore((s) => s.selectSkillNode);
-  const { jobClass } = useGameStore((s) => ({ jobClass: s.character.jobClass }));
+  const classSkills = useMemo(
+    () => (cls ? CLASS_CONFIG[cls].skills.filter((s) => s.id !== "dash") : []),
+    [cls],
+  );
 
-  const classSkills = jobClass ? CLASS_CONFIG[jobClass].skills.filter((s) => s.id !== "dash") : [];
-  const [selectedSkillId, setSelectedSkillId] = useState<string>(classSkills[0]?.id ?? "");
+  const equippedMap = useMemo(() => {
+    const map = new Map<string, number>();
+    skills.forEach((sk, idx) => {
+      if (sk) map.set(sk.id, idx);
+    });
+    return map;
+  }, [skills]);
 
-  const equippedMap = new Map<string, number>();
-  skills.forEach((sk, idx) => {
-    if (sk) equippedMap.set(sk.id, idx);
-  });
+  // 사용자가 아직 선택하지 않았으면 첫 스킬을 기본 선택
+  const activeSkillId = selectedSkillId || classSkills[0]?.id || "";
 
-  const selectedSkill = allSkills.find((s) => s.id === selectedSkillId);
-  const selectedTree =
-    jobClass && selectedSkillId ? getSkillTree(jobClass, selectedSkillId) : undefined;
+  const selectedSkill = allSkills.find((s) => s.id === activeSkillId);
+  const selectedTree = cls && activeSkillId ? getSkillTree(cls, activeSkillId) : undefined;
 
   const canUpgrade = skillPoints > 0 && !!selectedSkill && selectedSkill.level < SKILL_LEVEL_MAX;
   const canDowngrade = !!selectedSkill && selectedSkill.level > 1;
@@ -65,13 +78,14 @@ export function SkillWindow({ onClose }: SkillWindowProps) {
             return (
               <div
                 key={sk.id}
-                className={`${styles.sideSkill} ${selectedSkillId === sk.id ? styles.sideActive : ""} ${isLocked ? styles.sideLocked : ""}`}
+                className={`${styles.sideSkill} ${activeSkillId === sk.id ? styles.sideActive : ""} ${isLocked ? styles.sideLocked : ""}`}
                 onClick={() => !isLocked && setSelectedSkillId(sk.id)}
                 draggable={!isLocked}
                 onDragStart={(e) => {
                   if (isLocked) return;
                   const ghost = document.createElement("div");
-                  ghost.style.cssText = `width:36px;height:36px;background:${color};border-radius:8px;position:fixed;top:-100px;opacity:0.9;display:flex;align-items:center;justify-content:center;font-size:18px`;
+                  ghost.className = styles.dragGhost;
+                  ghost.style.background = color;
                   ghost.textContent = SKILL_ICON[sk.id] ?? "?";
                   document.body.appendChild(ghost);
                   e.dataTransfer.setDragImage(ghost, 18, 18);

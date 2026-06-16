@@ -1,6 +1,6 @@
 import { useGameStore, setGameState } from "@/stores/gameStore";
 import { useDraggable } from "@/hooks/useDraggable";
-import { SHOP_CATALOG } from "@/constants/shop";
+import { SHOP_CATALOG } from "@/constants/item/shop";
 
 import s from "./ShopWindow.module.scss";
 

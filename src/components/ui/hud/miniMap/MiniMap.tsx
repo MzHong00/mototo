@@ -7,7 +7,7 @@ import {
   monsterPositions,
   bossPositionRef,
 } from "@/stores/worldRefs";
-import { MAPS, MAP_MARKERS } from "@/constants/maps";
+import { MAPS, MAP_MARKERS } from "@/constants/map/maps";
 import type { MapMarker } from "@/types/map";
 
 import s from "./MiniMap.module.scss";
