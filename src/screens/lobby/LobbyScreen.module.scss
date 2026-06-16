@@ -127,10 +127,18 @@
 
 // ── 직업별 테마 색상 ──────────────────────────────────────────────
 .charSlot {
-  &[data-cls="warrior"] { --cls-color: var(--red-500); }
-  &[data-cls="archer"] { --cls-color: var(--emerald-500); }
-  &[data-cls="mage"] { --cls-color: var(--blue-500); }
-  &[data-cls="rogue"] { --cls-color: var(--amber-500); }
+  &[data-cls="warrior"] {
+    --cls-color: var(--red-500);
+  }
+  &[data-cls="archer"] {
+    --cls-color: var(--emerald-500);
+  }
+  &[data-cls="mage"] {
+    --cls-color: var(--blue-500);
+  }
+  &[data-cls="rogue"] {
+    --cls-color: var(--amber-500);
+  }
 }
 
 // ── 개별 캐릭터 ──────────────────────────────────────────────────

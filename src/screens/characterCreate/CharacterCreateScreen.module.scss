@@ -157,10 +157,18 @@
 .card,
 .statBars,
 .btnConfirm {
-  &[data-cls="warrior"] { --cls-color: var(--red-500); }
-  &[data-cls="archer"] { --cls-color: var(--emerald-500); }
-  &[data-cls="mage"] { --cls-color: var(--blue-500); }
-  &[data-cls="rogue"] { --cls-color: var(--amber-500); }
+  &[data-cls="warrior"] {
+    --cls-color: var(--red-500);
+  }
+  &[data-cls="archer"] {
+    --cls-color: var(--emerald-500);
+  }
+  &[data-cls="mage"] {
+    --cls-color: var(--blue-500);
+  }
+  &[data-cls="rogue"] {
+    --cls-color: var(--amber-500);
+  }
 }
 
 .previewPane {
@@ -512,7 +520,6 @@
     padding-top: var(--sp-md);
     margin-bottom: var(--sp-xs);
   }
-
 
   .createBody {
     flex-direction: column;

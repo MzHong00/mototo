@@ -117,7 +117,9 @@ export function CharacterCreateScreen() {
                       <div
                         className={s.barFill}
                         data-stat={stat.key}
-                        style={{ "--bar-pct": `${selectedCard.stats[stat.key]}%` } as React.CSSProperties}
+                        style={
+                          { "--bar-pct": `${selectedCard.stats[stat.key]}%` } as React.CSSProperties
+                        }
                       />
                     </div>
                     <span className={s.statValue}>{selectedCard.stats[stat.key]}</span>
