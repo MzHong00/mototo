@@ -1,4 +1,10 @@
-import type { DamageType, TargetType, SkillType, SkillFXType } from "@/types/combat";
+import type {
+  DamageType,
+  TargetType,
+  SkillType,
+  SkillFXType,
+  SkillHitPattern,
+} from "@/types/combat";
 
 export const DAMAGE_TYPE = {
   PHYSICAL: "physical",
@@ -43,17 +49,26 @@ export const SKILL_FX_TYPE = {
   SHURIKEN_BLAST: "shuriken_blast",
 } as const satisfies Record<string, SkillFXType>;
 
+export const SKILL_HIT_PATTERN = {
+  SLASH: "slash",
+  BLAST: "blast",
+} as const satisfies Record<string, SkillHitPattern>;
+
 export const SLASH_RANGE = 2.8;
 export const BLAST_RANGE = 4.5;
 export const PROJECTILE_HIT_RADIUS = 0.85;
 
-export const PROJECTILE_PARAMS = {
+export const PROJECTILE_PARAMS: Partial<
+  Record<SkillFXType, { maxDist: number; durationMs: number }>
+> = {
   arrow: { maxDist: 10, durationMs: 450 },
   fireball: { maxDist: 9, durationMs: 550 },
   shuriken: { maxDist: 11, durationMs: 500 },
-} as const;
+};
 
-export const BLAST_PROJECTILE_PARAMS = {
+export const BLAST_PROJECTILE_PARAMS: Partial<
+  Record<SkillFXType, { blastDist: number; travelMs: number; blastRadius: number }>
+> = {
   arrow_blast: { blastDist: 7, travelMs: 385, blastRadius: 2.5 },
   shuriken_blast: { blastDist: 8, travelMs: 375, blastRadius: 2.5 },
-} as const;
+};

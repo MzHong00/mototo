@@ -1,10 +1,10 @@
 import { useEffect, useCallback } from "react";
 
 import { useGameStore } from "@/stores/gameStore";
-import { playerPositionRef, playerFacingRef, playerAnimSignals } from "@/stores/worldRefs";
+import { playerPosition, playerFacing, playerAnimSignals } from "@/game/worldState";
 import { SKILL_CODES } from "@/constants/ui/controls";
 import { getControlsState } from "@/stores/controlsStore";
-import { SKILL_REGISTRY } from "@/game/skills";
+import { SKILL_REGISTRY } from "@/game/skills/skillRegistry";
 import { CLASS } from "@/constants/character/class";
 
 import type { SkillContext } from "@/types/skill";
@@ -31,8 +31,8 @@ export function useSkillInput() {
       const handler = SKILL_REGISTRY[activeClass][id];
       if (!handler) return;
 
-      const ppos = playerPositionRef.current.clone();
-      const facing = playerFacingRef.current;
+      const ppos = playerPosition.current.clone();
+      const facing = playerFacing.current;
       const ctx: SkillContext = {
         ppos,
         facing,

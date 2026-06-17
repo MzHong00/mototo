@@ -1,6 +1,7 @@
 export type DamageType = "physical" | "magic";
 export type TargetType = "single" | "aoe";
 export type SkillType = "attack" | "buff" | "heal";
+export type SkillHitPattern = "slash" | "blast";
 
 export type SkillFXType =
   | "slash"

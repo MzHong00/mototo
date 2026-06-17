@@ -1,6 +1,12 @@
 import type * as THREE from "three";
 
-import type { SkillFXType, SkillType, DamageType, TargetType } from "@/types/combat";
+import type {
+  SkillFXType,
+  SkillHitPattern,
+  SkillType,
+  DamageType,
+  TargetType,
+} from "@/types/combat";
 
 export type SkillUpgradeCategory = "damage_slash" | "damage_blast" | "cooldown" | "heal";
 
@@ -36,7 +42,7 @@ export interface SkillConfig {
   triggersAttack?: boolean;
   fx?: SkillFXType;
   hitDelay?: number;
-  pattern?: Extract<SkillFXType, "slash" | "blast">;
+  hitPattern?: SkillHitPattern;
 }
 
 export interface SkillHandler {
