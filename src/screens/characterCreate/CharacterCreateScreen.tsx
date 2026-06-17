@@ -45,7 +45,7 @@ export function CharacterCreateScreen() {
 
   return (
     <div className={s.overlay}>
-      <video className={s.bg} src="/video/lobby.mp4" autoPlay muted loop playsInline />
+      <img className={s.bg} src="/images/lobby.jpeg" alt="" />
       <div className={s.pageHeader}>
         <button className={s.btnClose} onClick={() => navigate("/")} aria-label="뒤로가기">
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">

@@ -40,7 +40,7 @@ export function LobbyScreen() {
 
   return (
     <div className={s.root}>
-      <video className={s.bg} src="/video/lobby.mp4" autoPlay muted loop playsInline />
+      <img className={s.bg} src="/images/lobby.jpeg" alt="" />
 
       <header className={s.header}>
         <GameLogo size="lg" />
