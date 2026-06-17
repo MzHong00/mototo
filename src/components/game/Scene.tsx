@@ -2,7 +2,7 @@ import { useRef, useEffect, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Physics, RigidBody } from "@react-three/rapier";
 
-import { playerPositionRef } from "@/stores/worldRefs";
+import { playerPosition } from "@/game/worldState";
 import { Character } from "@/components/game/character/Character";
 import { SkillEffects } from "@/components/game/effects/SkillEffects";
 import { EvergreenVillage } from "@/components/game/maps/EvergreenVillage";
@@ -47,7 +47,7 @@ function FollowCamera() {
   }, [gl]);
 
   useFrame(() => {
-    const { x, y, z } = playerPositionRef.current;
+    const { x, y, z } = playerPosition.current;
     const d = dist.current;
     const cosP = Math.cos(CAM_PITCH);
     camera.position.set(

@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { Text, Billboard } from "@react-three/drei";
 import * as THREE from "three";
 
-import { playerPositionRef, npcProximity } from "@/stores/worldRefs";
+import { playerPosition, npcProximity } from "@/game/worldState";
 import { NPC_POS, NPC_INTERACT_RANGE } from "@/constants/map/world";
 
 const NPC_VEC = new THREE.Vector3(...NPC_POS);
@@ -12,7 +12,7 @@ export function MarcoNPC() {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(({ clock }) => {
-    npcProximity.isNear = playerPositionRef.current.distanceTo(NPC_VEC) < NPC_INTERACT_RANGE;
+    npcProximity.isNear = playerPosition.current.distanceTo(NPC_VEC) < NPC_INTERACT_RANGE;
     if (groupRef.current) groupRef.current.rotation.y = Math.sin(clock.elapsedTime * 0.5) * 0.3;
   });
 

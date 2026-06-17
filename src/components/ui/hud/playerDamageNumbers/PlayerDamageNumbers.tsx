@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { playerDamageEvents } from "@/stores/worldRefs";
+import { playerDamageEvents } from "@/game/worldState";
 
 import s from "./PlayerDamageNumbers.module.scss";
 

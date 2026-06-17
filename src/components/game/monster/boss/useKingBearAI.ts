@@ -2,7 +2,7 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-import { playerPositionRef, registerBossDamageFn, bossPositionRef } from "@/stores/worldRefs";
+import { playerPosition, setBossDamageFn, bossPosition } from "@/game/worldState";
 import { useGameStore, getGameState } from "@/stores/gameStore";
 import { BOSS_TYPE, BOSSES } from "@/constants/monster/boss";
 
@@ -110,18 +110,18 @@ export function useKingBearAI({ onBossDeath }: UseKingBearAIProps) {
     };
 
     applyDamageRef.current = applyDamage;
-    registerBossDamageFn(applyDamage);
-    bossPositionRef.current = posRef.current;
+    setBossDamageFn(applyDamage);
+    bossPosition.current = posRef.current;
     return () => {
-      registerBossDamageFn(null);
-      bossPositionRef.current = null;
+      setBossDamageFn(null);
+      bossPosition.current = null;
     };
   }, [gainExp, addGold, addItem, setBossCleared, onBossDeath]);
 
   useFrame((_, delta) => {
     if (deadRef.current || !groupRef.current) return;
 
-    const player = playerPositionRef.current;
+    const player = playerPosition.current;
     const dist = posRef.current.distanceTo(player);
     const now = Date.now();
 

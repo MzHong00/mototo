@@ -2,7 +2,7 @@ import { useRef, useCallback, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-import { playerAnimSignals } from "@/stores/worldRefs";
+import { playerAnimSignals } from "@/game/worldState";
 import { KEYS } from "@/utils/keyState";
 import { getControlsState } from "@/stores/controlsStore";
 

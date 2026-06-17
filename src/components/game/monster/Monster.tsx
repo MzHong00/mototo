@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { Text, Billboard } from "@react-three/drei";
 import * as THREE from "three";
 
-import { playerPositionRef, monsterPositions, monsterDamageFns } from "@/stores/worldRefs";
+import { playerPosition, monsterPositions, monsterDamageFns } from "@/game/worldState";
 import { useGameStore } from "@/stores/gameStore";
 import {
   MONSTER_STATS,
@@ -114,7 +114,7 @@ export function Monster({ id, type, position, onDeath }: MonsterProps) {
 
     if (dead || !groupRef.current) return;
 
-    const player = playerPositionRef.current;
+    const player = playerPosition.current;
     const dist = posRef.current.distanceTo(player);
 
     if (dist < AGGRO_RANGE) aggroRef.current = true;

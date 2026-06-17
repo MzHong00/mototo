@@ -1,12 +1,7 @@
 import { useEffect, useRef } from "react";
 
 import { useGameStore } from "@/stores/gameStore";
-import {
-  playerPositionRef,
-  playerFacingRef,
-  monsterPositions,
-  bossPositionRef,
-} from "@/stores/worldRefs";
+import { playerPosition, playerFacing, monsterPositions, bossPosition } from "@/game/worldState";
 import { MAPS, MAP_MARKERS } from "@/constants/map/maps";
 import type { MapMarker } from "@/types/map";
 
@@ -112,8 +107,8 @@ export function MiniMap() {
       });
 
       // 보스
-      if (bossPositionRef.current) {
-        const [cx, cy] = w2c(bossPositionRef.current.x, bossPositionRef.current.z);
+      if (bossPosition.current) {
+        const [cx, cy] = w2c(bossPosition.current.x, bossPosition.current.z);
         ctx.beginPath();
         ctx.arc(cx, cy, 4.5, 0, Math.PI * 2);
         ctx.fillStyle = "#f97316";
@@ -124,9 +119,9 @@ export function MiniMap() {
       }
 
       // 플레이어 방향선
-      const pp = playerPositionRef.current;
+      const pp = playerPosition.current;
       const [px, py] = w2c(pp.x, pp.z);
-      const f = playerFacingRef.current;
+      const f = playerFacing.current;
       ctx.beginPath();
       ctx.moveTo(px, py);
       ctx.lineTo(px + f.x * 9, py + f.z * 9);

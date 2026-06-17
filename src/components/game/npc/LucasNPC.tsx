@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { Text, Billboard } from "@react-three/drei";
 import * as THREE from "three";
 
-import { playerPositionRef, npcProximity } from "@/stores/worldRefs";
+import { playerPosition, npcProximity } from "@/game/worldState";
 
 const DEFAULT_POS: [number, number, number] = [0, 0, -8];
 const INTERACT_RANGE = 2.5;
@@ -17,7 +17,7 @@ export function LucasNPC({ pos = DEFAULT_POS }: LucasNPCProps) {
   const posVec = useRef(new THREE.Vector3(...pos));
 
   useFrame(({ clock }) => {
-    npcProximity.isNear = playerPositionRef.current.distanceTo(posVec.current) < INTERACT_RANGE;
+    npcProximity.isNear = playerPosition.current.distanceTo(posVec.current) < INTERACT_RANGE;
     if (groupRef.current) groupRef.current.rotation.y = Math.sin(clock.elapsedTime * 0.4) * 0.25;
   });
 

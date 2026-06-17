@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { Text, Billboard } from "@react-three/drei";
 import * as THREE from "three";
 
-import { playerPositionRef } from "@/stores/worldRefs";
+import { playerPosition } from "@/game/worldState";
 import { KEYS } from "@/utils/keyState";
 import { getControlsState } from "@/stores/controlsStore";
 import { PORTAL_ENTER_RANGE } from "@/constants/map/world";
@@ -58,7 +58,7 @@ export function Portal({
       innerRef.current.scale.setScalar(1 + Math.sin(t * 2) * 0.05);
     }
 
-    const dist = playerPositionRef.current.distanceTo(posVec.current);
+    const dist = playerPosition.current.distanceTo(posVec.current);
     const near = dist < PORTAL_ENTER_RANGE * 2;
     setIsNear(near);
 
