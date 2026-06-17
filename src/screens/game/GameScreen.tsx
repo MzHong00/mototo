@@ -8,7 +8,6 @@ import { BossEntry } from "@/components/ui/overlay/bossEntry/BossEntry";
 import { Modal } from "@/components/ui/modal/Modal";
 import { Toast } from "@/components/ui/toast/Toast";
 import { useGameStore } from "@/stores/gameStore";
-import { bossEnterTrigger, portalTravelTrigger } from "@/stores/worldRefs";
 import { MAPS } from "@/constants/map/maps";
 
 import type { MapId } from "@/types/map";
@@ -21,13 +20,24 @@ const ZONE_FLASH_DURATION_MS = 400;
 export default function GameScreen() {
   const [flash, setFlash] = useState(false);
 
-  const { isDead, respawn, currentMapId, travelTo, exitBoss, bossEntryId } = useGameStore((s) => ({
+  const {
+    isDead,
+    respawn,
+    currentMapId,
+    travelTo,
+    exitBoss,
+    bossEntryId,
+    triggerBossEnter,
+    triggerPortalTravel,
+  } = useGameStore((s) => ({
     isDead: s.isDead,
     respawn: s.respawn,
     currentMapId: s.currentMapId,
     travelTo: s.travelTo,
     exitBoss: s.exitBoss,
     bossEntryId: s.bossEntryId,
+    triggerBossEnter: s.triggerBossEnter,
+    triggerPortalTravel: s.triggerPortalTravel,
   }));
 
   useEffect(() => {
@@ -40,21 +50,20 @@ export default function GameScreen() {
 
   const handlePortalEnter = useCallback(
     (dest: MapId, spawnPos?: [number, number, number]) => {
-      portalTravelTrigger.spawnPos = spawnPos ?? [0, 1, 0];
-      portalTravelTrigger.pending = true;
+      triggerPortalTravel(spawnPos ?? [0, 1, 0]);
       setFlash(true);
       setTimeout(() => {
         travelTo(dest);
         setFlash(false);
       }, ZONE_FLASH_DURATION_MS);
     },
-    [travelTo],
+    [travelTo, triggerPortalTravel],
   );
 
   const handleBossEnter = useCallback(() => {
-    bossEnterTrigger.pending = true;
+    triggerBossEnter();
     travelTo("kingBearChamber");
-  }, [travelTo]);
+  }, [travelTo, triggerBossEnter]);
 
   return (
     <div className={styles.root}>

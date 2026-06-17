@@ -3,19 +3,15 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
 import {
-  playerPositionRef,
-  playerFacingRef,
+  playerPosition,
+  playerFacing,
   playerScreenPos,
   playerDamageEvents,
-  respawnTrigger,
-  bossEnterTrigger,
-  portalTravelTrigger,
-  dashTrigger,
   playerAnimSignals,
-} from "@/stores/worldRefs";
+} from "@/game/worldState";
 import { KEYS, KEY_ORDER } from "@/utils/keyState";
 import { getControlsState } from "@/stores/controlsStore";
-import { useGameStore } from "@/stores/gameStore";
+import { useGameStore, getGameState } from "@/stores/gameStore";
 import { MAPS } from "@/constants/map/maps";
 
 import type { RefObject } from "react";
@@ -23,7 +19,6 @@ import type { RapierRigidBody } from "@react-three/rapier";
 
 const SPEED = 5;
 const DASH_SPEED = 24;
-const DASH_DURATION_MS = 220;
 const DMG_FLOAT_SPEED = 0.025;
 const DMG_FADE_SPEED = 0.022;
 const DMG_Y_START = 1.8;
@@ -61,29 +56,24 @@ export function useCharacterPhysics({ bodyRef, modelGroupRef }: UseCharacterPhys
     if (!body) return;
 
     // ── 트리거 처리 ────────────────────────────────────────────
-    if (respawnTrigger.pending) {
+    const gs = getGameState();
+    if (gs.respawnPending) {
       const [px, py, pz] = MAPS[currentMapIdRef.current].spawnPos;
       body.setTranslation({ x: px, y: py, z: pz }, true);
       body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      respawnTrigger.pending = false;
+      gs.consumeRespawn();
     }
-    if (bossEnterTrigger.pending) {
+    if (gs.bossEnterPending) {
       const [px, py, pz] = MAPS.kingBearChamber.spawnPos;
       body.setTranslation({ x: px, y: py, z: pz }, true);
       body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      bossEnterTrigger.pending = false;
+      gs.consumeBossEnter();
     }
-    if (portalTravelTrigger.pending) {
-      const [px, py, pz] = portalTravelTrigger.spawnPos;
+    if (gs.portalTravelPending) {
+      const [px, py, pz] = gs.portalSpawnPos;
       body.setTranslation({ x: px, y: py, z: pz }, true);
       body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      portalTravelTrigger.pending = false;
-    }
-    if (dashTrigger.pending) {
-      const until = Date.now() + DASH_DURATION_MS;
-      dashUntil.current = until;
-      playerAnimSignals.dashUntil = until;
-      dashTrigger.pending = false;
+      gs.consumePortalTravel();
     }
 
     // ── 낙하 복구 — 현재 맵 스폰 좌표로 이동 ─────────────────
@@ -96,9 +86,9 @@ export function useCharacterPhysics({ bodyRef, modelGroupRef }: UseCharacterPhys
 
     // ── 위치 갱신 (isDead 무관 — miniMap 등 위치 의존 UI 대응) ──
     const t = body.translation();
-    playerPositionRef.current.set(t.x, t.y, t.z);
+    playerPosition.current.set(t.x, t.y, t.z);
     // playerScreenPos: 픽셀 단위 (size.width/height 기준) — UI 위치 계산용
-    const projected = playerPositionRef.current.clone().project(camera);
+    const projected = playerPosition.current.clone().project(camera);
     playerScreenPos.x = (projected.x * 0.5 + 0.5) * size.width;
     playerScreenPos.y = (-projected.y * 0.5 + 0.5) * size.height;
 
@@ -111,7 +101,7 @@ export function useCharacterPhysics({ bodyRef, modelGroupRef }: UseCharacterPhys
     const isAttacking = now < playerAnimSignals.attackUntil;
 
     if (isDashing) {
-      const f = playerFacingRef.current;
+      const f = playerFacing.current;
       body.setLinvel({ x: f.x * DASH_SPEED, y: vel.y, z: f.z * DASH_SPEED }, true);
     } else if (isAttacking) {
       body.setLinvel({ x: 0, y: vel.y, z: 0 }, true);
@@ -144,7 +134,7 @@ export function useCharacterPhysics({ bodyRef, modelGroupRef }: UseCharacterPhys
       body.setLinvel({ x: vx, y: vel.y, z: vz }, true);
 
       if (vx !== 0 || vz !== 0) {
-        playerFacingRef.current.set(vx, 0, vz).normalize();
+        playerFacing.current.set(vx, 0, vz).normalize();
         if (modelGroupRef.current) modelGroupRef.current.rotation.y = Math.atan2(vx, vz);
       }
     }

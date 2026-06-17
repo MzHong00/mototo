@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 
-import { respawnTrigger, pushPlayerDamage } from "@/stores/worldRefs";
+import { pushPlayerDamage } from "@/game/worldState";
 import { CLASS_CONFIG } from "@/constants/character/class";
 import { MAPS } from "@/constants/map/maps";
 import { SKILL_UPGRADE_CATEGORY, COOLDOWN_MULT } from "@/constants/character/growth";
@@ -86,6 +86,17 @@ export interface GameState {
   upgradeSkill: (skillId: string) => void;
   downgradeSkill: (skillId: string) => void;
   selectSkillNode: (skillId: string, tier: number, nodeId: string) => void;
+
+  respawnPending: boolean;
+  bossEnterPending: boolean;
+  portalTravelPending: boolean;
+  portalSpawnPos: [number, number, number];
+  triggerRespawn: () => void;
+  consumeRespawn: () => void;
+  triggerBossEnter: () => void;
+  consumeBossEnter: () => void;
+  triggerPortalTravel: (spawnPos: [number, number, number]) => void;
+  consumePortalTravel: () => void;
 }
 
 const EMPTY_CHARACTER: CharacterStats = {
@@ -156,6 +167,11 @@ const gameStore = create<GameState>((set, get) => ({
   clearedBosses: [],
   currentMapId: "evergreenVillage" as MapId,
   previousFieldMapId: "evergreenMeadow" as MapId,
+
+  respawnPending: false,
+  bossEnterPending: false,
+  portalTravelPending: false,
+  portalSpawnPos: [0, 1, 0] as [number, number, number],
 
   totalAtk: () => {
     const { character, equipped } = get();
@@ -325,9 +341,15 @@ const gameStore = create<GameState>((set, get) => ({
 
   respawn: () => {
     const { character } = get();
-    respawnTrigger.pending = true;
-    set({ isDead: false, character: { ...character, hp: character.maxHp } });
+    set({ isDead: false, respawnPending: true, character: { ...character, hp: character.maxHp } });
   },
+
+  triggerRespawn: () => set({ respawnPending: true }),
+  consumeRespawn: () => set({ respawnPending: false }),
+  triggerBossEnter: () => set({ bossEnterPending: true }),
+  consumeBossEnter: () => set({ bossEnterPending: false }),
+  triggerPortalTravel: (spawnPos) => set({ portalTravelPending: true, portalSpawnPos: spawnPos }),
+  consumePortalTravel: () => set({ portalTravelPending: false }),
 
   addItem: (item) =>
     set((s) => ({
