@@ -63,12 +63,6 @@ export function useCharacterPhysics({ bodyRef, modelGroupRef }: UseCharacterPhys
       body.setLinvel({ x: 0, y: 0, z: 0 }, true);
       gs.consumeRespawn();
     }
-    if (gs.bossEnterPending) {
-      const [px, py, pz] = MAPS.kingBearChamber.spawnPos;
-      body.setTranslation({ x: px, y: py, z: pz }, true);
-      body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      gs.consumeBossEnter();
-    }
     if (gs.portalTravelPending) {
       const [px, py, pz] = gs.portalSpawnPos;
       body.setTranslation({ x: px, y: py, z: pz }, true);

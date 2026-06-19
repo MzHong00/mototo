@@ -1,43 +1,22 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect } from "react";
 
-import { Scene } from "@/components/game/Scene";
+import { GameCanvas } from "@/components/game/gameCanvas/GameCanvas";
 import { HUD } from "@/components/ui/hud/HUD";
 import { DeathScreen } from "@/components/ui/overlay/deathScreen/DeathScreen";
 import { WindowManager } from "@/components/ui/window/WindowManager";
-import { BossEntry } from "@/components/ui/overlay/bossEntry/BossEntry";
 import { Modal } from "@/components/ui/modal/Modal";
 import { Toast } from "@/components/ui/toast/Toast";
 import { useGameStore } from "@/stores/gameStore";
-import { MAPS } from "@/constants/map/maps";
-
-import type { MapId } from "@/types/map";
-import type { BossType } from "@/types/boss";
 
 import styles from "./GameScreen.module.scss";
 
-const ZONE_FLASH_DURATION_MS = 400;
-
 export default function GameScreen() {
-  const [flash, setFlash] = useState(false);
-
-  const {
-    isDead,
-    respawn,
-    currentMapId,
-    travelTo,
-    exitBoss,
-    bossEntryId,
-    triggerBossEnter,
-    triggerPortalTravel,
-  } = useGameStore((s) => ({
+  const { isDead, respawn, currentMapId, exitBoss, isFlashing } = useGameStore((s) => ({
     isDead: s.isDead,
     respawn: s.respawn,
     currentMapId: s.currentMapId,
-    travelTo: s.travelTo,
     exitBoss: s.exitBoss,
-    bossEntryId: s.bossEntryId,
-    triggerBossEnter: s.triggerBossEnter,
-    triggerPortalTravel: s.triggerPortalTravel,
+    isFlashing: s.isFlashing,
   }));
 
   useEffect(() => {
@@ -48,39 +27,11 @@ export default function GameScreen() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  const handlePortalEnter = useCallback(
-    (dest: MapId, spawnPos?: [number, number, number]) => {
-      triggerPortalTravel(spawnPos ?? [0, 1, 0]);
-      setFlash(true);
-      setTimeout(() => {
-        travelTo(dest);
-        setFlash(false);
-      }, ZONE_FLASH_DURATION_MS);
-    },
-    [travelTo, triggerPortalTravel],
-  );
-
-  const handleBossEnter = useCallback(() => {
-    triggerBossEnter();
-    travelTo("kingBearChamber");
-  }, [travelTo, triggerBossEnter]);
-
   return (
     <div className={styles.root}>
-      <Scene mapId={currentMapId} onPortalEnter={handlePortalEnter} onBossExit={exitBoss} />
+      <GameCanvas mapId={currentMapId} />
       <HUD />
       <WindowManager />
-
-      {bossEntryId !== null && (
-        <BossEntry
-          bossId={bossEntryId as BossType}
-          subtitle={{
-            cleared: "재도전 시 골드·경험치만 획득",
-            uncleared: "클리어 시 곰 발톱 검 획득",
-          }}
-          onEnter={handleBossEnter}
-        />
-      )}
       {isDead && (
         <DeathScreen
           onRespawn={() => {
@@ -89,10 +40,7 @@ export default function GameScreen() {
           }}
         />
       )}
-
-      {flash && (
-        <div className={styles.flash} style={{ background: MAPS[currentMapId].flashColor }} />
-      )}
+      {isFlashing && <div className={styles.flash} />}
       <Modal />
       <Toast />
     </div>

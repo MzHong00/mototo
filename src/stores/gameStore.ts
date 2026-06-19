@@ -40,7 +40,7 @@ export interface GameState {
   isDead: boolean;
 
   shopOpen: boolean;
-  bossEntryId: string | null;
+  isFlashing: boolean;
   fxList: SkillFX[];
   skillPoints: number;
   clearedBosses: string[];
@@ -69,7 +69,6 @@ export interface GameState {
   equipItem: (item: Item) => void;
   unequipItem: (slot: keyof EquipSlots) => void;
   setShopOpen: (v: boolean) => void;
-  setBossEntryId: (bossId: string | null) => void;
   addFX: (type: SkillFXType, pos: [number, number, number], dir?: [number, number, number]) => void;
   addFXBatch: (
     items: Array<{
@@ -82,22 +81,22 @@ export interface GameState {
 
   setBossCleared: (bossId: string) => void;
   travelTo: (mapId: MapId) => void;
+  /** 포탈 입장 — 플래시 후 목적지 맵으로 이동 */
+  enterPortal: (mapId: MapId, spawnPos?: [number, number, number]) => void;
   exitBoss: () => void;
   upgradeSkill: (skillId: string) => void;
   downgradeSkill: (skillId: string) => void;
   selectSkillNode: (skillId: string, tier: number, nodeId: string) => void;
 
   respawnPending: boolean;
-  bossEnterPending: boolean;
   portalTravelPending: boolean;
   portalSpawnPos: [number, number, number];
   triggerRespawn: () => void;
   consumeRespawn: () => void;
-  triggerBossEnter: () => void;
-  consumeBossEnter: () => void;
-  triggerPortalTravel: (spawnPos: [number, number, number]) => void;
   consumePortalTravel: () => void;
 }
+
+const ZONE_FLASH_DURATION_MS = 400; // 포탈 입장 시 화면 전환 플래시 지속 시간
 
 const EMPTY_CHARACTER: CharacterStats = {
   name: "",
@@ -161,7 +160,7 @@ const gameStore = create<GameState>((set, get) => ({
   isDead: false,
 
   shopOpen: false,
-  bossEntryId: null,
+  isFlashing: false,
   fxList: [],
   skillPoints: 0,
   clearedBosses: [],
@@ -169,7 +168,6 @@ const gameStore = create<GameState>((set, get) => ({
   previousFieldMapId: "evergreenMeadow" as MapId,
 
   respawnPending: false,
-  bossEnterPending: false,
   portalTravelPending: false,
   portalSpawnPos: [0, 1, 0] as [number, number, number],
 
@@ -346,9 +344,6 @@ const gameStore = create<GameState>((set, get) => ({
 
   triggerRespawn: () => set({ respawnPending: true }),
   consumeRespawn: () => set({ respawnPending: false }),
-  triggerBossEnter: () => set({ bossEnterPending: true }),
-  consumeBossEnter: () => set({ bossEnterPending: false }),
-  triggerPortalTravel: (spawnPos) => set({ portalTravelPending: true, portalSpawnPos: spawnPos }),
   consumePortalTravel: () => set({ portalTravelPending: false }),
 
   addItem: (item) =>
@@ -389,7 +384,6 @@ const gameStore = create<GameState>((set, get) => ({
     }),
 
   setShopOpen: (v) => set({ shopOpen: v }),
-  setBossEntryId: (bossId) => set({ bossEntryId: bossId }),
 
   addFX: (type, pos, dir = [0, 0, -1]) =>
     set((s) => ({
@@ -455,6 +449,18 @@ const gameStore = create<GameState>((set, get) => ({
         ? { currentMapId: mapId, previousFieldMapId: s.currentMapId }
         : { currentMapId: mapId },
     ),
+
+  enterPortal: (mapId, spawnPos) => {
+    set({
+      portalTravelPending: true,
+      portalSpawnPos: spawnPos ?? [0, 1, 0],
+      isFlashing: true,
+    });
+    setTimeout(() => {
+      get().travelTo(mapId);
+      set({ isFlashing: false });
+    }, ZONE_FLASH_DURATION_MS);
+  },
 
   exitBoss: () => set((s) => ({ currentMapId: s.previousFieldMapId })),
 
