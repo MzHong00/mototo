@@ -5,11 +5,7 @@ import { BOSS_TYPE, BOSSES } from "@/constants/monster/boss";
 
 const { arenaRadius: BOSS_ARENA_RADIUS } = BOSSES.mototo.evergreen[BOSS_TYPE.KING_BEAR];
 
-interface KingBearChamberProps {
-  onBossExit: () => void;
-}
-
-export function KingBearChamber({ onBossExit }: KingBearChamberProps) {
+export function KingBearChamber() {
   return (
     <>
       <RigidBody type="fixed" colliders="cuboid">
@@ -27,7 +23,7 @@ export function KingBearChamber({ onBossExit }: KingBearChamberProps) {
       <ambientLight intensity={0.3} />
       <pointLight position={[0, 12, 0]} intensity={1.5} color="#FF4444" distance={40} />
 
-      <KingBearBoss onBossDeath={onBossExit} />
+      <KingBearBoss />
     </>
   );
 }
