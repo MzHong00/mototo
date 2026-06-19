@@ -42,17 +42,14 @@ const DEATH_DELAY_MS = 3000;
 
 export { SPAWN_POSITION, BOSS_MAX_HP, BOSS_SCALE, BOSS_MELEE_STORM_RADIUS, BOSS_PHASE_COLORS };
 
-interface UseKingBearAIProps {
-  onBossDeath: () => void;
-}
-
-export function useKingBearAI({ onBossDeath }: UseKingBearAIProps) {
+export function useKingBearAI() {
   const takeDamage = useGameStore((s) => s.takeDamage);
   const totalAtk = useGameStore((s) => s.totalAtk);
   const gainExp = useGameStore((s) => s.gainExp);
   const addGold = useGameStore((s) => s.addGold);
   const addItem = useGameStore((s) => s.addItem);
   const setBossCleared = useGameStore((s) => s.setBossCleared);
+  const exitBoss = useGameStore((s) => s.exitBoss);
   const addFXBatch = useGameStore((s) => s.addFXBatch);
 
   const groupRef = useRef<THREE.Group>(null);
@@ -103,7 +100,7 @@ export function useKingBearAI({ onBossDeath }: UseKingBearAIProps) {
             });
             setBossCleared(BOSS_ID);
           }
-          setTimeout(onBossDeath, DEATH_DELAY_MS);
+          setTimeout(exitBoss, DEATH_DELAY_MS);
         }
         return next;
       });
@@ -116,7 +113,7 @@ export function useKingBearAI({ onBossDeath }: UseKingBearAIProps) {
       setBossDamageFn(null);
       bossPosition.current = null;
     };
-  }, [gainExp, addGold, addItem, setBossCleared, onBossDeath]);
+  }, [gainExp, addGold, addItem, setBossCleared, exitBoss]);
 
   useFrame((_, delta) => {
     if (deadRef.current || !groupRef.current) return;

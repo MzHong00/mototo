@@ -9,13 +9,9 @@ import {
   BOSS_MELEE_STORM_RADIUS,
 } from "@/components/game/monster/boss/useKingBearAI";
 
-interface KingBearBossProps {
-  onBossDeath: () => void;
-}
-
-export function KingBearBoss({ onBossDeath }: KingBearBossProps) {
+export function KingBearBoss() {
   const { groupRef, hp, phase, dead, hit, showWindup, damages, handleClick, phaseColor } =
-    useKingBearAI({ onBossDeath });
+    useKingBearAI();
 
   if (dead) {
     return (

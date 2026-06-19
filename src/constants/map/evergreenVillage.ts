@@ -3,7 +3,6 @@ import type { MapObjects } from "@/types/map";
 // 맵 경계: ±60 (120x120)
 export const EVERGREEN_VILLAGE_OBJECTS: MapObjects = {
   size: [120, 120],
-  terrain: [],
   trees: [
     { pos: [-15, -10], variant: "pine" },
     { pos: [18, -20], variant: "oak" },
@@ -27,8 +26,6 @@ export const EVERGREEN_VILLAGE_OBJECTS: MapObjects = {
   portals: [
     {
       pos: [55, 0, 10],
-      label: "에버그린 초원 →",
-      type: "field",
       dest: "evergreenMeadow",
       spawnPos: [-10, 1, -3],
     },

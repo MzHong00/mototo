@@ -87,24 +87,6 @@ export const GOLD_TABLE: Record<MonsterType, [number, number]> = {
   [MONSTER_TYPE.WILD_BOAR]: [35, 60],
 };
 
-// ── 맵 오브젝트 ───────────────────────────────────────────────
-export const TREE_POSITIONS: [number, number][] = [
-  [-4, -3],
-  [4, -5],
-  [-6, 2],
-  [5, 3],
-  [-2, 5],
-  [7, -1],
-  [-8, -6],
-];
-
-export const MAP_WALLS: { pos: [number, number, number]; size: [number, number, number] }[] = [
-  { pos: [0, 2, -20], size: [40, 4, 0.5] },
-  { pos: [0, 2, 20], size: [40, 4, 0.5] },
-  { pos: [-20, 2, 0], size: [0.5, 4, 40] },
-  { pos: [20, 2, 0], size: [0.5, 4, 40] },
-];
-
 // ── 포탈 ──────────────────────────────────────────────────────
 export const PORTAL_FORWARD_POS: [number, number, number] = [13, 0, 5];
 export const PORTAL_BACK_POS: [number, number, number] = [-13, 0, -5];
