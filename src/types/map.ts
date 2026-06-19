@@ -1,16 +1,6 @@
 import type { MonsterConfig } from "@/types/monster";
 
-export type TerrainMaterial = "grass" | "stone" | "dirt" | "wood" | "sand";
 export type TreeVariant = "pine" | "oak" | "dead";
-export type PortalType = "town" | "field" | "boss";
-
-export interface TerrainBlock {
-  pos: [number, number, number];
-  size: [number, number, number];
-  rotation?: [number, number, number];
-  material: TerrainMaterial;
-  rounded?: boolean;
-}
 
 export interface TreeObject {
   pos: [number, number];
@@ -24,8 +14,6 @@ export interface WallBlock {
 
 export interface PortalObject {
   pos: [number, number, number];
-  label: string;
-  type: PortalType;
   dest: MapId;
   spawnPos: [number, number, number];
 }
@@ -37,7 +25,6 @@ export interface NpcObject {
 
 export interface MapObjects {
   size?: [number, number]; // [width, depth]
-  terrain: TerrainBlock[];
   trees: TreeObject[];
   walls: WallBlock[];
   portals: PortalObject[];
@@ -68,6 +55,5 @@ export interface MapConfig {
   id: MapId;
   type: MapType;
   label: string;
-  flashColor: string;
   spawnPos: [number, number, number];
 }
