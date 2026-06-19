@@ -37,10 +37,10 @@ src/
 │
 ├── components/
 │   ├── game/                       # R3F Canvas 안 — Three.js 전용
-│   │   ├── Scene.tsx               # Canvas 루트 + 카메라
+│   │   ├── gameCanvas/             # GameCanvas.tsx — Canvas 루트 + 현재 맵 조립
 │   │   ├── character/              # 플레이어 (이동·물리·대시)
-│   │   ├── map/                    # Map.tsx (지형), Portal.tsx (존 이동)
-│   │   ├── maps/                   # 존별 씬 조합
+│   │   ├── portal/                 # Portal.tsx (존 이동 — store enterPortal 직접 호출)
+│   │   ├── map/                    # 존별 씬 조합
 │   │   │                           #   Evergreen(Village·Meadow·Forest·Swamp·Ruins)
 │   │   │                           #   TwilightWasteland, KingBearChamber
 │   │   ├── monster/                # Monsters.tsx (관리·리스폰), Monster.tsx (AI·HP)
