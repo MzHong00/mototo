@@ -1,0 +1,122 @@
+{
+ "chains": [
+  {
+   "root": "HJ_e7d28e69",
+   "stiffness": 1.6,
+   "drag": 0.5,
+   "gravity": 0.25,
+   "hitRadius": 0.03
+  },
+  {
+   "root": "HJ_7a62315d",
+   "stiffness": 1.6,
+   "drag": 0.5,
+   "gravity": 0.25,
+   "hitRadius": 0.095
+  },
+  {
+   "root": "HJ_a6e7e603",
+   "stiffness": 1.6,
+   "drag": 0.5,
+   "gravity": 0.25,
+   "hitRadius": 0.041
+  },
+  {
+   "root": "HJ_075310cc",
+   "stiffness": 1.6,
+   "drag": 0.5,
+   "gravity": 0.25,
+   "hitRadius": 0.038
+  },
+  {
+   "root": "HJ_bdda9c05",
+   "stiffness": 1.6,
+   "drag": 0.5,
+   "gravity": 0.25,
+   "hitRadius": 0.03
+  }
+ ],
+ "colliders": [
+  {
+   "bone": "Head",
+   "center": [
+    0.0,
+    1.93,
+    -0.0
+   ],
+   "radius": 0.41
+  },
+  {
+   "bone": "Neck",
+   "center": [
+    0.0,
+    1.37,
+    -0.0
+   ],
+   "radius": 0.13
+  },
+  {
+   "bone": "Chest",
+   "center": [
+    0.0,
+    1.204,
+    -0.0
+   ],
+   "radius": 0.24
+  },
+  {
+   "bone": "ShoulderL",
+   "center": [
+    0.2,
+    1.29,
+    0.03
+   ],
+   "radius": 0.13
+  },
+  {
+   "bone": "UpperArmL",
+   "center": [
+    0.32,
+    1.29,
+    0.03
+   ],
+   "radius": 0.11
+  },
+  {
+   "bone": "LowerArmL",
+   "center": [
+    0.555,
+    1.29,
+    0.03
+   ],
+   "radius": 0.09
+  },
+  {
+   "bone": "ShoulderR",
+   "center": [
+    -0.2,
+    1.29,
+    0.03
+   ],
+   "radius": 0.13
+  },
+  {
+   "bone": "UpperArmR",
+   "center": [
+    -0.32,
+    1.29,
+    0.03
+   ],
+   "radius": 0.11
+  },
+  {
+   "bone": "LowerArmR",
+   "center": [
+    -0.555,
+    1.29,
+    0.03
+   ],
+   "radius": 0.09
+  }
+ ]
+}

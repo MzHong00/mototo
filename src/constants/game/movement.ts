@@ -1,0 +1,9 @@
+export const WALK_SPEED = 3.2; // 걷기 속도
+export const RUN_SPEED = 6.5; // 달리기 속도
+export const JUMP_VELOCITY = 6; // 점프 초속도
+export const TURN_RATE = 12; // 방향 전환 보간 속도 (치비 뷰어와 동일)
+export const ACCEL_RATE = 10; // 가속·감속 보간 속도 (치비 뷰어와 동일)
+export const GROUNDED_EPS = 0.05; // 수직 속도가 이보다 작으면 착지로 판단
+export const ATTACK_LOCK_MS = 450; // 공격 중 이동 잠금
+export const SPAWN_POS: [number, number, number] = [0, 1, 0]; // 시작 위치
+export const FALL_THRESHOLD = -5; // 이 높이 아래로 떨어지면 시작 위치로

@@ -1,0 +1,26 @@
+// ============================================================
+// _semantic.scss — Layer 2: 역할 기반 토큰. 컴포넌트는 이 계층만 사용한다.
+// ============================================================
+
+:root {
+  --color-chibi-ink: var(--ink-900); // 본문 글자
+  --color-chibi-ink-muted: var(--ink-500); // 보조 글자
+  --color-chibi-line: var(--line-100); // 카드 하단 그림자선
+  --color-chibi-card: var(--card-50); // 선택 카드 바탕
+  --color-chibi-tab: var(--tab-50); // 비활성 탭
+  --color-chibi-bg-from: var(--bg-pink); // 배경 그라데이션 시작
+  --color-chibi-bg-to: var(--bg-blue); // 배경 그라데이션 끝
+  --color-chibi-primary: var(--pink-400); // 주 버튼
+  --color-chibi-primary-strong: var(--pink-600);
+  --color-chibi-secondary: var(--blue-400);
+  --color-chibi-secondary-strong: var(--blue-600);
+  --color-chibi-on: var(--mint-400);
+  --color-chibi-panel: var(--white-a66); // 반투명 패널
+  --color-chibi-chip: var(--white-a85); // 떠 있는 칩·HUD
+  --color-surface: var(--neutral-0); // 카드·입력창 바탕
+  --color-danger: var(--red-500);
+  --shadow-chibi: var(--shadow-soft);
+
+  --font-ui: var(--font-family-ui);
+  --font-title: var(--font-family-title);
+}

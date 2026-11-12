@@ -1,0 +1,9 @@
+hair_twintail.glb
+  Source: "HairSample_Female" by VRoid Project (pixiv), CC0 1.0
+  https://opengameart.org/content/vroid-studio-cc0-models
+  Modified: cat ears removed, refitted to chibi head, texture converted to grayscale.
+
+hair_male_short.glb
+  Source: "HairSample_Male" by VRoid Project (pixiv), CC0 1.0
+  https://opengameart.org/content/vroid-studio-cc0-models
+  Modified: refitted to chibi head, texture converted to grayscale, springs stiffened.

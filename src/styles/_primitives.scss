@@ -1,0 +1,44 @@
+// ============================================================
+// _primitives.scss — Layer 1: 원시값 (치비 꾸미기 스타일 기준)
+// 출처: chibi-pipeline/web/customize.css
+// ============================================================
+
+:root {
+  // ── 색 ──
+  --neutral-0: #ffffff;
+  --ink-900: #3b2f4a;
+  --ink-500: #7c6f8c;
+  --line-100: #efe4f2;
+  --card-50: #f8f4fa;
+  --tab-50: #f4eef7;
+  --bg-pink: #fdf1f6;
+  --bg-blue: #e6f1fd;
+  --pink-400: #ff7aa8;
+  --pink-600: #e45c8c;
+  --blue-400: #6aa8ff;
+  --blue-600: #4b88e0;
+  --mint-400: #7fd6b3;
+  --red-500: #e5484d;
+  --white-a66: rgba(255, 255, 255, 0.66);
+  --white-a85: rgba(255, 255, 255, 0.85);
+
+  // ── 간격 ──
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  // ── 반경 ──
+  --radius-2: 8px;
+  --radius-3: 14px;
+  --radius-4: 20px;
+  --radius-full: 9999px;
+
+  // ── 그림자 ──
+  --shadow-soft: 0 6px 0 rgba(59, 47, 74, 0.08), 0 10px 28px rgba(59, 47, 74, 0.1);
+
+  // ── 글꼴 ──
+  --font-family-ui: "Gowun Dodum", system-ui, sans-serif;
+  --font-family-title: "Jua", "Gowun Dodum", system-ui, sans-serif;
+}
