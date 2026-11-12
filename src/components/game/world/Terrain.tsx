@@ -3,11 +3,13 @@ import { RigidBody, TrimeshCollider } from "@react-three/rapier";
 import { useTerrainGeometry } from "@/hooks/useTerrainGeometry";
 import {
   TERRAIN_COLORS,
+  TRIMESH_FLAGS,
   WATER_OPACITY,
   WATER_PLANE_SIZE,
   WATER_SURFACE_Y,
 } from "@/constants/game/terrain";
 
+import type { TrimeshArgs } from "@react-three/rapier";
 import type { TileMapData } from "@/types/terrain";
 
 interface TerrainProps {
@@ -21,7 +23,10 @@ export function Terrain({ map }: TerrainProps) {
   return (
     <>
       <RigidBody type="fixed" colliders={false}>
-        <TrimeshCollider args={[colliderPositions, colliderIndices]} />
+        {/* 3번째 인자(flags)는 rapier로 그대로 전달되지만 라이브러리 타입에 빠져 있어 단언 */}
+        <TrimeshCollider
+          args={[colliderPositions, colliderIndices, TRIMESH_FLAGS] as unknown as TrimeshArgs}
+        />
       </RigidBody>
       <mesh geometry={geometry} receiveShadow castShadow>
         <meshLambertMaterial vertexColors />

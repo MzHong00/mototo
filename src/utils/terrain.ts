@@ -45,8 +45,9 @@ class QuadBuffer {
 
   /** 사각형 추가 — 법선이 facing 쪽을 보도록 감는 방향 자동 보정 */
   push(quad: Vector3[], facing: Vector3, color?: Color) {
-    this.a.subVectors(quad[1], quad[0]);
-    this.b.subVectors(quad[2], quad[0]);
+    // 대각선끼리 외적 — 한 변이 0인 사각형(경사로 옆 삼각 벽)에서도 법선이 망가지지 않음
+    this.a.subVectors(quad[2], quad[0]);
+    this.b.subVectors(quad[3], quad[1]);
     this.n.crossVectors(this.a, this.b).normalize();
     if (this.n.dot(facing) < 0) {
       quad = [quad[0], quad[3], quad[2], quad[1]];

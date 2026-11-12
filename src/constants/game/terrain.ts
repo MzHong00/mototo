@@ -6,6 +6,7 @@ export const WATER_SURFACE_Y = -0.15; // 바다·연못 수면 높이 (0층 기�
 export const WATER_PLANE_SIZE = 400; // 수면 한 변 — 지도 바깥 바다까지 덮음
 export const WATER_OPACITY = 0.82;
 export const BLOCKER_HEIGHT = 3; // 물가 투명벽 높이 — 물에 못 들어가게
+export const TRIMESH_FLAGS = 144; // rapier TriMeshFlags.FIX_INTERNAL_EDGES (꼭짓점 병합 포함) — 칸 이음매에서 튕기지 않게
 export const TILE_SHADE = 0.025; // 칸마다 밝기 차이 — 바둑판 느낌
 
 export const TERRAIN_COLORS = {

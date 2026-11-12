@@ -11,13 +11,16 @@ import {
 } from "@/engine/runtime/frameState";
 import {
   ACCEL_RATE,
+  AIR_GRACE_SEC,
   FALL_THRESHOLD,
   GROUND_PROBE,
   JUMP_VELOCITY,
+  MAX_SNAP_SPEED,
+  MIN_GROUND_NORMAL_Y,
   PLAYER_HALF_HEIGHT,
   PLAYER_RADIUS,
-  RISING_EPS,
   RUN_SPEED,
+  SNAP_DISTANCE,
   SPAWN_POS,
   TURN_RATE,
   WALK_SPEED,
@@ -41,6 +44,9 @@ interface UsePlayerMovementParams {
 export function usePlayerMovement({ bodyRef, modelRef }: UsePlayerMovementParams) {
   const { world, rapier } = useRapier();
   const footRayRef = useRef<Ray | null>(null); // 발밑 착지 판정용 광선 (재사용, 시작점만 갱신)
+  const isJumpRisingRef = useRef(false); // 점프로 올라가는 중 (경사로를 오를 때 올라가는 속도와 구분)
+  const airTimeRef = useRef(0); // 연속으로 떠 있던 시간 (초)
+  const wasGroundedRef = useRef(false); // 지난 프레임 착지 여부 — 땅에 붙어 다니기(스냅) 판단용
 
   /** 물리 스텝 직후·카메라 직전에 위치 동기화 — 카메라가 이번 프레임 위치를 그대로 따라가게 */
   useFrame(() => {
@@ -61,22 +67,34 @@ export function usePlayerMovement({ bodyRef, modelRef }: UsePlayerMovementParams
     if (!body) return;
 
     const vel = body.linvel();
-    // 착지 판정: 발밑으로 짧은 광선을 쏴서 바닥이 닿는지 (점프 꼭대기에서 속도 0이어도 공중으로 판정)
+    // 착지 판정: 발밑으로 광선을 쏴서 바닥까지 거리·기울기를 잰다 (점프 꼭대기에서 속도 0이어도 공중으로 판정)
     const t = body.translation();
     footRayRef.current ??= new rapier.Ray({ x: 0, y: 0, z: 0 }, { x: 0, y: -1, z: 0 });
     const footRay = footRayRef.current;
     footRay.origin = { x: t.x, y: t.y, z: t.z };
-    const groundHit = world.castRay(
+    const groundHit = world.castRayAndGetNormal(
       footRay,
-      PLAYER_HALF_HEIGHT + PLAYER_RADIUS + GROUND_PROBE,
+      PLAYER_HALF_HEIGHT + PLAYER_RADIUS + SNAP_DISTANCE,
       true,
       undefined,
       undefined,
       undefined,
       body,
     );
-    const isGrounded = groundHit !== null && vel.y < RISING_EPS;
-    playerAnimSignals.isAirborne = !isGrounded;
+    if (vel.y <= 0) isJumpRisingRef.current = false; // 꼭대기를 지나면 점프 상승 끝
+    const n = groundHit?.normal;
+    const isWalkable = groundHit !== null && n !== undefined && n.y > MIN_GROUND_NORMAL_Y;
+    // 바닥에서 떠 있는 틈 (경사면에선 캡슐 둥근 바닥 때문에 서 있는 높이가 조금 더 높음)
+    const gap = isWalkable
+      ? groundHit.timeOfImpact - (PLAYER_HALF_HEIGHT + PLAYER_RADIUS / n.y)
+      : 0;
+    // 바닥 바로 위거나, 방금까지 땅이었고 아직 가까우면(경사 끝·턱) 착지 — 점프 상승 중은 제외
+    const isGrounded =
+      isWalkable && !isJumpRisingRef.current && (gap <= GROUND_PROBE || wasGroundedRef.current);
+    wasGroundedRef.current = isGrounded;
+    // 공중 모션은 점프했거나 잠깐 이상 떠 있을 때만 — 칸 턱·경사 끝에서 순간 뜨는 건 무시
+    airTimeRef.current = isGrounded ? 0 : airTimeRef.current + delta;
+    playerAnimSignals.isAirborne = isJumpRisingRef.current || airTimeRef.current > AIR_GRACE_SEC;
     const isAttacking = Date.now() < playerAnimSignals.attackUntil;
 
     // 목표 속도 (공격 중이면 정지)
@@ -103,8 +121,17 @@ export function usePlayerMovement({ bodyRef, modelRef }: UsePlayerMovementParams
     const k = Math.min(1, delta * ACCEL_RATE);
     const isJumping = playerInput.isJumpQueued && isGrounded && !isAttacking;
     playerInput.isJumpQueued = false;
-    const vy = isJumping ? JUMP_VELOCITY : vel.y;
-    body.setLinvel({ x: vel.x + (vx - vel.x) * k, y: vy, z: vel.z + (vz - vel.z) * k }, true);
+    if (isJumping) isJumpRisingRef.current = true;
+    const nextVx = vel.x + (vx - vel.x) * k;
+    const nextVz = vel.z + (vz - vel.z) * k;
+    // 땅 위에선 바닥 기울기를 따라 이동 + 뜬 틈만큼 끌어내림 — 경사로 꼭대기에서 튀어 오르거나 붕 뜨지 않게
+    let vy = vel.y;
+    if (isJumping) vy = JUMP_VELOCITY;
+    else if (isGrounded && n) {
+      const snap = Math.min(Math.max(gap, 0) / delta, MAX_SNAP_SPEED);
+      vy = -(n.x * nextVx + n.z * nextVz) / n.y - snap;
+    }
+    body.setLinvel({ x: nextVx, y: vy, z: nextVz }, true);
 
     // 바라보는 방향으로 최단 각도 회전 보간
     const model = modelRef.current;
