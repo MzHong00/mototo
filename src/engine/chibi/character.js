@@ -169,7 +169,13 @@ export function toonFrom(m) {
  * then the bone is rotated to aim at it. Runs after the animation mixer every frame. */
 const _v1 = new THREE.Vector3(), _v2 = new THREE.Vector3(), _v3 = new THREE.Vector3(), _q1 = new THREE.Quaternion(), _q2 = new THREE.Quaternion();
 class SpringBones {
-  constructor(cfg, bones, skeleton) {
+  constructor(cfg, bones, skeleton, root) {
+    // the hair is simulated in a frame that moves with the character root, so uneven frame deltas can
+    // no longer make the tails tremble while moving. Motion is fed back as forces instead:
+    // AIR = head wind proportional to the speed (tails stream back while running), INERTIA = kick when
+    // speeding up / stopping / turning.
+    this.root = root || null;
+    this.rootPos = null; this.rootVel = new THREE.Vector3(); this.wind = new THREE.Vector3();
     this.colliders = [];
     for (const c of cfg.colliders || []) {
       const b = bones.get(c.bone); if (!b) continue;
@@ -196,12 +202,38 @@ class SpringBones {
   }
   update(dt) {
     if (!this.joints.length) return;
-    const steps = Math.max(1, Math.ceil(Math.min(dt, 0.1) / (1 / 60)));
-    const h = Math.min(dt, 0.1) / steps;
-    for (let s = 0; s < steps; s++) this._step(h);
+    if (this.root && dt > 0) {
+      const p = this.root.getWorldPosition(_v1);
+      if (this.rootPos) {
+        const move = _v2.copy(p).sub(this.rootPos);
+        const vel = _v3.copy(move).divideScalar(dt);
+        const kick = vel.clone().sub(this.rootVel).multiplyScalar(SpringBones.INERTIA * Math.min(dt, 0.1));
+        kick.y = 0;   // jumps are already strong; keep the kick horizontal
+        for (const j of this.joints) { j.cur.add(move); j.prev.add(move).add(kick); }
+        this.rootVel.copy(vel);
+        this.wind.set(-vel.x, 0, -vel.z).clampLength(0, SpringBones.AIR_MAX_SPEED).multiplyScalar(SpringBones.AIR);
+      }
+      this.rootPos = (this.rootPos || new THREE.Vector3()).copy(p);
+    }
+    // fixed 1/120 s steps (verlet needs a constant step) + interpolation of the leftover time
+    this.acc = Math.min((this.acc || 0) + dt, 0.1);
+    while (this.acc >= SpringBones.H) { this._step(SpringBones.H); this.acc -= SpringBones.H; }
+    const a = this.acc / SpringBones.H;
+    for (const j of this.joints) this._aim(j, _v2.copy(j.prev).lerp(j.cur, a));
   }
+  _aim(j, tail) {
+    const b = j.bone, wp = b.getWorldPosition(_v1);
+    b.parent.getWorldQuaternion(_q1);
+    const to = _v3.copy(tail).sub(wp).applyQuaternion(_q2.copy(_q1).invert()).normalize();
+    b.quaternion.setFromUnitVectors(_v1.copy(j.axis).applyQuaternion(j.rest), to).multiply(j.rest);
+    b.updateMatrixWorld(true);
+  }
+  static H = 1 / 120;
+  static INERTIA = 1.0;   // how strongly a change of the character's speed swings the hair
+  static AIR = 0.55;      // head wind per unit of speed
+  static AIR_MAX_SPEED = 3.5;   // faster than this streams no further (game runs faster than the viewer)
   _step(dt) {
-    for (const c of this.colliders) c.world.copy(c.local).applyMatrix4(c.bone.matrixWorld);
+    for (const c of this.colliders) { c.bone.updateWorldMatrix(true, false); c.world.copy(c.local).applyMatrix4(c.bone.matrixWorld); }
     for (const j of this.joints) {
       const b = j.bone, wp = b.getWorldPosition(_v1);
       b.parent.getWorldQuaternion(_q1);
@@ -209,6 +241,7 @@ class SpringBones {
       const next = _v2.copy(j.cur).sub(j.prev).multiplyScalar(1 - j.drag).add(j.cur);
       next.addScaledVector(_v3.copy(j.axis).applyQuaternion(j.rest).applyQuaternion(_q1), j.stiff * dt);
       next.y -= j.grav * dt;
+      next.addScaledVector(this.wind, dt);
       next.sub(wp).normalize().multiplyScalar(j.len).add(wp);
       for (const c of this.colliders) {
         const r = c.radius + j.hit, d = _v3.copy(next).sub(c.world), l = d.length();
@@ -491,7 +524,7 @@ export class Character {
       meshes.push({ mesh, line });
     });
     this.slots[cat] = { id, meshes };
-    if (springCfg) this.springs[cat] = new SpringBones(springCfg, this.bones, this.mainSkeleton);
+    if (springCfg) this.springs[cat] = new SpringBones(springCfg, this.bones, this.mainSkeleton, this.root);
     this._applyColor(cat);
     if (cat === 'top') this._updateLayer();
     this._updateHide();
