@@ -1,0 +1,13 @@
+.fade {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: var(--color-chibi-ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease; // FADE_MS 와 같게
+}
+
+.isDark {
+  opacity: 1;
+}

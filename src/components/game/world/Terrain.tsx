@@ -1,3 +1,4 @@
+import { MeshLambertMaterial } from "three";
 import { RigidBody, TrimeshCollider } from "@react-three/rapier";
 
 import { useTerrainGeometry } from "@/hooks/useTerrainGeometry";
@@ -12,13 +13,15 @@ import {
 import type { TrimeshArgs } from "@react-three/rapier";
 import type { TileMapData } from "@/types/terrain";
 
+const TERRAIN_MATERIAL = new MeshLambertMaterial({ vertexColors: true }); // 모든 조각·맵이 함께 쓰는 재질 1개
+
 interface TerrainProps {
   map: TileMapData;
 }
 
-/** 칸 지형 — 땅 메시 1개 + 수면 1장 + 충돌체 1개 */
+/** 칸 지형 — 땅 메시 조각들(32칸) + 수면 1장 + 충돌체 1개 */
 export function Terrain({ map }: TerrainProps) {
-  const { geometry, colliderPositions, colliderIndices } = useTerrainGeometry(map);
+  const { geometries, colliderPositions, colliderIndices } = useTerrainGeometry(map);
 
   return (
     <>
@@ -28,9 +31,15 @@ export function Terrain({ map }: TerrainProps) {
           args={[colliderPositions, colliderIndices, TRIMESH_FLAGS] as unknown as TrimeshArgs}
         />
       </RigidBody>
-      <mesh geometry={geometry} receiveShadow castShadow>
-        <meshLambertMaterial vertexColors />
-      </mesh>
+      {geometries.map((geometry) => (
+        <mesh
+          key={geometry.uuid}
+          geometry={geometry}
+          material={TERRAIN_MATERIAL}
+          receiveShadow
+          castShadow
+        />
+      ))}
       <mesh rotation-x={-Math.PI / 2} position-y={WATER_SURFACE_Y}>
         <planeGeometry args={[WATER_PLANE_SIZE, WATER_PLANE_SIZE]} />
         <meshLambertMaterial color={TERRAIN_COLORS.water} transparent opacity={WATER_OPACITY} />

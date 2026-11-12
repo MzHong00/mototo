@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint",
     "format": "prettier --write \"src/**/*.{ts,tsx,scss}\"",
-    "check": "npm run format && npm run lint && npm run build"
+    "check": "npm run format && npm run lint && npm run build",
+    "maps:check": "esbuild scripts/validateMaps.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/validateMaps.mjs && node node_modules/.cache/validateMaps.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

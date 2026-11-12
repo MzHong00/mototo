@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Physics } from "@react-three/rapier";
 import { Stats } from "@react-three/drei";
@@ -6,11 +6,12 @@ import { Stats } from "@react-three/drei";
 import { FollowCamera } from "@/components/game/world/FollowCamera";
 import { PlayerCharacter } from "@/components/game/world/PlayerCharacter";
 import { SunLight } from "@/components/game/world/SunLight";
-import { Terrain } from "@/components/game/world/Terrain";
+import { CurrentMap } from "@/components/game/world/CurrentMap";
+import { useWorldStore } from "@/stores/worldStore";
+import { getMapDef } from "@/utils/maps";
 
 import { FRAME_PRIORITY } from "@/constants/game/frame";
 import { GRAVITY } from "@/constants/game/movement";
-import { TEST_ISLAND } from "@/constants/maps/testIsland";
 
 import type { ChibiState } from "@/engine/chibi/character";
 
@@ -29,6 +30,9 @@ interface GameCanvasProps {
 
 /** 게임 3D 월드 */
 export function GameCanvas({ appearance }: GameCanvasProps) {
+  const mapId = useWorldStore((st) => st.location.map);
+  const map = useMemo(() => getMapDef(mapId), [mapId]);
+
   return (
     <Canvas className={s.canvas} shadows flat camera={{ fov: 45 }}>
       <color attach="background" args={[SKY_COLOR]} />
@@ -39,7 +43,8 @@ export function GameCanvas({ appearance }: GameCanvasProps) {
       <Suspense fallback={null}>
         {/* 물리를 렌더 프레임과 1:1로 맞춰 카메라·캐릭터·배경이 같은 위치를 보게 한다 (고주사율 화면 끊김 방지) */}
         <Physics gravity={GRAVITY} timeStep="vary" updatePriority={FRAME_PRIORITY.PHYSICS}>
-          <Terrain map={TEST_ISLAND} />
+          {/* 맵이 바뀌면 지형·물체·충돌체를 통째로 새로 만든다 */}
+          <CurrentMap key={map.id} map={map} />
           <PlayerCharacter appearance={appearance} />
         </Physics>
       </Suspense>

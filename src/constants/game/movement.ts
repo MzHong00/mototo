@@ -17,5 +17,5 @@ export const FOOT_REACH = 0.18; // 발끝이 몸 중심에서 앞으로 나가�
 export const MIN_GROUND_NORMAL_Y = 0.5; // 바닥 법선이 이보다 서 있어야 걸을 수 있는 면 (약 60° 이하 경사)
 export const AIR_GRACE_SEC = 0.15; // 이만큼 계속 떠 있어야 점프(공중) 모션 — 턱·경사 끝에서 잠깐 뜨는 건 무시
 export const ATTACK_LOCK_MS = 450; // 공격 중 이동 잠금
-export const SPAWN_POS: [number, number, number] = [0, 1, 0]; // 시작 위치
+export const SPAWN_DROP = 1; // 맵 도착 시 바닥에서 이만큼 위에 놓음
 export const FALL_THRESHOLD = -5; // 이 높이 아래로 떨어지면 시작 위치로

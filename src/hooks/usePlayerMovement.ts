@@ -9,6 +9,8 @@ import {
   playerInput,
   playerPosition,
 } from "@/engine/runtime/frameState";
+import { getWorldState } from "@/stores/worldStore";
+import { spawnPoint } from "@/utils/maps";
 import {
   ACCEL_RATE,
   FOOT_REACH,
@@ -26,7 +28,6 @@ import {
   STEP_LIFT_SEC,
   STEP_MIN,
   STEP_PROBE,
-  SPAWN_POS,
   TURN_RATE,
   WALK_SPEED,
 } from "@/constants/game/movement";
@@ -60,8 +61,9 @@ export function usePlayerMovement({ bodyRef, modelRef }: UsePlayerMovementParams
     if (!body) return;
     const t = body.translation();
     if (t.y < FALL_THRESHOLD) {
-      // 낙하 복구
-      body.setTranslation({ x: SPAWN_POS[0], y: SPAWN_POS[1], z: SPAWN_POS[2] }, true);
+      // 낙하 복구 — 지금 맵의 도착 자리로
+      const [x, y, z] = spawnPoint(getWorldState().location);
+      body.setTranslation({ x, y, z }, true);
       body.setLinvel({ x: 0, y: 0, z: 0 }, true);
     }
     playerPosition.current.set(t.x, t.y, t.z);

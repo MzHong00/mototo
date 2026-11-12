@@ -1,8 +1,11 @@
 import { Color, Vector3 } from "three";
 
+import { valueNoise } from "@/utils/noise";
 import {
   BLOCKER_HEIGHT,
+  CHUNK_SIZE,
   LEVEL_HEIGHT,
+  SEA_SKIP_DISTANCE,
   TERRAIN_COLORS,
   SHADE_AMOUNT,
   SHADE_SCALE,
@@ -10,11 +13,11 @@ import {
   WATER_DEPTH,
 } from "@/constants/game/terrain";
 
-import type { TerrainBuffers, TileMapData } from "@/types/terrain";
+import type { TerrainBuffers, TileKind, TileMapData } from "@/types/terrain";
 
 type Corners = [number, number, number, number]; // 칸 네 모서리 높이: (x0,z0) (x1,z0) (x1,z1) (x0,z1)
 
-const RAMP_UP: Record<string, [number, number]> = {
+export const RAMP_UP: Record<string, [number, number]> = {
   "^": [0, -1],
   v: [0, 1],
   "<": [-1, 0],
@@ -65,25 +68,6 @@ class QuadBuffer {
   }
 }
 
-/** 0~1 해시 — 같은 격자점은 항상 같은 값 */
-const hash2 = (x: number, z: number) => {
-  const h = Math.sin(x * 127.1 + z * 311.7) * 43758.5453;
-  return h - Math.floor(h);
-};
-
-/** 부드러운 값 노이즈 (0~1) — 격자점 값을 매끄럽게 섞어 넓은 얼룩을 만든다 */
-const valueNoise = (x: number, z: number) => {
-  const ix = Math.floor(x);
-  const iz = Math.floor(z);
-  const fx = x - ix;
-  const fz = z - iz;
-  const sx = fx * fx * (3 - 2 * fx);
-  const sz = fz * fz * (3 - 2 * fz);
-  const top = hash2(ix, iz) + (hash2(ix + 1, iz) - hash2(ix, iz)) * sx;
-  const bottom = hash2(ix, iz + 1) + (hash2(ix + 1, iz + 1) - hash2(ix, iz + 1)) * sx;
-  return top + (bottom - top) * sz;
-};
-
 /** 위치별 밝기 배율 — 큰 얼룩 + 작은 얼룩. 모서리 위치로 계산해 이웃 칸과 이어져 칸 경계가 안 보임 */
 const groundShade = (x: number, z: number) =>
   1 +
@@ -91,14 +75,10 @@ const groundShade = (x: number, z: number) =>
     (valueNoise(x / (SHADE_SCALE / 3), z / (SHADE_SCALE / 3)) - 0.5)) *
     SHADE_AMOUNT;
 
-/** 칸 글자 지도 → 지형 메시·충돌체 버퍼. 지도 전체가 메시 1개라 그리기 호출 1번 */
-export function buildTerrain(map: TileMapData): TerrainBuffers {
-  const depth = map.kinds.length;
-  const width = map.kinds[0].length;
+/** 지도 읽기 도우미 — 칸 종류·층·네 모서리 높이 (지형 빌드와 맵 검사가 함께 씀) */
+export function tileReader(map: TileMapData) {
   const kindAt = (x: number, z: number) => map.kinds[z]?.[x] ?? "w"; // 지도 밖은 물
   const levelAt = (x: number, z: number) => Number(map.heights[z]?.[x] ?? 0);
-  const ox = -(width * TILE_SIZE) / 2; // 지도 가운데를 월드 원점에
-  const oz = -(depth * TILE_SIZE) / 2;
 
   /** 같은 방향 경사로가 몇 칸 이어지는지 (dir 쪽으로) */
   const rampRun = (x: number, z: number, kind: string, dx: number, dz: number) => {
@@ -122,7 +102,37 @@ export function buildTerrain(map: TileMapData): TerrainBuffers {
     }) as Corners;
   };
 
-  const surface = new QuadBuffer();
+  return { kindAt, levelAt, cornersAt };
+}
+
+/** 땅에서 멀리 떨어진 물 칸 표시 — 수면 판이 덮으니 바닥을 그리지 않는다 */
+function farSeaMask(map: TileMapData, width: number, depth: number) {
+  const isLand = (x: number, z: number) =>
+    map.kinds[z]?.[x] !== undefined && map.kinds[z][x] !== "w";
+  const r = SEA_SKIP_DISTANCE;
+  const offsets = Array.from({ length: (2 * r + 1) ** 2 }, (_, i) => [
+    (i % (2 * r + 1)) - r,
+    Math.floor(i / (2 * r + 1)) - r,
+  ]);
+  return Array.from({ length: depth }, (_, z) =>
+    Array.from({ length: width }, (_, x) => !offsets.some(([dx, dz]) => isLand(x + dx, z + dz))),
+  );
+}
+
+/** 칸 글자 지도 → 지형 메시 조각들·충돌체 버퍼. 조각(32칸)마다 메시 1개라 화면 밖 조각은 그리지 않는다 */
+export function buildTerrain(map: TileMapData): TerrainBuffers {
+  const depth = map.kinds.length;
+  const width = map.kinds[0].length;
+  const { kindAt, cornersAt } = tileReader(map);
+  const palette: Record<string, string> = { ...TERRAIN_COLORS, ...map.colors };
+  const isFarSea = farSeaMask(map, width, depth);
+  const ox = -(width * TILE_SIZE) / 2; // 지도 가운데를 월드 원점에
+  const oz = -(depth * TILE_SIZE) / 2;
+  const chunkCols = Math.ceil(width / CHUNK_SIZE);
+  const chunks = Array.from(
+    { length: chunkCols * Math.ceil(depth / CHUNK_SIZE) },
+    () => new QuadBuffer(),
+  );
   const collider = new QuadBuffer();
   const color = new Color();
   const up = new Vector3(0, 1, 0);
@@ -137,12 +147,12 @@ export function buildTerrain(map: TileMapData): TerrainBuffers {
   map.kinds.forEach((row, z) => {
     [...row].forEach((kind, x) => {
       const isWater = kind === "w";
+      if (isWater && isFarSea[z][x]) return;
+      const surface = chunks[Math.floor(z / CHUNK_SIZE) * chunkCols + Math.floor(x / CHUNK_SIZE)];
       const mine = cornersAt(x, z);
 
       // 윗면 — 자연스러운 얼룩 (꼭짓점마다 위치 기반 밝기)
-      const topHex = RAMP_UP[kind]
-        ? TERRAIN_COLORS.ramp
-        : TERRAIN_COLORS[kind as "g" | "p" | "s" | "w"];
+      const topHex = RAMP_UP[kind] ? palette.ramp : palette[kind as TileKind];
       const top = mine.map((y, i) => corner(x, z, i, y));
       surface.push(top, up, (p) => color.set(topHex).multiplyScalar(groundShade(p.x, p.z)));
       if (!isWater) collider.push(top, up);
@@ -162,7 +172,7 @@ export function buildTerrain(map: TileMapData): TerrainBuffers {
             corner(x, z, m2, Math.min(mine[m2], theirs[t2])),
             corner(x, z, m1, Math.min(mine[m1], theirs[t1])),
           ];
-          const wallHex = kind === "s" ? TERRAIN_COLORS.bank : TERRAIN_COLORS.cliff;
+          const wallHex = kind === "s" ? palette.bank : palette.cliff;
           surface.push(wall, facing, () => color.set(wallHex));
           collider.push(wall, facing);
         }
@@ -183,10 +193,14 @@ export function buildTerrain(map: TileMapData): TerrainBuffers {
   });
 
   return {
-    positions: new Float32Array(surface.positions),
-    normals: new Float32Array(surface.normals),
-    colors: new Float32Array(surface.colors),
-    indices: new Uint32Array(surface.indices),
+    chunks: chunks
+      .filter((c) => c.indices.length > 0)
+      .map((c) => ({
+        positions: new Float32Array(c.positions),
+        normals: new Float32Array(c.normals),
+        colors: new Float32Array(c.colors),
+        indices: new Uint32Array(c.indices),
+      })),
     colliderPositions: new Float32Array(collider.positions),
     colliderIndices: new Uint32Array(collider.indices),
   };

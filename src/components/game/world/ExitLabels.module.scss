@@ -1,0 +1,12 @@
+.label {
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-chibi-chip);
+  box-shadow: var(--shadow-chibi);
+  color: var(--color-chibi-ink);
+  font-family: var(--font-title);
+  font-size: 14px;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}

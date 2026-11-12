@@ -6,6 +6,8 @@ export const WATER_SURFACE_Y = -0.15; // 바다·연못 수면 높이 (0층 기�
 export const WATER_PLANE_SIZE = 400; // 수면 한 변 — 지도 바깥 바다까지 덮음
 export const WATER_OPACITY = 0.82;
 export const BLOCKER_HEIGHT = 3; // 물가 투명벽 높이 — 물에 못 들어가게
+export const CHUNK_SIZE = 32; // 화면 메시 조각 한 변 (칸) — 화면 밖 조각은 그리지 않음
+export const SEA_SKIP_DISTANCE = 2; // 땅에서 이 칸 수보다 먼 물 칸은 바닥 생략 (수면이 덮음)
 export const TRIMESH_FLAGS = 144; // rapier TriMeshFlags.FIX_INTERNAL_EDGES (꼭짓점 병합 포함) — 칸 이음매에서 튕기지 않게
 export const SHADE_SCALE = 7; // 바닥 얼룩 크기 (m)
 export const SHADE_AMOUNT = 0.05; // 바닥 얼룩 밝기 차이
@@ -15,6 +17,8 @@ export const TERRAIN_COLORS = {
   p: "#e3c99a", // 흙길
   s: "#f2e2b3", // 모래
   w: "#8fc9c4", // 물 바닥
+  r: "#d8d0bf", // 돌바닥 (마을 광장·전투맵 방)
+  x: "#6f8a5c", // 막힘 칸 윗면 (전투맵 벽 위)
   ramp: "#e3c99a", // 경사로 (흙길과 같음)
   cliff: "#b98f62", // 절벽
   bank: "#d9c48f", // 모래 물가 벽
