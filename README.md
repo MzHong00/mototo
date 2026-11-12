@@ -16,5 +16,6 @@ npm run dev
 | 분류 | 경로 |
 | --- | --- |
 | 게임 기획 | [docs/content/GameDesign.md](docs/content/GameDesign.md) |
+| 콘텐츠 문서 목록 | [docs/content/index.md](docs/content/index.md) |
 | 아키텍처 | [docs/arch/Architecture.md](docs/arch/Architecture.md) |
 | 할 일 | [docs/todo/Todos.md](docs/todo/Todos.md) |

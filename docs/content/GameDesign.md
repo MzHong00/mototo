@@ -19,13 +19,7 @@
 
 ## 시스템 문서
 
-| 시스템 | 문서 |
-| --- | --- |
-| 캐릭터 커스터마이징 | [Character.md](Character.md) |
-| 세계 구조 (마을·갈래길) | [World.md](World.md) |
-| 나날빛 (출석 색 레벨) | [Nanalbit.md](Nanalbit.md) |
-| 생활·전투 기술과 등급 | [Skills.md](Skills.md) |
-| 집짓기 | [Housing.md](Housing.md) |
+전체 목록과 각 문서 설명은 [index.md](index.md) 참고.
 
 ## 아이템 분류 (초안)
 
