@@ -17,7 +17,7 @@ React 19 · Three.js · React Three Fiber · drei · Rapier · Zustand · Vite �
 src/
   App.tsx                 캐릭터 유무·꾸미기 여부로 화면 선택
   screens/                characterCreate(만들기·꾸미기) · game
-  components/game/        character(ChibiPreview) · world(GameCanvas·PlayerCharacter·TestGround·FollowCamera·SunLight)
+  components/game/        character(ChibiPreview) · world(GameCanvas·PlayerCharacter·Terrain·FollowCamera·SunLight)
   components/ui/          common/chibiEditor(꾸미기 패널) · hud(GameHud)
   hooks/                  useChibiCharacter · useChibiAnimations · useCharacterAnimation · usePlayerMovement · useAttackInput
   engine/                 chibi(원본 사본) · runtime(keyState·frameState: 프레임 공유 상태)

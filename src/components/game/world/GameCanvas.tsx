@@ -6,10 +6,11 @@ import { Stats } from "@react-three/drei";
 import { FollowCamera } from "@/components/game/world/FollowCamera";
 import { PlayerCharacter } from "@/components/game/world/PlayerCharacter";
 import { SunLight } from "@/components/game/world/SunLight";
-import { TestGround } from "@/components/game/world/TestGround";
+import { Terrain } from "@/components/game/world/Terrain";
 
 import { FRAME_PRIORITY } from "@/constants/game/frame";
 import { GRAVITY } from "@/constants/game/movement";
+import { TEST_ISLAND } from "@/constants/maps/testIsland";
 
 import type { ChibiState } from "@/engine/chibi/character";
 
@@ -38,7 +39,7 @@ export function GameCanvas({ appearance }: GameCanvasProps) {
       <Suspense fallback={null}>
         {/* 물리를 렌더 프레임과 1:1로 맞춰 카메라·캐릭터·배경이 같은 위치를 보게 한다 (고주사율 화면 끊김 방지) */}
         <Physics gravity={GRAVITY} timeStep="vary" updatePriority={FRAME_PRIORITY.PHYSICS}>
-          <TestGround />
+          <Terrain map={TEST_ISLAND} />
           <PlayerCharacter appearance={appearance} />
         </Physics>
       </Suspense>

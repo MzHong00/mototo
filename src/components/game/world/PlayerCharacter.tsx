@@ -32,6 +32,7 @@ export function PlayerCharacter({ appearance }: PlayerCharacterProps) {
       position={SPAWN_POS}
       enabledRotations={[false, false, false]}
       colliders={false}
+      ccd // 프레임이 길어져도 얇은 지형 충돌면을 뚫고 빠지지 않게
     >
       <CapsuleCollider args={[PLAYER_HALF_HEIGHT, PLAYER_RADIUS]} />
       <group ref={modelRef}>
