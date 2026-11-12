@@ -4,7 +4,8 @@ import {
   BLOCKER_HEIGHT,
   LEVEL_HEIGHT,
   TERRAIN_COLORS,
-  TILE_SHADE,
+  SHADE_AMOUNT,
+  SHADE_SCALE,
   TILE_SIZE,
   WATER_DEPTH,
 } from "@/constants/game/terrain";
@@ -44,7 +45,7 @@ class QuadBuffer {
   private n = new Vector3();
 
   /** 사각형 추가 — 법선이 facing 쪽을 보도록 감는 방향 자동 보정 */
-  push(quad: Vector3[], facing: Vector3, color?: Color) {
+  push(quad: Vector3[], facing: Vector3, colorAt?: (p: Vector3) => Color) {
     // 대각선끼리 외적 — 한 변이 0인 사각형(경사로 옆 삼각 벽)에서도 법선이 망가지지 않음
     this.a.subVectors(quad[2], quad[0]);
     this.b.subVectors(quad[3], quad[1]);
@@ -57,11 +58,38 @@ class QuadBuffer {
     quad.forEach((p) => {
       this.positions.push(p.x, p.y, p.z);
       this.normals.push(this.n.x, this.n.y, this.n.z);
+      const color = colorAt?.(p);
       if (color) this.colors.push(color.r, color.g, color.b);
     });
     this.indices.push(base, base + 1, base + 2, base, base + 2, base + 3);
   }
 }
+
+/** 0~1 해시 — 같은 격자점은 항상 같은 값 */
+const hash2 = (x: number, z: number) => {
+  const h = Math.sin(x * 127.1 + z * 311.7) * 43758.5453;
+  return h - Math.floor(h);
+};
+
+/** 부드러운 값 노이즈 (0~1) — 격자점 값을 매끄럽게 섞어 넓은 얼룩을 만든다 */
+const valueNoise = (x: number, z: number) => {
+  const ix = Math.floor(x);
+  const iz = Math.floor(z);
+  const fx = x - ix;
+  const fz = z - iz;
+  const sx = fx * fx * (3 - 2 * fx);
+  const sz = fz * fz * (3 - 2 * fz);
+  const top = hash2(ix, iz) + (hash2(ix + 1, iz) - hash2(ix, iz)) * sx;
+  const bottom = hash2(ix, iz + 1) + (hash2(ix + 1, iz + 1) - hash2(ix, iz + 1)) * sx;
+  return top + (bottom - top) * sz;
+};
+
+/** 위치별 밝기 배율 — 큰 얼룩 + 작은 얼룩. 모서리 위치로 계산해 이웃 칸과 이어져 칸 경계가 안 보임 */
+const groundShade = (x: number, z: number) =>
+  1 +
+  ((valueNoise(x / SHADE_SCALE, z / SHADE_SCALE) - 0.5) * 2 +
+    (valueNoise(x / (SHADE_SCALE / 3), z / (SHADE_SCALE / 3)) - 0.5)) *
+    SHADE_AMOUNT;
 
 /** 칸 글자 지도 → 지형 메시·충돌체 버퍼. 지도 전체가 메시 1개라 그리기 호출 1번 */
 export function buildTerrain(map: TileMapData): TerrainBuffers {
@@ -111,14 +139,12 @@ export function buildTerrain(map: TileMapData): TerrainBuffers {
       const isWater = kind === "w";
       const mine = cornersAt(x, z);
 
-      // 윗면 — 칸마다 살짝 다른 밝기로 바둑판 느낌
-      const shade =
-        1 + (((x + z) & 1) * 2 - 1) * TILE_SHADE + (((x * 7 + z * 13) % 5) - 2) * TILE_SHADE * 0.4;
-      color
-        .set(RAMP_UP[kind] ? TERRAIN_COLORS.ramp : TERRAIN_COLORS[kind as "g" | "p" | "s" | "w"])
-        .multiplyScalar(shade);
+      // 윗면 — 자연스러운 얼룩 (꼭짓점마다 위치 기반 밝기)
+      const topHex = RAMP_UP[kind]
+        ? TERRAIN_COLORS.ramp
+        : TERRAIN_COLORS[kind as "g" | "p" | "s" | "w"];
       const top = mine.map((y, i) => corner(x, z, i, y));
-      surface.push(top, up, color);
+      surface.push(top, up, (p) => color.set(topHex).multiplyScalar(groundShade(p.x, p.z)));
       if (!isWater) collider.push(top, up);
 
       // 옆면 — 이웃보다 높은 쪽 가장자리마다 절벽 벽
@@ -136,8 +162,8 @@ export function buildTerrain(map: TileMapData): TerrainBuffers {
             corner(x, z, m2, Math.min(mine[m2], theirs[t2])),
             corner(x, z, m1, Math.min(mine[m1], theirs[t1])),
           ];
-          color.set(kind === "s" ? TERRAIN_COLORS.bank : TERRAIN_COLORS.cliff);
-          surface.push(wall, facing, color);
+          const wallHex = kind === "s" ? TERRAIN_COLORS.bank : TERRAIN_COLORS.cliff;
+          surface.push(wall, facing, () => color.set(wallHex));
           collider.push(wall, facing);
         }
         // 물가 투명벽 — 땅에서 물(또는 지도 밖)로 못 나가게
