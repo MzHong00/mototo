@@ -11,6 +11,7 @@ import {
 } from "@/engine/runtime/frameState";
 import {
   ACCEL_RATE,
+  FOOT_REACH,
   AIR_GRACE_SEC,
   FALL_THRESHOLD,
   GROUND_PROBE,
@@ -21,6 +22,10 @@ import {
   PLAYER_RADIUS,
   RUN_SPEED,
   SNAP_DISTANCE,
+  STEP_HEIGHT,
+  STEP_LIFT_SEC,
+  STEP_MIN,
+  STEP_PROBE,
   SPAWN_POS,
   TURN_RATE,
   WALK_SPEED,
@@ -47,6 +52,7 @@ export function usePlayerMovement({ bodyRef, modelRef }: UsePlayerMovementParams
   const isJumpRisingRef = useRef(false); // 점프로 올라가는 중 (경사로를 오를 때 올라가는 속도와 구분)
   const airTimeRef = useRef(0); // 연속으로 떠 있던 시간 (초)
   const wasGroundedRef = useRef(false); // 지난 프레임 착지 여부 — 땅에 붙어 다니기(스냅) 판단용
+  const stepRayRef = useRef<Ray | null>(null); // 앞쪽 턱 높이 측정용 광선 (재사용)
 
   /** 물리 스텝 직후·카메라 직전에 위치 동기화 — 카메라가 이번 프레임 위치를 그대로 따라가게 */
   useFrame(() => {
@@ -131,6 +137,34 @@ export function usePlayerMovement({ bodyRef, modelRef }: UsePlayerMovementParams
       const snap = Math.min(Math.max(gap, 0) / delta, MAX_SNAP_SPEED);
       vy = -(n.x * nextVx + n.z * nextVz) / n.y - snap;
     }
+
+    // 낮은 턱 올라서기: 가려는데 막혀 있으면 바로 앞 바닥 높이를 재서 STEP_HEIGHT 이하면 들어 올린다
+    const wantSpeed = Math.hypot(vx, vz);
+    const isBlocked = isGrounded && wantSpeed > 0 && Math.hypot(vel.x, vel.z) < wantSpeed * 0.5;
+    if (isBlocked) {
+      const footY = t.y - PLAYER_HALF_HEIGHT - PLAYER_RADIUS;
+      const ahead = PLAYER_RADIUS + STEP_PROBE;
+      stepRayRef.current ??= new rapier.Ray({ x: 0, y: 0, z: 0 }, { x: 0, y: -1, z: 0 });
+      const stepRay = stepRayRef.current;
+      stepRay.origin = {
+        x: t.x + (vx / wantSpeed) * ahead,
+        y: footY + STEP_HEIGHT,
+        z: t.z + (vz / wantSpeed) * ahead,
+      };
+      const stepHit = world.castRayAndGetNormal(
+        stepRay,
+        STEP_HEIGHT,
+        true,
+        undefined,
+        undefined,
+        undefined,
+        body,
+      );
+      const rise = stepHit ? STEP_HEIGHT - stepHit.timeOfImpact : 0; // 앞 바닥이 발보다 높은 정도
+      if (stepHit && stepHit.normal.y > MIN_GROUND_NORMAL_Y && rise > STEP_MIN) {
+        vy = Math.min(rise / STEP_LIFT_SEC, MAX_SNAP_SPEED);
+      }
+    }
     body.setLinvel({ x: nextVx, y: vy, z: nextVz }, true);
 
     // 바라보는 방향으로 최단 각도 회전 보간
@@ -140,6 +174,9 @@ export function usePlayerMovement({ bodyRef, modelRef }: UsePlayerMovementParams
       const diff = Math.atan2(f.x, f.z) - model.rotation.y;
       model.rotation.y +=
         Math.atan2(Math.sin(diff), Math.cos(diff)) * Math.min(1, delta * TURN_RATE);
+      // 경사면에선 모델을 살짝 들어 앞발 끝이 비탈에 묻히지 않게 (경사 tan × 발 길이)
+      const slopeLift = isGrounded && n ? (FOOT_REACH * Math.sqrt(1 - n.y * n.y)) / n.y : 0;
+      model.position.y += (slopeLift - model.position.y) * k;
     }
   });
 }
