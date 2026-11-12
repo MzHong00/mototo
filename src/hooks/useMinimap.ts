@@ -8,7 +8,9 @@ import { TERRAIN_COLORS, TILE_SIZE } from "@/constants/game/terrain";
 import {
   MINIMAP_CLIFF,
   MINIMAP_DUNGEON,
+  MINIMAP_ARROW,
   MINIMAP_EXIT,
+  MINIMAP_ICON_R,
   MINIMAP_LEVEL_DARKEN,
   MINIMAP_OUTLINE,
   MINIMAP_PLAYER,
@@ -90,7 +92,7 @@ export function useMinimap(canvasRef: RefObject<HTMLCanvasElement | null>, map: 
       icons.forEach((icon) => {
         ctx.fillStyle = icon.isDungeon ? MINIMAP_DUNGEON : MINIMAP_EXIT;
         ctx.beginPath();
-        ctx.arc(half - cx + icon.x * px, half - cz + icon.z * px, 5, 0, Math.PI * 2);
+        ctx.arc(half - cx + icon.x * px, half - cz + icon.z * px, MINIMAP_ICON_R, 0, Math.PI * 2);
         ctx.fill();
       });
       const f = playerFacing.current;
@@ -101,10 +103,7 @@ export function useMinimap(canvasRef: RefObject<HTMLCanvasElement | null>, map: 
       ctx.strokeStyle = MINIMAP_OUTLINE;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(8, 0);
-      ctx.lineTo(-6, 6);
-      ctx.lineTo(-3, 0);
-      ctx.lineTo(-6, -6);
+      MINIMAP_ARROW.forEach(([ax, ay], i) => (i === 0 ? ctx.moveTo(ax, ay) : ctx.lineTo(ax, ay)));
       ctx.closePath();
       ctx.stroke();
       ctx.fill();

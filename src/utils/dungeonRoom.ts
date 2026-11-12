@@ -2,7 +2,9 @@ import {
   DOOR_WIDTH,
   ROOM_ENTRY_INSET,
   ROOM_KIND_LABEL,
+  ROOM_LEAVE_LABEL,
   ROOM_PROPS,
+  ROOM_RETURN_LABEL,
   ROOM_SIZE,
   ROOM_WALL,
   ROOM_WALL_LEVEL,
@@ -34,9 +36,9 @@ export function buildRoomMap(dungeon: DungeonDef, roomId: string): MapDef {
     };
   });
   if (room.kind === "boss")
-    exits.push({ mark: "A", to: dungeon.returnTo, mode: "walk", label: "🏠 마을로" });
+    exits.push({ mark: "A", to: dungeon.returnTo, mode: "walk", label: ROOM_RETURN_LABEL });
   if (room.kind === "entry")
-    exits.push({ mark: BACK_MARK, to: dungeon.returnTo, mode: "walk", label: "나가기" });
+    exits.push({ mark: BACK_MARK, to: dungeon.returnTo, mode: "walk", label: ROOM_LEAVE_LABEL });
 
   // 문 자리 (벽 틈) — 표시 글자 → 해당 칸 판별
   const doorAt = (x: number, z: number) => {

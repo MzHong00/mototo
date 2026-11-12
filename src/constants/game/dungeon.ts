@@ -24,6 +24,9 @@ export const ROOM_KIND_LABEL: Record<RoomKind, string> = {
   boss: "👑 보스",
 };
 
+export const ROOM_RETURN_LABEL = "🏠 마을로"; // 보스방 북쪽 문
+export const ROOM_LEAVE_LABEL = "나가기"; // 입구방 남쪽 문
+
 /** 방 종류별 표식 물체 — [종류, 방 가로 비율, 방 세로 비율] (전투가 생기기 전 자리 표시) */
 export const ROOM_PROPS: Record<RoomKind, [string, number, number][]> = {
   entry: [],

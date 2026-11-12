@@ -93,7 +93,7 @@ export function rasterizeBlueprint(bp: MapBlueprint): TileMapData {
   const lines = bp.paths.map((path) => ({ path, cells: pathCenterline(path.points) }));
   const crossCells = (x: number, z: number, dx: number, dz: number, width: number) =>
     Array.from({ length: width }, (_, i): [number, number] => {
-      const o = i - (width - 1) / 2;
+      const o = i - Math.floor((width - 1) / 2); // 짝수 폭도 정수 칸
       return [x + (dz !== 0 ? o : 0), z + (dx !== 0 ? o : 0)];
     });
   lines.forEach(({ path, cells }) =>
@@ -115,10 +115,13 @@ export function rasterizeBlueprint(bp: MapBlueprint): TileMapData {
       // 오르막이면 경계 앞(a 쪽)으로, 내리막이면 경계 뒤(b 쪽)로 경사로를 깐다
       const [sx, sz, step] = diff > 0 ? [ax, az, -1] : [bx, bz, 1];
       const kind = diff > 0 ? rampKind(dx, dz) : rampKind(-dx, -dz);
+      // 아래층과 같은 높이의 길 칸에만 깐다 (꺾인 곳·다른 경계를 넘어 풀밭·물이 경사로가 되지 않게)
+      const lower = heights[sz][sx];
       Array.from({ length: RAMP_LENGTH }, (_, k) =>
         crossCells(sx + dx * step * k, sz + dz * step * k, dx, dz, path.width).forEach(
           ([cx, cz]) => {
-            if (inside(cx, cz)) kinds[cz][cx] = kind;
+            if (inside(cx, cz) && kinds[cz][cx] === "p" && heights[cz][cx] === lower)
+              kinds[cz][cx] = kind;
           },
         ),
       );

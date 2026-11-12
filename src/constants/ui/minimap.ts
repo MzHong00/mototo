@@ -6,3 +6,10 @@ export const MINIMAP_PLAYER = "#ff7aa8"; // 내 위치 화살표
 export const MINIMAP_EXIT = "#4f9fd6"; // 출구 아이콘
 export const MINIMAP_DUNGEON = "#6c4f8a"; // 전투맵 입구·문 아이콘
 export const MINIMAP_OUTLINE = "#ffffff"; // 화살표 테두리
+export const MINIMAP_ICON_R = 5; // 출구 아이콘 반지름 (px)
+export const MINIMAP_ARROW: [number, number][] = [
+  [8, 0],
+  [-6, 6],
+  [-3, 0],
+  [-6, -6],
+]; // 내 위치 화살표 꼭짓점 (오른쪽 = 바라보는 방향)

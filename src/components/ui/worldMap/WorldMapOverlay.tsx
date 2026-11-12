@@ -1,52 +1,51 @@
 import { useWorldMap } from "@/hooks/useWorldMap";
 import {
-  WORLD_MAP_CELL,
+  WORLD_MAP_DUNGEON_R,
+  WORLD_MAP_HERE_GAP,
+  WORLD_MAP_LABEL_GAP,
   WORLD_MAP_LINE_WIDTH,
-  WORLD_MAP_PAD,
+  WORLD_MAP_TEXT,
   WORLD_MAP_UNKNOWN,
+  WORLD_MAP_UNKNOWN_DASH,
   WORLD_MAP_UNKNOWN_LABEL,
+  WORLD_MAP_VILLAGE_R,
 } from "@/constants/ui/worldMap";
 
 import s from "./WorldMapOverlay.module.scss";
 
-interface WorldMapOverlayProps {
-  /** 지도 닫기 */
-  onClose: () => void;
-}
-
 /** 전체 지도 — 지하철 노선도처럼 역(맵)과 노선(길). 살짝 눕힌 판으로 3D 느낌. 가 본 마을을 누르면 빠른 이동 */
-export function WorldMapOverlay({ onClose }: WorldMapOverlayProps) {
-  const { nodes, lines, stateOf, currentId, isInDungeon, selectNode } = useWorldMap();
-  const shown = nodes.filter((n) => stateOf(n.id) !== "hidden"); // 판 크기는 보이는 역에만 맞춤
-  const xs = shown.map((n) => n.grid[0]);
-  const zs = shown.map((n) => n.grid[1]);
-  const minX = Math.min(...xs);
-  const minZ = Math.min(...zs);
-  const width = (Math.max(...xs) - minX) * WORLD_MAP_CELL + WORLD_MAP_PAD * 2;
-  const height = (Math.max(...zs) - minZ) * WORLD_MAP_CELL + WORLD_MAP_PAD * 2;
-  const pos = (id: string) => {
-    const node = nodes.find((n) => n.id === id);
-    const [gx, gz] = node?.grid ?? [0, 0];
-    return [
-      (gx - minX) * WORLD_MAP_CELL + WORLD_MAP_PAD,
-      (gz - minZ) * WORLD_MAP_CELL + WORLD_MAP_PAD,
-    ];
-  };
+export function WorldMapOverlay() {
+  const {
+    isMapOpen,
+    close,
+    nodes,
+    lines,
+    stateOf,
+    layout,
+    currentId,
+    isInDungeon,
+    canTravelTo,
+    selectNode,
+  } = useWorldMap();
+  if (!isMapOpen) return null;
 
   return (
-    <div className={s.backdrop} onClick={onClose} role="dialog" aria-label="전체 지도">
+    <div className={s.backdrop} onClick={close} role="dialog" aria-label={WORLD_MAP_TEXT.title}>
       <div className={s.stage} onClick={(e) => e.stopPropagation()}>
-        <h2 className={s.title}>지도</h2>
+        <h2 className={s.title}>{WORLD_MAP_TEXT.title}</h2>
         <div className={s.plate}>
-          <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+          <svg
+            width={layout.width}
+            height={layout.height}
+            viewBox={`0 0 ${layout.width} ${layout.height}`}
+          >
             {lines.map((line) =>
               line.stops.slice(1).map((id, i) => {
                 const from = line.stops[i];
+                if (stateOf(from) === "hidden" || stateOf(id) === "hidden") return null;
                 const isKnown = stateOf(from) === "visited" && stateOf(id) === "visited";
-                const isShown = stateOf(from) !== "hidden" && stateOf(id) !== "hidden";
-                if (!isShown) return null;
-                const [x1, y1] = pos(from);
-                const [x2, y2] = pos(id);
+                const [x1, y1] = layout.toPx(from);
+                const [x2, y2] = layout.toPx(id);
                 return (
                   <line
                     key={`${line.id}-${i}`}
@@ -57,7 +56,7 @@ export function WorldMapOverlay({ onClose }: WorldMapOverlayProps) {
                     stroke={isKnown ? line.color : WORLD_MAP_UNKNOWN}
                     strokeWidth={WORLD_MAP_LINE_WIDTH}
                     strokeLinecap="round"
-                    strokeDasharray={isKnown ? undefined : "2 18"}
+                    strokeDasharray={isKnown ? undefined : WORLD_MAP_UNKNOWN_DASH}
                   />
                 );
               }),
@@ -65,19 +64,18 @@ export function WorldMapOverlay({ onClose }: WorldMapOverlayProps) {
             {nodes.map((node) => {
               const state = stateOf(node.id);
               if (state === "hidden") return null;
-              const [x, y] = pos(node.id);
+              const [x, y] = layout.toPx(node.id);
               const isVisited = state === "visited";
-              const isCurrent = node.id === currentId;
-              const canTravel = isVisited && !!node.fastTravel && !isInDungeon && !isCurrent;
-              const r = node.kind === "dungeon" ? 11 : 17;
+              const isDungeon = node.kind === "dungeon";
+              const r = isDungeon ? WORLD_MAP_DUNGEON_R : WORLD_MAP_VILLAGE_R;
               return (
                 <g
                   key={node.id}
-                  className={canTravel ? s.station : undefined}
+                  className={canTravelTo(node) ? s.station : undefined}
                   onClick={() => selectNode(node)}
                   transform={`translate(${x} ${y})`}
                 >
-                  {node.kind === "dungeon" ? (
+                  {isDungeon ? (
                     <rect
                       x={-r}
                       y={-r}
@@ -89,8 +87,10 @@ export function WorldMapOverlay({ onClose }: WorldMapOverlayProps) {
                   ) : (
                     <circle r={r} className={isVisited ? s.village : s.unknown} />
                   )}
-                  {isCurrent && <circle r={r + 9} className={s.here} />}
-                  <text y={r + 22} className={s.label}>
+                  {node.id === currentId && (
+                    <circle r={r + WORLD_MAP_HERE_GAP} className={s.here} />
+                  )}
+                  <text y={r + WORLD_MAP_LABEL_GAP} className={s.label}>
                     {isVisited ? node.label : WORLD_MAP_UNKNOWN_LABEL}
                   </text>
                 </g>
@@ -99,12 +99,10 @@ export function WorldMapOverlay({ onClose }: WorldMapOverlayProps) {
           </svg>
         </div>
         <p className={s.hint}>
-          {isInDungeon
-            ? "전투맵 안에서는 빠른 이동을 할 수 없어요"
-            : "가 본 마을을 누르면 그곳으로 이동해요"}
+          {isInDungeon ? WORLD_MAP_TEXT.hintDungeon : WORLD_MAP_TEXT.hintTravel}
         </p>
-        <button type="button" className={s.close} onClick={onClose}>
-          닫기 (M)
+        <button type="button" className={s.close} onClick={close}>
+          {WORLD_MAP_TEXT.close}
         </button>
       </div>
     </div>

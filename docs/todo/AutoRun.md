@@ -8,8 +8,8 @@
 - [x] 0. 사용자 요구 11개 문서 반영 (Skills·Character·Controls·Combat·Village·Npc·Animals·GameDesign·index)
 - [x] 1. 콘텐츠 전 항목 개발 가능 수준으로 구체화 (웹 리서치 + 서브에이전트 검토)
 - [x] 2. 에셋 AI 파이프라인 문서화 (`docs/content/AssetPipeline.md`)
-- [ ] 3. 월드맵 구현: 시작 섬(작게) + 본 맵 5개(크게) + 마을별 전투맵 입구·브랜치(엘리트·보스방) + 미니맵 + 3D 노선도 지도
-- [ ] 4. 검증(tsc·eslint·build·스크린샷) 후 커밋, 사용자용 요약 작성
+- [x] 3. 월드맵 구현: 시작 섬(작게) + 본 맵 5개(크게) + 마을별 전투맵 입구·브랜치(엘리트·보스방) + 미니맵 + 3D 노선도 지도
+- [x] 4. 검증(tsc·eslint·build·스크린샷) 후 커밋, 사용자용 요약 작성
 
 ## 결정 로그
 
@@ -26,3 +26,11 @@
 - 6개 완료 → 검토 에이전트 1개로 일관성 검토 → 수정 → index.md 갱신 → 커밋 → 3단계
 - (진행) 6개 완료. 검토 에이전트 a6d76b8d2f0611345 가 충돌 통일·index·Decisions.md 작업 중 (src 금지). 끝나면 1단계 체크 후 커밋.
 - 3단계는 메인이 동시에 구현 중. 설계: 지도는 blueprint(TS) → 런타임 래스터화(utils/mapBlueprint.ts), 경로가 층 경계를 지나면 경사로 자동. 청크 32. worldStore(persist) + 페이드 + 확인창. 전투맵 방은 종류별 자동 생성.
+- 3단계 코드 작성 완료(미커밋): types/world, utils/mapBlueprint·dungeonRoom·maps·noise, constants/maps/*, stores/worldStore, CurrentMap·MapObjects·ExitLabels, Minimap·WorldMapOverlay·FadeOverlay·ExitConfirmDialog, scripts/validateMaps.ts(npm run maps:check 통과). 다음: ~/Desktop/vsc/ai_tech_shots/world.py 스크린샷 검증 → 수정 → 커밋.
+- 3단계 커밋 8394969. 스크린샷 검증 완료(ai_tech_shots/world). 코드 검토 에이전트 ab5261deb58808d5b 결과 대기 → 수정 → 문서(index·Todos·Architecture 수정됨, 미커밋) 커밋 → 4단계 요약.
+
+## 완료 요약 (2026-11-12)
+
+- 문서: 요구 11개 반영 → 27개 콘텐츠 문서 구체화(웹 리서치 + 검토 에이전트 통일) → `docs/content/Decisions.md`에 확인할 결정 25개.
+- 에셋 파이프라인: `docs/content/AssetPipeline.md` (지난 작업 기록 기준, 미확인 단계 ❓).
+- 월드맵: 첫걸음 섬 + 본 맵 5개 + 마을별 전투맵(방 10개) + 미니맵 + 노선도 지도. 검토 지적 7건 수정.

@@ -64,15 +64,16 @@ export function markCenter(tiles: TileMapData, mark: string) {
   };
 }
 
+/** 칸 좌표(소수 가능) → 그 칸 바닥 높이가 담긴 월드 좌표 */
+export function tileToWorldOnGround(tiles: TileMapData, x: number, z: number) {
+  const level = Number(tiles.heights[Math.floor(z)]?.[Math.floor(x)] ?? 0);
+  return { ...tileToWorld(tiles, x, z), y: level * LEVEL_HEIGHT };
+}
+
 /** 이동 목적지 → 월드 도착 위치 (바닥 조금 위에서 떨어뜨림) */
 export function spawnPoint(target: TravelTarget): [number, number, number] {
   const { tiles } = getMapDef(target.map);
   const cell = markCenter(tiles, target.entry) ?? markCenter(tiles, "@") ?? { x: 0.5, z: 0.5 };
-  const level = Number(tiles.heights[Math.floor(cell.z)]?.[Math.floor(cell.x)] ?? 0);
-  const { width, depth } = mapSize(tiles);
-  return [
-    (cell.x - width / 2) * TILE_SIZE,
-    level * LEVEL_HEIGHT + SPAWN_DROP,
-    (cell.z - depth / 2) * TILE_SIZE,
-  ];
+  const p = tileToWorldOnGround(tiles, cell.x, cell.z);
+  return [p.x, p.y + SPAWN_DROP, p.z];
 }

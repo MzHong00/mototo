@@ -23,12 +23,13 @@ export const RAMP_UP: Record<string, [number, number]> = {
   "<": [-1, 0],
   ">": [1, 0],
 }; // 경사로가 올라가는 방향
-const EDGES: { dx: number; dz: number; mine: [number, number]; theirs: [number, number] }[] = [
-  { dx: 0, dz: -1, mine: [0, 1], theirs: [3, 2] }, // 북
-  { dx: 1, dz: 0, mine: [1, 2], theirs: [0, 3] }, // 동
-  { dx: 0, dz: 1, mine: [2, 3], theirs: [1, 0] }, // 남
-  { dx: -1, dz: 0, mine: [3, 0], theirs: [2, 1] }, // 서
-];
+export const EDGES: { dx: number; dz: number; mine: [number, number]; theirs: [number, number] }[] =
+  [
+    { dx: 0, dz: -1, mine: [0, 1], theirs: [3, 2] }, // 북
+    { dx: 1, dz: 0, mine: [1, 2], theirs: [0, 3] }, // 동
+    { dx: 0, dz: 1, mine: [2, 3], theirs: [1, 0] }, // 남
+    { dx: -1, dz: 0, mine: [3, 0], theirs: [2, 1] }, // 서
+  ];
 const CORNER_OFFSET: [number, number][] = [
   [0, 0],
   [1, 0],

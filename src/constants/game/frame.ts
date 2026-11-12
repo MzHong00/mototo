@@ -3,5 +3,6 @@
 export const FRAME_PRIORITY = {
   PHYSICS: -50,
   SYNC: -10,
+  MAP_EXITS: -8, // 위치 동기화 직후 — 이번 프레임 발밑 칸으로 출구 판정
   CAMERA: -5,
 } as const;

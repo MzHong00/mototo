@@ -2,18 +2,11 @@
  * 맵 검사 (개발용) — npm run maps:check
  * 모든 맵: 출구 목적지 도착점 존재 · 광장(@)에서 모든 출구·도착점까지 걸어서 도달 가능 · 빌드 시간·삼각형 수
  */
-import { buildTerrain, tileReader } from "@/utils/terrain";
+import { EDGES, buildTerrain, tileReader } from "@/utils/terrain";
 import { getMapDef, markCenter } from "@/utils/maps";
 import { MAP_SPECS } from "@/constants/maps/registry";
 import { DUNGEONS } from "@/constants/maps/dungeons";
 import { STEP_HEIGHT } from "@/constants/game/movement";
-
-const SIDES = [
-  { dx: 0, dz: -1, mine: [0, 1], theirs: [3, 2] },
-  { dx: 1, dz: 0, mine: [1, 2], theirs: [0, 3] },
-  { dx: 0, dz: 1, mine: [2, 3], theirs: [1, 0] },
-  { dx: -1, dz: 0, mine: [3, 0], theirs: [2, 1] },
-];
 
 const ids = [
   ...Object.keys(MAP_SPECS),
@@ -40,7 +33,7 @@ ids.forEach((id) => {
   while (queue.length > 0) {
     const [x, z] = queue.shift()!;
     const mine = cornersAt(x, z);
-    SIDES.forEach((s) => {
+    EDGES.forEach((s) => {
       const nx = x + s.dx;
       const nz = z + s.dz;
       if (nx < 0 || nz < 0 || nx >= width || nz >= depth || seen.has(nz * width + nx)) return;

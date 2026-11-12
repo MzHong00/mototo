@@ -1,4 +1,5 @@
 import { useWorldStore } from "@/stores/worldStore";
+import { EXIT_DIALOG_TEXT } from "@/constants/ui/worldMap";
 
 import s from "./ExitConfirmDialog.module.scss";
 
@@ -10,20 +11,21 @@ export function ExitConfirmDialog() {
     travel: st.travel,
   }));
   if (!pendingExit) return null;
+  const isDungeon = pendingExit.mode === "dungeon";
 
   return (
     <div className={s.dialog} role="dialog" aria-label="이동 확인">
       <p className={s.text}>
         <b>{pendingExit.label}</b>
         <br />
-        {pendingExit.mode === "dungeon" ? "들어갈까요?" : "출발할까요?"}
+        {isDungeon ? EXIT_DIALOG_TEXT.askDungeon : EXIT_DIALOG_TEXT.askTravel}
       </p>
       <div className={s.buttons}>
         <button type="button" className={s.ok} onClick={() => travel(pendingExit.to)}>
-          {pendingExit.mode === "dungeon" ? "들어가기" : "출발"}
+          {isDungeon ? EXIT_DIALOG_TEXT.okDungeon : EXIT_DIALOG_TEXT.okTravel}
         </button>
         <button type="button" className={s.cancel} onClick={() => askExit(null)}>
-          그만두기
+          {EXIT_DIALOG_TEXT.cancel}
         </button>
       </div>
     </div>

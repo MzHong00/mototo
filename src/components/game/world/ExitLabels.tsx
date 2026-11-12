@@ -1,8 +1,7 @@
 import { Html } from "@react-three/drei";
 
-import { markCenter, tileToWorld } from "@/utils/maps";
+import { markCenter, tileToWorldOnGround } from "@/utils/maps";
 import { EXIT_LABEL_HEIGHT } from "@/constants/game/mapObjects";
-import { LEVEL_HEIGHT } from "@/constants/game/terrain";
 
 import type { MapDef } from "@/types/world";
 
@@ -19,12 +18,11 @@ export function ExitLabels({ map }: ExitLabelsProps) {
       {map.exits.map((exit) => {
         const cell = markCenter(map.tiles, exit.mark);
         if (!cell) return null;
-        const pos = tileToWorld(map.tiles, cell.x, cell.z);
-        const level = Number(map.tiles.heights[Math.floor(cell.z)]?.[Math.floor(cell.x)] ?? 0);
+        const pos = tileToWorldOnGround(map.tiles, cell.x, cell.z);
         return (
           <Html
             key={exit.mark}
-            position={[pos.x, level * LEVEL_HEIGHT + EXIT_LABEL_HEIGHT, pos.z]}
+            position={[pos.x, pos.y + EXIT_LABEL_HEIGHT, pos.z]}
             center
             zIndexRange={[10, 0]}
           >

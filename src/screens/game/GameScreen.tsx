@@ -20,11 +20,10 @@ interface GameScreenProps {
 /** 게임 화면 — 3D 월드 + HUD(미니맵·지도·이동 확인·화면 전환) */
 export function GameScreen({ character }: GameScreenProps) {
   const setEditing = useUiStore((s) => s.setEditing);
-  const { mapId, isMapOpen, setMapOpen } = useWorldStore((s) => ({
+  const { mapId, setMapOpen } = useWorldStore((s) => ({
     mapId: s.location.map,
-    isMapOpen: s.isMapOpen,
     setMapOpen: s.setMapOpen,
-  }));
+  })); // 지도 열림은 지도 컴포넌트만 구독 (3D 다시 그리기 방지)
   const map = useMemo(() => getMapDef(mapId), [mapId]);
 
   useActionInput();
@@ -35,7 +34,7 @@ export function GameScreen({ character }: GameScreenProps) {
       <GameHud name={character.name} onEdit={() => setEditing(true)} />
       <Minimap map={map} onOpenMap={() => setMapOpen(true)} />
       <ExitConfirmDialog />
-      {isMapOpen && <WorldMapOverlay onClose={() => setMapOpen(false)} />}
+      <WorldMapOverlay />
       <FadeOverlay />
     </>
   );
