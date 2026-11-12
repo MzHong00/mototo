@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 
 import { playerPosition } from "@/engine/runtime/frameState";
+import { FRAME_PRIORITY } from "@/constants/game/frame";
 
 const CAM_MIN = 4; // 최소 줌 거리
 const CAM_MAX = 24; // 최대 줌 거리
@@ -35,7 +36,7 @@ export function FollowCamera() {
       z + Math.cos(CAM_YAW) * cosP * d,
     );
     camera.lookAt(x, y + 1, z);
-  }, -1);
+  }, FRAME_PRIORITY.CAMERA);
 
   return null;
 }

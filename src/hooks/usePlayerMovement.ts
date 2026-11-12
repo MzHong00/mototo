@@ -16,6 +16,7 @@ import {
   TURN_RATE,
   WALK_SPEED,
 } from "@/constants/game/movement";
+import { FRAME_PRIORITY } from "@/constants/game/frame";
 
 import type { RefObject } from "react";
 import type { Group } from "three";
@@ -31,17 +32,23 @@ interface UsePlayerMovementParams {
  * 이동 방향은 화면(카메라) 기준이 아니라 월드 축 기준 (카메라가 고정 각도라 동일하게 느껴짐).
  */
 export function usePlayerMovement({ bodyRef, modelRef }: UsePlayerMovementParams) {
-  useFrame((_, delta) => {
+  /** 물리 스텝 직후·카메라 직전에 위치 동기화 — 카메라가 이번 프레임 위치를 그대로 따라가게 */
+  useFrame(() => {
     const body = bodyRef.current;
     if (!body) return;
-
-    // 낙하 복구
     const t = body.translation();
     if (t.y < FALL_THRESHOLD) {
+      // 낙하 복구
       body.setTranslation({ x: SPAWN_POS[0], y: SPAWN_POS[1], z: SPAWN_POS[2] }, true);
       body.setLinvel({ x: 0, y: 0, z: 0 }, true);
     }
     playerPosition.current.set(t.x, t.y, t.z);
+  }, FRAME_PRIORITY.SYNC);
+
+  /** 입력 → 다음 물리 스텝에 쓸 속도, 모델 회전 */
+  useFrame((_, delta) => {
+    const body = bodyRef.current;
+    if (!body) return;
 
     const vel = body.linvel();
     const isGrounded = Math.abs(vel.y) < GROUNDED_EPS;
