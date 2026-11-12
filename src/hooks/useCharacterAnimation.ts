@@ -2,7 +2,7 @@ import { useRef, useCallback } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-import { isPressed, playerAnimSignals } from "@/engine/runtime/frameState";
+import { playerAnimSignals } from "@/engine/runtime/frameState";
 import { CHIBI_ANIM, ANIM_FADE_SEC } from "@/constants/assets/chibi";
 import { ATTACK_LOCK_MS } from "@/constants/game/movement";
 
@@ -52,10 +52,8 @@ export function useCharacterAnimation(actions: Record<string, AnimationAction>) 
       return;
     }
 
-    const isMoving =
-      isPressed("up") || isPressed("down") || isPressed("left") || isPressed("right");
-    if (isMoving && isPressed("run")) play(CHIBI_ANIM.RUN);
-    else if (isMoving) play(CHIBI_ANIM.WALK);
+    if (playerAnimSignals.isRunning) play(CHIBI_ANIM.RUN);
+    else if (playerAnimSignals.isMoving) play(CHIBI_ANIM.WALK);
     else play(CHIBI_ANIM.IDLE);
   });
 }

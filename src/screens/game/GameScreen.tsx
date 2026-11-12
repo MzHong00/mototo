@@ -1,6 +1,6 @@
 import { GameCanvas } from "@/components/game/world/GameCanvas";
 import { GameHud } from "@/components/ui/hud/GameHud";
-import { useAttackInput } from "@/hooks/useAttackInput";
+import { useActionInput } from "@/hooks/useActionInput";
 import { useUiStore } from "@/stores/uiStore";
 
 import type { SavedCharacter } from "@/types/character";
@@ -13,7 +13,7 @@ interface GameScreenProps {
 export function GameScreen({ character }: GameScreenProps) {
   const setEditing = useUiStore((s) => s.setEditing);
 
-  useAttackInput();
+  useActionInput();
 
   return (
     <>

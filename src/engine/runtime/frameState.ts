@@ -13,6 +13,12 @@ export const playerAnimSignals = {
   attackCount: 0, // 증가할 때마다 공격 모션
   attackUntil: 0, // 공격 종료 timestamp — 이동 잠금
   isAirborne: false, // 공중 여부 — 점프 모션
+  isMoving: false, // 실제로 이동 중인지 (반대 방향 키 동시 입력 = 정지)
+  isRunning: false, // 달리는 중인지
+};
+
+export const playerInput = {
+  isJumpQueued: false, // 점프 키를 새로 눌렀음 — 착지 상태에서만 1회 소비
 };
 
 /** 해당 동작의 키 중 하나라도 눌려 있는지 */

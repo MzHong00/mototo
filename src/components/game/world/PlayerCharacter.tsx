@@ -6,14 +6,11 @@ import { useChibiAnimations } from "@/hooks/useChibiAnimations";
 import { useCharacterAnimation } from "@/hooks/useCharacterAnimation";
 import { usePlayerMovement } from "@/hooks/usePlayerMovement";
 import { CHIBI_SCALE, CHIBI_Y_OFFSET } from "@/constants/assets/chibi";
-import { SPAWN_POS } from "@/constants/game/movement";
+import { PLAYER_HALF_HEIGHT, PLAYER_RADIUS, SPAWN_POS } from "@/constants/game/movement";
 
 import type { Group } from "three";
 import type { RapierRigidBody } from "@react-three/rapier";
 import type { ChibiState } from "@/engine/chibi/character";
-
-const COLLIDER_HALF_HEIGHT = 0.35; // 캡슐 원통부 절반 높이
-const COLLIDER_RADIUS = 0.25; // 캡슐 반지름
 
 interface PlayerCharacterProps {
   appearance: ChibiState;
@@ -36,7 +33,7 @@ export function PlayerCharacter({ appearance }: PlayerCharacterProps) {
       enabledRotations={[false, false, false]}
       colliders={false}
     >
-      <CapsuleCollider args={[COLLIDER_HALF_HEIGHT, COLLIDER_RADIUS]} />
+      <CapsuleCollider args={[PLAYER_HALF_HEIGHT, PLAYER_RADIUS]} />
       <group ref={modelRef}>
         {character && (
           <primitive
