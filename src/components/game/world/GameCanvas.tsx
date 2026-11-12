@@ -9,6 +9,7 @@ import { SunLight } from "@/components/game/world/SunLight";
 import { TestGround } from "@/components/game/world/TestGround";
 
 import { FRAME_PRIORITY } from "@/constants/game/frame";
+import { GRAVITY } from "@/constants/game/movement";
 
 import type { ChibiState } from "@/engine/chibi/character";
 
@@ -36,7 +37,7 @@ export function GameCanvas({ appearance }: GameCanvasProps) {
       <FollowCamera />
       <Suspense fallback={null}>
         {/* 물리를 렌더 프레임과 1:1로 맞춰 카메라·캐릭터·배경이 같은 위치를 보게 한다 (고주사율 화면 끊김 방지) */}
-        <Physics timeStep="vary" updatePriority={FRAME_PRIORITY.PHYSICS}>
+        <Physics gravity={GRAVITY} timeStep="vary" updatePriority={FRAME_PRIORITY.PHYSICS}>
           <TestGround />
           <PlayerCharacter appearance={appearance} />
         </Physics>

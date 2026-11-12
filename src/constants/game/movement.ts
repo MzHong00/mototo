@@ -1,6 +1,7 @@
 export const WALK_SPEED = 3.2; // 걷기 속도
 export const RUN_SPEED = 6.5; // 달리기 속도
-export const JUMP_VELOCITY = 6; // 점프 초속도
+export const JUMP_VELOCITY = 6; // 점프 초속도 (치비 뷰어와 동일)
+export const GRAVITY: [number, number, number] = [0, -18, 0]; // 게임용 중력 — 지구 값(-9.81)은 너무 붕 떠 보임 (치비 뷰어와 동일)
 export const TURN_RATE = 12; // 방향 전환 보간 속도 (치비 뷰어와 동일)
 export const ACCEL_RATE = 10; // 가속·감속 보간 속도 (치비 뷰어와 동일)
 export const PLAYER_HALF_HEIGHT = 0.35; // 캡슐 원통부 절반 높이
