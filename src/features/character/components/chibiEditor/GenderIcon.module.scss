@@ -1,0 +1,16 @@
+.icon {
+  width: 55%;
+  height: 55%;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.female {
+  stroke: var(--color-chibi-primary-strong);
+}
+
+.male {
+  stroke: var(--color-chibi-secondary-strong);
+}

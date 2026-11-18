@@ -1,17 +1,13 @@
 /**
  * 맵 검사 (개발용) — npm run maps:check
- * 모든 맵: 출구 목적지 도착점 존재 · 광장(@)에서 모든 출구·도착점까지 걸어서 도달 가능 · 빌드 시간·삼각형 수
+ * 모든 맵: 출구 목적지 도착점 존재 · 시작점(@)에서 모든 출구·도착점까지 걸어서 도달 가능 · 빌드 시간·삼각형 수
  */
-import { EDGES, buildTerrain, tileReader } from "@/utils/terrain";
-import { getMapDef, markCenter } from "@/utils/maps";
-import { MAP_SPECS } from "@/constants/maps/registry";
-import { DUNGEONS } from "@/constants/maps/dungeons";
-import { STEP_HEIGHT } from "@/constants/game/movement";
+import { EDGES, buildTerrain, tileReader } from "@/features/world/utils/terrain";
+import { getMapDef, markCenter } from "@/features/world/utils/maps";
+import { MAP_SPECS } from "@/features/world/constants/maps/registry";
+import { STEP_HEIGHT } from "@/features/world/constants/movement";
 
-const ids = [
-  ...Object.keys(MAP_SPECS),
-  ...DUNGEONS.flatMap((d) => d.rooms.map((r) => `${d.id}/${r.id}`)),
-];
+const ids = Object.keys(MAP_SPECS);
 const errors: string[] = [];
 
 ids.forEach((id) => {
@@ -24,7 +20,7 @@ ids.forEach((id) => {
   const width = map.tiles.kinds[0].length;
   const depth = map.tiles.kinds.length;
 
-  // 걸어서 갈 수 있는 칸 (광장에서 출발, 이웃 칸과 맞닿은 변 높이 차가 턱 높이 이하)
+  // 걸어서 갈 수 있는 칸 (시작점에서 출발, 이웃 칸과 맞닿은 변 높이 차가 턱 높이 이하)
   const start = markCenter(map.tiles, "@");
   if (!start) errors.push(`${id}: @ 없음`);
   const seen = new Set<number>();
@@ -61,7 +57,6 @@ ids.forEach((id) => {
     if (target.id !== e.to.map || !markCenter(target.tiles, e.to.entry))
       errors.push(`${id}: 출구 ${e.mark} → ${e.to.map}:${e.to.entry} 없음`);
   });
-  if (id.includes("/")) return;
   const tris = buffers.chunks.reduce((n, c) => n + c.indices.length / 3, 0);
   console.log(
     `${id.padEnd(14)} ${width}x${depth}  설계도 ${(t1 - t0).toFixed(0)}ms  지형 ${(t2 - t1).toFixed(0)}ms  조각 ${buffers.chunks.length}  삼각형 ${tris}  물체 ${map.tiles.objects.length}`,

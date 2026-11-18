@@ -15,5 +15,5 @@ export default defineConfig([
     files: ["scripts/**/*.mjs"],
     languageOptions: { globals: { console: "readonly", process: "readonly" } },
   },
-  { ignores: ["dist/**", "node_modules/**", "src/engine/chibi/character.js"] }, // 치비 원본 사본 (chibi-pipeline 소유)
+  { ignores: ["dist/**", "node_modules/**", "src/lib/chibi/character.js"] }, // 치비 원본 사본 (chibi-pipeline 소유)
 ]);

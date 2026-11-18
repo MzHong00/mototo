@@ -1,0 +1,45 @@
+$rainbow: conic-gradient(red, #ff0, lime, cyan, blue, #f0f, red); // 직접 고르기 표시 (모든 색)
+
+.row {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.swatch {
+  position: relative;
+  flex: 0 1 24px; // 한 줄에 다 들어가게 좁으면 줄어듦
+  min-width: 0;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid var(--color-chibi-line);
+  border-radius: var(--radius-full);
+  background: var(--sw, var(--color-surface));
+  cursor: pointer;
+}
+
+// 아이템 원래 색 — 안쪽 작은 흰 점으로 다른 칸과 구분
+.original::after {
+  content: "";
+  position: absolute;
+  inset: 32%;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+}
+
+// 직접 고르기 — 무지개 동그라미
+.custom {
+  background: $rainbow;
+
+  input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
+
+.on {
+  outline: 2px solid var(--color-chibi-ink);
+  outline-offset: 2px;
+}

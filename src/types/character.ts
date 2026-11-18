@@ -1,4 +1,4 @@
-import type { ChibiState } from "@/engine/chibi/character";
+import type { ChibiState } from "@/lib/chibi/character";
 
 /** 저장되는 내 캐릭터 */
 export interface SavedCharacter {
